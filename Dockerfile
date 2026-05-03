@@ -9,7 +9,6 @@ RUN npx prisma generate
 CMD ["npm", "run dev"]
 
 FROM base AS build
-ENV DATABASE_URL="postgresql://placeholder:placeholder@localhost:5432/db"
 RUN npm install --silent
 COPY . .
 RUN npx prisma generate
@@ -25,6 +24,7 @@ COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/public ./public
 COPY --from=prod-deps /app/node_modules ./node_modules
 COPY --from=build /app/prisma ./prisma
+COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 
 EXPOSE 3000
 CMD ["npm", "start"]
