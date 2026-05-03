@@ -7,6 +7,11 @@ enum Role {
   ADMIN
 }
 
+enum ContentType {
+  MOVIE
+  SERIES
+}
+
 generator client {
   provider = "prisma-client"
   output   = "./generated/prisma"
@@ -31,6 +36,116 @@ model User {
 
   @@unique([email])
   @@map("user")
+}
+
+model Category {
+  id         String            @id @default(cuid())
+  name       String
+  orderIndex Int               @default(0)
+  contents   ContentCategory[]
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+
+  @@map("categories")
+}
+
+model Content {
+  id            String            @id @default(cuid())
+  type          ContentType
+  title         String
+  year          Int
+  rating        Float
+  duration      String?
+  genre         String[]
+  description   String
+  posterUrl     String
+  backdropUrl   String
+  telegramUrl   String?
+  embedUrl      String?
+  isTrending    Boolean           @default(false)
+  isPopular     Boolean           @default(false)
+  categories    ContentCategory[]
+  seasons       Season[]
+  downloadLinks DownloadLink[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  @@map("content")
+}
+
+model ContentCategory {
+  contentId  String
+  categoryId String
+  content    Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([contentId, categoryId])
+  @@map("content_categories")
+}
+
+model Season {
+  id           String    @id @default(cuid())
+  seasonNumber Int
+  contentId    String
+  content      Content   @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  episodes     Episode[]
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@unique([contentId, seasonNumber])
+  @@map("seasons")
+}
+
+model Episode {
+  id            String         @id @default(cuid())
+  seasonId      String
+  season        Season         @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  seasonNumber  Int
+  episodeNumber Int
+  title         String
+  duration      String
+  description   String
+  posterUrl     String
+  telegramUrl   String?
+  embedUrl      String?
+  downloadLinks DownloadLink[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@unique([seasonId, episodeNumber])
+  @@map("episodes")
+}
+
+model DownloadLink {
+  id        String   @id @default(cuid())
+  quality   String
+  size      String
+  url       String
+  contentId String?
+  episodeId String?
+  content   Content? @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  episode   Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@map("download_links")
+}
+
+model Request {
+  id        String   @id @default(cuid())
+  title     String
+  createdAt DateTime @default(now())
+
+  @@map("requests")
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  title       String
+  reason      String?
+  description String
+  createdAt   DateTime @default(now())
+
+  @@map("reports")
 }
 
 model Session {

@@ -3,7 +3,9 @@ import { create } from "@spoosh/react";
 import { cachePlugin } from "@spoosh/plugin-cache";
 import { deduplicationPlugin } from "@spoosh/plugin-deduplication";
 import { invalidationPlugin } from "@spoosh/plugin-invalidation";
+import type { AdminReportItem, AdminRequestItem } from "@/types/admin";
 import type { Category, Content, MovieListResponse } from "@/types/content";
+import type { MovieCreateInput } from "@/validation/moviesSchema";
 
 export type ApiSchema = {
   movies: {
@@ -15,6 +17,10 @@ export type ApiSchema = {
         pageSize?: number;
         search?: string;
       };
+    };
+    POST: {
+      data: Content;
+      body: MovieCreateInput;
     };
   };
   "movies/:id": {
@@ -31,6 +37,9 @@ export type ApiSchema = {
     };
   };
   requests: {
+    GET: {
+      data: AdminRequestItem[];
+    };
     POST: {
       data: { ok: true };
       body: {
@@ -39,6 +48,9 @@ export type ApiSchema = {
     };
   };
   reports: {
+    GET: {
+      data: AdminReportItem[];
+    };
     POST: {
       data: { ok: true };
       body: {

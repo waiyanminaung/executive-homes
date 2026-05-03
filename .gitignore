@@ -48,4 +48,4 @@ GEMINI.md
 .clinerules
 .windsurfrules
 .trae/rules/project_rules.md
-/app/generated/prisma
+/prisma/generated
