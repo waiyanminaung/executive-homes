@@ -15,7 +15,7 @@ RUN npx prisma generate
 RUN npm run build
 
 FROM base AS prod-deps
-RUN npm install --silent --omit=dev
+RUN npm install --silent --omit=dev --no-script
 
 FROM node:lts-alpine3.22 AS production
 WORKDIR /app
