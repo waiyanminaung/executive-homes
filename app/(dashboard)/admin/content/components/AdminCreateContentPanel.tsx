@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useForm, FormProvider, useWatch } from "react-hook-form";
+import type { Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Input, Textarea } from "@geckoui/geckoui";
 import { useWrite } from "@/lib/spoosh";
@@ -41,7 +42,9 @@ export default function AdminCreateContentPanel({
 }: AdminCreateContentPanelProps) {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const methods = useForm<MovieCreateInput>({
-    resolver: zodResolver(movieCreateSchema),
+    resolver: zodResolver(
+      movieCreateSchema,
+    ) as unknown as Resolver<MovieCreateInput>,
     defaultValues,
   });
   const selectedCategoryIds = useWatch({
@@ -50,21 +53,23 @@ export default function AdminCreateContentPanel({
   });
   const { trigger, loading } = useWrite((api) => api("movies").POST());
 
-  const handleSubmit = methods.handleSubmit(async (values) => {
-    setSubmitError(null);
+  const handleSubmit = methods.handleSubmit(
+    async (values: MovieCreateInput) => {
+      setSubmitError(null);
 
-    const result = await trigger({
-      body: values,
-    });
+      const result = await trigger({
+        body: values,
+      });
 
-    if (!result.error) {
-      methods.reset(defaultValues);
-      onCreated();
-      return;
-    }
+      if (!result.error) {
+        methods.reset(defaultValues);
+        onCreated();
+        return;
+      }
 
-    setSubmitError(result.error.message);
-  });
+      setSubmitError(result.error.message);
+    },
+  );
 
   return (
     <section className="rounded-3xl border border-white/5 bg-white/[0.03] p-5 lg:p-6">
