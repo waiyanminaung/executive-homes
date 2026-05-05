@@ -7,6 +7,12 @@ import type { AdminReportItem, AdminRequestItem } from "@/types/admin";
 import type { Category, Content, MovieListResponse } from "@/types/content";
 import type { TmdbMovieImportData } from "@/types/tmdb";
 import type {
+  CategoryCreateInput,
+  CategoryDeleteInput,
+  CategoryOrderInput,
+  CategoryUpdateInput,
+} from "@/validation/categoriesSchema";
+import type {
   MovieCreateInput,
   MovieUpdateInput,
 } from "@/validation/moviesSchema";
@@ -46,6 +52,32 @@ export type ApiSchema = {
   categories: {
     GET: {
       data: Category[];
+    };
+    POST: {
+      data: Category;
+      body: CategoryCreateInput;
+    };
+  };
+  "categories/:id": {
+    PUT: {
+      data: Category;
+      params: {
+        id: string;
+      };
+      body: CategoryUpdateInput;
+    };
+    DELETE: {
+      data: { ok: true };
+      params: {
+        id: string;
+      };
+      body: CategoryDeleteInput;
+    };
+  };
+  "categories/order": {
+    PATCH: {
+      data: { ok: true };
+      body: CategoryOrderInput;
     };
   };
   requests: {

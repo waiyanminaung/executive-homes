@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { Button } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
-import { PAGE_SIZE } from "@/constants/content";
+import { PAGE_SIZE, SEARCH_DEBOUNCE_MS } from "@/constants/content";
 import { useRead } from "@/lib/spoosh";
 import { useWatchlist } from "@/components/@shared/useWatchlist";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import type { Category, MovieListResponse } from "@/types/content";
 import {
   HomeCategoryTabs,
@@ -31,13 +32,20 @@ export default function Home() {
     staleTime: 60000,
   });
 
+  const searchInput = searchQuery.trim();
+  const debouncedSearchQuery = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
+  const search = debouncedSearchQuery;
+  const isSearchInputActive = !!searchInput;
+  const isSearchActive = !!search;
+  const isSearchPending = searchInput !== debouncedSearchQuery;
+
   const { data: moviesData, loading } = useRead((api) =>
     api("movies").GET({
       query: {
-        category: currentCategoryId,
-        page: searchQuery.trim() ? 1 : currentPage,
+        category: isSearchActive ? "all" : currentCategoryId,
+        page: isSearchActive ? 1 : currentPage,
         pageSize: PAGE_SIZE,
-        search: searchQuery.trim() ? searchQuery : undefined,
+        search: isSearchActive ? search : undefined,
       },
     }),
   );
@@ -66,7 +74,7 @@ export default function Home() {
             }}
           />
 
-          {!searchQuery.trim() ? (
+          {!isSearchInputActive ? (
             <HomeCategoryTabs
               categories={categories}
               currentCategoryId={currentCategoryId}
@@ -78,9 +86,11 @@ export default function Home() {
           ) : null}
 
           <section className={classNames("mt-8")}>
-            {searchQuery.trim() ? (
+            {isSearchInputActive ? (
               <div
-                className={classNames("mb-6 flex items-center justify-between")}
+                className={classNames(
+                  "mx-auto mb-6 flex max-w-4xl items-center justify-between",
+                )}
               >
                 <h2
                   className={classNames(
@@ -105,11 +115,11 @@ export default function Home() {
 
             <MovieGrid
               items={response.items}
-              isLoading={loading}
-              isSearchActive={!!searchQuery.trim()}
+              isLoading={loading || isSearchPending}
+              isSearchActive={isSearchInputActive}
             />
 
-            {!searchQuery.trim() ? (
+            {!isSearchInputActive ? (
               <HomePagination
                 currentPage={currentPage}
                 totalPages={totalPages}

@@ -74,7 +74,7 @@ export const MovieGrid = ({
                 "absolute top-3 left-3 flex flex-col gap-2 z-20",
               )}
             >
-              {movie.isTrending ? (
+              {!isSearchActive && movie.isTrending ? (
                 <div
                   className={classNames(
                     "flex items-center gap-1.5 px-2 py-1 bg-accent text-white",
@@ -91,7 +91,7 @@ export const MovieGrid = ({
                   </span>
                 </div>
               ) : null}
-              {movie.isPopular ? (
+              {!isSearchActive && movie.isPopular ? (
                 <div
                   className={classNames(
                     "flex items-center gap-1.5 px-2 py-1 bg-[#FBC02D] text-black",
@@ -108,7 +108,8 @@ export const MovieGrid = ({
                   </span>
                 </div>
               ) : null}
-              {movie.type === "series" &&
+              {!isSearchActive &&
+              movie.type === "series" &&
               !movie.isTrending &&
               !movie.isPopular ? (
                 <div
