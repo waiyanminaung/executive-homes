@@ -28,4 +28,7 @@ export const movieCreateSchema = z.object({
   isPopular: z.boolean().default(false),
 });
 
+export const movieUpdateSchema = movieCreateSchema;
+
 export type MovieCreateInput = z.infer<typeof movieCreateSchema>;
+export type MovieUpdateInput = z.infer<typeof movieUpdateSchema>;

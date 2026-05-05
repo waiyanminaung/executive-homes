@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { AlertCircle, Download, Heart, Send } from "lucide-react";
 import { Button } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import { useRead } from "@/lib/spoosh";
 import { useWatchlist } from "@/components/@shared/useWatchlist";
-import type { Content, Episode } from "@/types/content";
+import type { Episode } from "@/types/content";
 import {
   DownloadModal,
   EpisodeList,
@@ -30,13 +30,6 @@ export default function MovieDetailPage() {
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(1);
   const [selectedEpisode, setSelectedEpisode] = useState<Episode | null>(null);
-
-  useEffect(() => {
-    if (movie?.seasons?.length) {
-      setSelectedSeason(movie.seasons[0].seasonNumber);
-      setSelectedEpisode(null);
-    }
-  }, [movie?.id]);
 
   if (loading) {
     return (
@@ -67,10 +60,17 @@ export default function MovieDetailPage() {
   }
 
   const isInWatchlist = isSaved(movie.id);
-  const currentSeason = movie.seasons?.find(
+  const effectiveSelectedSeason = movie.seasons?.some(
     (season) => season.seasonNumber === selectedSeason,
+  )
+    ? selectedSeason
+    : (movie.seasons?.[0]?.seasonNumber ?? 1);
+  const currentSeason = movie.seasons?.find(
+    (season) => season.seasonNumber === effectiveSelectedSeason,
   );
-  const activeEpisode = selectedEpisode ?? currentSeason?.episodes[0];
+  const activeEpisode =
+    currentSeason?.episodes.find((episode) => episode.id === selectedEpisode?.id) ??
+    currentSeason?.episodes[0];
   const activeEmbedUrl =
     movie.type === "series" ? activeEpisode?.embedUrl : movie.embedUrl;
   const activeDownloads =
@@ -243,7 +243,7 @@ export default function MovieDetailPage() {
           {movie.type === "series" && movie.seasons?.length ? (
             <EpisodeList
               seasons={movie.seasons}
-              selectedSeason={selectedSeason}
+              selectedSeason={effectiveSelectedSeason}
               onSeasonChange={(season) => {
                 setSelectedSeason(season);
                 setSelectedEpisode(null);

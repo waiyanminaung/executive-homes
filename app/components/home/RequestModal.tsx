@@ -73,7 +73,7 @@ export const RequestModal = ({ isOpen, onClose }: RequestModalProps) => {
               <p className={classNames("text-ink-secondary text-sm")}>
                 ကျွန်ုပ်တို့ မကြာမီ{" "}
                 <span className={classNames("text-white font-bold")}>
-                  "{title}"
+                  &quot;{title}&quot;
                 </span>
                 ကို ထည့်သွင်းပေးပါမည်။
               </p>

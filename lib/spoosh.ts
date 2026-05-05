@@ -5,7 +5,12 @@ import { deduplicationPlugin } from "@spoosh/plugin-deduplication";
 import { invalidationPlugin } from "@spoosh/plugin-invalidation";
 import type { AdminReportItem, AdminRequestItem } from "@/types/admin";
 import type { Category, Content, MovieListResponse } from "@/types/content";
-import type { MovieCreateInput } from "@/validation/moviesSchema";
+import type { TmdbMovieImportData } from "@/types/tmdb";
+import type {
+  MovieCreateInput,
+  MovieUpdateInput,
+} from "@/validation/moviesSchema";
+import type { TmdbMovieImportInput } from "@/validation/tmdbSchema";
 
 export type ApiSchema = {
   movies: {
@@ -29,6 +34,13 @@ export type ApiSchema = {
       params: {
         id: string;
       };
+    };
+    PUT: {
+      data: Content;
+      params: {
+        id: string;
+      };
+      body: MovieUpdateInput;
     };
   };
   categories: {
@@ -58,6 +70,12 @@ export type ApiSchema = {
         reason: string;
         description: string;
       };
+    };
+  };
+  "tmdb/movie": {
+    POST: {
+      data: TmdbMovieImportData;
+      body: TmdbMovieImportInput;
     };
   };
 };

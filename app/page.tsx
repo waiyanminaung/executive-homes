@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import { PAGE_SIZE } from "@/constants/content";
@@ -42,10 +42,6 @@ export default function Home() {
     }),
   );
 
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchQuery, currentCategoryId]);
-
   const categories = categoriesData ?? ([] as Category[]);
   const response = moviesData ?? ({ items: [], total: 0 } as MovieListResponse);
   const totalPages = Math.max(1, Math.ceil(response.total / PAGE_SIZE));
@@ -62,13 +58,22 @@ export default function Home() {
         <main
           className={classNames("relative z-10 pb-24 px-4 overflow-x-hidden")}
         >
-          <HomeSearchBar value={searchQuery} onChange={setSearchQuery} />
+          <HomeSearchBar
+            value={searchQuery}
+            onChange={(value) => {
+              setSearchQuery(value);
+              setCurrentPage(1);
+            }}
+          />
 
           {!searchQuery.trim() ? (
             <HomeCategoryTabs
               categories={categories}
               currentCategoryId={currentCategoryId}
-              onSelect={(categoryId) => setCurrentCategoryId(categoryId)}
+              onSelect={(categoryId) => {
+                setCurrentCategoryId(categoryId);
+                setCurrentPage(1);
+              }}
             />
           ) : null}
 

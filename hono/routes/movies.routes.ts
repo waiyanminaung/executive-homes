@@ -7,6 +7,7 @@ import {
   movieCreateSchema,
   movieIdParamSchema,
   movieListQuerySchema,
+  movieUpdateSchema,
 } from "@/validation/moviesSchema";
 import { zv } from "@/validation/zv";
 import { Prisma } from "@/prisma/generated/prisma/client";
@@ -102,4 +103,42 @@ export const movieRoutes = new Hono()
     });
 
     return c.json(mapContent(movie));
-  });
+  })
+  .put(
+    "/:id",
+    zv("param", movieIdParamSchema),
+    zv("json", movieUpdateSchema),
+    async (c) => {
+      const { id } = c.req.valid("param");
+      const body = c.req.valid("json");
+
+      const movie = await prisma.content.update({
+        where: { id },
+        data: {
+          type: body.type === "movie" ? "MOVIE" : "SERIES",
+          title: body.title,
+          year: body.year,
+          rating: body.rating,
+          duration: body.duration || null,
+          genre: body.genre
+            .split(",")
+            .map((value) => value.trim())
+            .filter(Boolean),
+          description: body.description,
+          posterUrl: body.posterUrl,
+          backdropUrl: body.backdropUrl,
+          telegramUrl: body.telegramUrl || null,
+          embedUrl: body.embedUrl || null,
+          isTrending: body.isTrending,
+          isPopular: body.isPopular,
+          categories: {
+            deleteMany: {},
+            create: body.categoryIds.map((categoryId) => ({ categoryId })),
+          },
+        },
+        include: contentInclude,
+      });
+
+      return c.json(mapContent(movie));
+    },
+  );

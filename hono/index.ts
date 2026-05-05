@@ -4,6 +4,7 @@ import {
   movieRoutes,
   reportRoutes,
   requestRoutes,
+  tmdbRoutes,
 } from "./routes";
 import { auth } from "@/lib/auth";
 
@@ -13,6 +14,7 @@ router.route("/movies", movieRoutes);
 router.route("/categories", categoryRoutes);
 router.route("/requests", requestRoutes);
 router.route("/reports", reportRoutes);
+router.route("/tmdb", tmdbRoutes);
 
 router.on(["POST", "GET"], "/auth/*", (c) => {
   return auth.handler(c.req.raw);

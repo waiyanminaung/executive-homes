@@ -90,7 +90,7 @@ export const ReportModal = ({ isOpen, title, onClose }: ReportModalProps) => {
               >
                 ကျွန်ုပ်တို့အဖွဲ့မှ{" "}
                 <span className={classNames("text-white font-bold")}>
-                  "{title}"
+                  &quot;{title}&quot;
                 </span>
                 နဲ့ ပတ်သက်တဲ့ ပြဿနာကို စစ်ဆေးနေပါပြီ။
               </p>

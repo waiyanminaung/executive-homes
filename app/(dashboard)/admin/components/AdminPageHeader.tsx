@@ -16,17 +16,29 @@ export default function AdminPageHeader({
   return (
     <div
       className={classNames(
-        "flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between",
+        "flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between",
       )}
     >
-      <div className="space-y-2">
-        <p className="text-[10px] font-black uppercase tracking-[0.35em] text-white/30">
+      <div className={classNames("space-y-2")}>
+        <p
+          className={classNames(
+            "text-[10px] font-black uppercase tracking-[0.35em] text-white/30",
+          )}
+        >
           {eyebrow}
         </p>
-        <h1 className="text-3xl lg:text-5xl font-black uppercase tracking-tighter text-white">
+        <h1
+          className={classNames(
+            "text-2xl font-black uppercase tracking-tighter text-white lg:text-3xl",
+          )}
+        >
           {title}
         </h1>
-        <p className="max-w-2xl text-sm lg:text-base text-white/45 leading-relaxed">
+        <p
+          className={classNames(
+            "max-w-2xl text-xs leading-relaxed text-white/40 lg:text-sm",
+          )}
+        >
           {description}
         </p>
       </div>

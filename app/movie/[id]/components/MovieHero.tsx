@@ -1,6 +1,7 @@
 "use client";
 
-import { Play } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Play } from "lucide-react";
 import { Button } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import type { Content } from "@/types/content";
@@ -11,6 +12,17 @@ interface MovieHeroProps {
 }
 
 export const MovieHero = ({ movie, onPlay }: MovieHeroProps) => {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      router.back();
+      return;
+    }
+
+    router.push("/");
+  };
+
   return (
     <div
       className={classNames(
@@ -28,6 +40,21 @@ export const MovieHero = ({ movie, onPlay }: MovieHeroProps) => {
           "absolute inset-0 bg-gradient-to-t from-[#0A0A0A] via-transparent to-transparent",
         )}
       />
+
+      <Button
+        type="button"
+        variant="icon"
+        onClick={handleBack}
+        className={classNames(
+          "absolute left-4 top-4 z-20 size-11 rounded-full",
+          "border border-white/10 bg-black/45 text-white backdrop-blur-md",
+          "transition-all hover:bg-white/10 active:scale-95",
+          "lg:left-8 lg:top-8 lg:size-12",
+        )}
+        aria-label="Back"
+      >
+        <ArrowLeft className={classNames("size-5")} />
+      </Button>
 
       <div
         className={classNames(

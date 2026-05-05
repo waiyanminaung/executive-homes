@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_Myanmar } from "next/font/google";
+import { GeckoUIPortal } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import "./globals.css";
 
@@ -30,11 +31,12 @@ export default function RootLayout({
         inter.variable,
         myanmar.variable,
         "h-full",
-        "antialiased",
+        "antialiased dark",
       )}
     >
       <body className={classNames("min-h-full", "flex", "flex-col")}>
         {children}
+        <GeckoUIPortal />
       </body>
     </html>
   );

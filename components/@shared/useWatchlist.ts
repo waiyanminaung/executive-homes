@@ -18,12 +18,10 @@ const parseWatchlist = (value: string | null): Content[] => {
 };
 
 export const useWatchlist = () => {
-  const [watchlist, setWatchlist] = useState<Content[]>([]);
-
-  useEffect(() => {
-    const stored = parseWatchlist(localStorage.getItem(WATCHLIST_STORAGE_KEY));
-    setWatchlist(stored);
-  }, []);
+  const [watchlist, setWatchlist] = useState<Content[]>(() => {
+    if (typeof window === "undefined") return [];
+    return parseWatchlist(localStorage.getItem(WATCHLIST_STORAGE_KEY));
+  });
 
   useEffect(() => {
     localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(watchlist));
