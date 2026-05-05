@@ -71,7 +71,7 @@ export const MovieGrid = ({
           >
             <div
               className={classNames(
-                "absolute top-3 left-3 flex flex-col gap-2 z-20",
+                "absolute left-3 top-3 z-20 hidden flex-col gap-2 sm:flex",
               )}
             >
               {!isSearchActive && movie.isTrending ? (
@@ -145,22 +145,25 @@ export const MovieGrid = ({
 
             <div
               className={classNames(
-                "absolute top-3 right-3 flex items-center gap-1.5 bg-[#FBC02D]",
-                "px-2.5 py-1 rounded-md z-20 shadow-xl border border-black/10",
+                "absolute right-2 top-2 z-20 flex items-center gap-1 bg-[#FBC02D]",
+                "rounded-md border border-black/10 px-1.5 py-1 shadow-xl sm:right-3 sm:top-3",
+                "sm:gap-1.5 sm:px-2.5",
               )}
             >
               <span
                 className={classNames(
-                  "text-[10px] font-black text-black tracking-tighter",
+                  "hidden text-[10px] font-black tracking-tighter text-black sm:inline",
                 )}
               >
                 IMDb
               </span>
               <div className={classNames("flex items-center gap-1")}>
-                <Star className={classNames("w-3 h-3 fill-black text-black")} />
+                <Star
+                  className={classNames("size-2.5 fill-black text-black sm:size-3")}
+                />
                 <span
                   className={classNames(
-                    "text-[12px] font-black text-black leading-none",
+                    "text-[10px] font-black leading-none text-black sm:text-[12px]",
                   )}
                 >
                   {movie.rating}

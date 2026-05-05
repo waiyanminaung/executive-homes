@@ -16,7 +16,7 @@ export const HomeSearchBar = ({ value, onChange }: SearchBarProps) => {
     >
       <Search
         className={classNames(
-          "absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5",
+          "absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 lg:left-5",
           "text-ink-secondary group-focus-within:text-accent transition-colors",
         )}
       />
@@ -26,7 +26,7 @@ export const HomeSearchBar = ({ value, onChange }: SearchBarProps) => {
         placeholder="ရုပ်ရှင်နှင့် ဇာတ်လမ်းတွဲများ ရှာဖွေပါ..."
         className={classNames(
           "w-full bg-card border-none rounded-xl py-4 lg:py-5",
-          "pl-12 lg:pl-14 pr-6 text-sm lg:text-base font-medium",
+          "pl-10 pr-4 text-sm font-medium lg:pl-14 lg:pr-6 lg:text-base",
           "placeholder:text-white/10 focus-within:ring-1 focus-within:ring-accent/30",
           "outline-none transition-all shadow-lg",
         )}
