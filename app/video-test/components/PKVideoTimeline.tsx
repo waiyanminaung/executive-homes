@@ -7,6 +7,10 @@ import { classNames } from "@/utils/classNames";
 interface PKVideoTimelineProps {
   currentTime: number;
   duration: number;
+  showTimeLabels?: boolean;
+  onInteractionEnd?: () => void;
+  onInteractionStart?: () => void;
+  onInteraction?: () => void;
   onSeek: (time: number) => void;
 }
 
@@ -15,7 +19,7 @@ interface RangeStyle extends CSSProperties {
   "--pk-range-progress": string;
 }
 
-const formatTime = (seconds: number) => {
+export const formatVideoTime = (seconds: number) => {
   if (!Number.isFinite(seconds)) {
     return "0:00:00";
   }
@@ -35,6 +39,10 @@ const formatTime = (seconds: number) => {
 export const PKVideoTimeline = ({
   currentTime,
   duration,
+  showTimeLabels = true,
+  onInteractionEnd,
+  onInteractionStart,
+  onInteraction,
   onSeek,
 }: PKVideoTimelineProps) => {
   const safeDuration = Number.isFinite(duration) && duration > 0 ? duration : 0;
@@ -48,14 +56,18 @@ export const PKVideoTimeline = ({
   return (
     <div
       className={classNames(
-        "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5",
+        showTimeLabels
+          ? "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5"
+          : "grid grid-cols-1 items-center",
       )}
     >
-      <span
-        className={classNames("text-[11px] font-bold tabular-nums text-white")}
-      >
-        {formatTime(currentTime)}
-      </span>
+      {showTimeLabels && (
+        <span
+          className={classNames("text-[11px] font-bold tabular-nums text-white")}
+        >
+          {formatVideoTime(currentTime)}
+        </span>
+      )}
       <input
         type="range"
         min="0"
@@ -63,15 +75,28 @@ export const PKVideoTimeline = ({
         step="0.1"
         value={seekValue}
         onChange={(event) => onSeek(Number(event.target.value))}
+        onBlur={onInteractionEnd}
+        onClick={onInteraction}
+        onFocus={onInteraction}
+        onPointerCancel={onInteractionEnd}
+        onPointerDown={onInteractionStart}
+        onPointerMove={onInteraction}
+        onPointerUp={onInteractionEnd}
+        onTouchCancel={onInteractionEnd}
+        onTouchEnd={onInteractionEnd}
+        onTouchMove={onInteraction}
+        onTouchStart={onInteractionStart}
         className={classNames("pk-player-range w-full")}
         style={seekStyle}
         aria-label="Seek"
       />
-      <span
-        className={classNames("text-[11px] font-bold tabular-nums text-white")}
-      >
-        {formatTime(duration)}
-      </span>
+      {showTimeLabels && (
+        <span
+          className={classNames("text-[11px] font-bold tabular-nums text-white")}
+        >
+          {formatVideoTime(duration)}
+        </span>
+      )}
     </div>
   );
 };

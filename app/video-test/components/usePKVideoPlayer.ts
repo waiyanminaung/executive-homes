@@ -46,6 +46,7 @@ export const usePKVideoPlayer = () => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const feedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isControlsInteractionActiveRef = useRef(false);
   const isPointerInsidePlayerRef = useRef(false);
   const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const videoLoadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -85,6 +86,18 @@ export const usePKVideoPlayer = () => {
   const showControls = () => {
     setIsControlsVisible(true);
     scheduleControlsHide();
+  };
+
+  const startControlsInteraction = () => {
+    isControlsInteractionActiveRef.current = true;
+    setIsControlsVisible(true);
+    clearControlsTimeout();
+    clearLeaveTimeout();
+  };
+
+  const endControlsInteraction = () => {
+    isControlsInteractionActiveRef.current = false;
+    showControls();
   };
 
   const showControlsFromPointer = () => {
@@ -214,7 +227,7 @@ export const usePKVideoPlayer = () => {
   const hideControls = () => {
     isPointerInsidePlayerRef.current = false;
 
-    if (isInitialControlsWindowRef.current) {
+    if (isInitialControlsWindowRef.current || isControlsInteractionActiveRef.current) {
       return;
     }
 
@@ -413,10 +426,12 @@ export const usePKVideoPlayer = () => {
     seekTo,
     showControls,
     showControlsFromPointer,
+    startControlsInteraction,
     toggleFullscreen,
     toggleMute,
     togglePlay,
     toggleSurfacePlay,
+    endControlsInteraction,
     updateVolume,
     updatePlaybackRate,
     videoRef,

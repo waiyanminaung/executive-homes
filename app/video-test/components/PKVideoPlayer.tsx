@@ -53,11 +53,14 @@ export const PKVideoPlayer = ({
     playbackRate,
     seekBy,
     seekTo,
+    showControls,
     showControlsFromPointer,
+    startControlsInteraction,
     toggleFullscreen,
     toggleMute,
     togglePlay,
     toggleSurfacePlay,
+    endControlsInteraction,
     updateVolume,
     updatePlaybackRate,
     videoRef,
@@ -81,6 +84,7 @@ export const PKVideoPlayer = ({
         width: "min(100vw, calc(100vh * 16 / 9))",
       }
     : undefined;
+  const centerControlFeedback = centerFeedback ?? (isPlaying ? "pause" : "play");
 
   return (
     <div className={classNames("space-y-4")}>
@@ -146,16 +150,20 @@ export const PKVideoPlayer = ({
           className={classNames(
             "pointer-events-none absolute inset-0 z-10 flex items-center justify-center",
             "transition-opacity duration-200 ease-out",
-            centerFeedback ? "opacity-100" : "opacity-0",
+            centerFeedback
+              ? "opacity-100"
+              : isControlsVisible
+                ? "opacity-100 sm:opacity-0"
+                : "opacity-0",
           )}
         >
           <div
             className={classNames(
               "flex size-16 items-center justify-center rounded-full",
-              "bg-black/45 text-white backdrop-blur-sm",
+              "bg-black/45 text-white",
             )}
           >
-            {centerFeedback === "pause" ? (
+            {centerControlFeedback === "pause" ? (
               <Pause className={classNames("size-8 fill-current")} />
             ) : (
               <Play className={classNames("size-8 fill-current")} />
@@ -194,6 +202,9 @@ export const PKVideoPlayer = ({
           onSeek={seekTo}
           onSeekBy={seekBy}
           onFullscreenToggle={toggleFullscreen}
+          onInteractionEnd={endControlsInteraction}
+          onInteractionStart={startControlsInteraction}
+          onInteraction={showControls}
           onMuteToggle={toggleMute}
           onPlaybackRateChange={updatePlaybackRate}
           onVolumeChange={updateVolume}
