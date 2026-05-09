@@ -132,11 +132,11 @@ export const PKVideoPlayerControls = ({
           >
             {isPlaying ? (
               <Pause
-                className={classNames("size-[18px] fill-current stroke-[2.4]")}
+                className={classNames("size-4.5 fill-current stroke-[2.4]")}
               />
             ) : (
               <Play
-                className={classNames("size-[18px] fill-current stroke-[2.4]")}
+                className={classNames("size-4.5 fill-current stroke-[2.4]")}
               />
             )}
           </PKVideoControlButton>
@@ -146,7 +146,7 @@ export const PKVideoPlayerControls = ({
             onClick={() => onSeekBy(-PK_PLAYER_SEEK_SECONDS)}
             className={classNames("bg-black/45 hover:bg-black/55")}
           >
-            <RotateCcw className={classNames("size-[18px] stroke-[2.4]")} />
+            <RotateCcw className={classNames("size-4.5 stroke-[2.4]")} />
           </PKVideoControlButton>
 
           <PKVideoControlButton
@@ -154,7 +154,7 @@ export const PKVideoPlayerControls = ({
             onClick={() => onSeekBy(PK_PLAYER_SEEK_SECONDS)}
             className={classNames("bg-black/45 hover:bg-black/55")}
           >
-            <RotateCw className={classNames("size-[18px] stroke-[2.4]")} />
+            <RotateCw className={classNames("size-4.5 stroke-[2.4]")} />
           </PKVideoControlButton>
 
           <span
@@ -177,9 +177,9 @@ export const PKVideoPlayerControls = ({
         >
           <PKVideoControlButton label="Mute" onClick={onMuteToggle}>
             {isMuted || volume === 0 ? (
-              <VolumeX className={classNames("size-[18px] stroke-[2.4]")} />
+              <VolumeX className={classNames("size-4.5 stroke-[2.4]")} />
             ) : (
-              <Volume2 className={classNames("size-[18px] stroke-[2.4]")} />
+              <Volume2 className={classNames("size-4.5 stroke-[2.4]")} />
             )}
           </PKVideoControlButton>
 
@@ -218,9 +218,9 @@ export const PKVideoPlayerControls = ({
 
           <PKVideoControlButton label="Fullscreen" onClick={onFullscreenToggle}>
             {isFullscreen ? (
-              <Minimize className={classNames("size-[18px] stroke-[2.4]")} />
+              <Minimize className={classNames("size-4.5 stroke-[2.4]")} />
             ) : (
-              <Maximize className={classNames("size-[18px] stroke-[2.4]")} />
+              <Maximize className={classNames("size-4.5 stroke-[2.4]")} />
             )}
           </PKVideoControlButton>
         </div>
