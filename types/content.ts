@@ -15,7 +15,8 @@ export interface Episode {
   description: string;
   posterUrl: string;
   telegramUrl?: string;
-  embedUrl?: string;
+  sourceUrl: string;
+  provider: ContentSourceProvider;
   downloadLinks?: DownloadLink[];
 }
 

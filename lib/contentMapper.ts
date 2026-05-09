@@ -49,9 +49,15 @@ const mapContentSourceProvider = (provider: string): ContentSourceProvider => {
   return "S3";
 };
 
+type EpisodeSourceFields = {
+  sourceUrl?: string | null;
+  provider?: string | null;
+};
+
 const mapEpisode = (
   episode: ContentWithRelations["seasons"][number]["episodes"][number],
 ): Episode => {
+  const sourceFields = episode as typeof episode & EpisodeSourceFields;
   const downloadLinks = episode.downloadLinks.length
     ? mapDownloadLinks(episode.downloadLinks)
     : undefined;
@@ -65,7 +71,8 @@ const mapEpisode = (
     description: episode.description,
     posterUrl: episode.posterUrl,
     telegramUrl: episode.telegramUrl ?? undefined,
-    embedUrl: episode.embedUrl ?? undefined,
+    sourceUrl: sourceFields.sourceUrl ?? "",
+    provider: mapContentSourceProvider(sourceFields.provider ?? "S3"),
     downloadLinks,
   };
 };

@@ -26,6 +26,8 @@ interface PKVideoPlayerProps {
   subtitle: string;
   src: string;
   sourceType: VideoSourceType;
+  autoPlay?: boolean;
+  showDetails?: boolean;
   poster?: string;
   tracks?: VideoTrack[];
 }
@@ -35,6 +37,8 @@ export const PKVideoPlayer = ({
   subtitle,
   src,
   sourceType,
+  autoPlay = false,
+  showDetails = true,
   poster,
   tracks = [],
 }: PKVideoPlayerProps) => {
@@ -88,7 +92,7 @@ export const PKVideoPlayer = ({
     centerFeedback ?? (isPlaying ? "pause" : "play");
 
   return (
-    <div className={classNames("space-y-4")}>
+    <div className={classNames(showDetails ? "space-y-4" : "")}>
       <div
         ref={containerRef}
         tabIndex={0}
@@ -100,7 +104,11 @@ export const PKVideoPlayer = ({
           "relative overflow-hidden bg-black",
           isFullscreen
             ? "flex h-screen w-screen items-center justify-center rounded-none"
-            : "rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.45)] ring-white/10",
+            : classNames(
+                showDetails
+                  ? "rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.45)] ring-white/10"
+                  : "",
+              ),
         )}
       >
         <div
@@ -123,8 +131,10 @@ export const PKVideoPlayer = ({
                   ref={videoRef}
                   src={src}
                   poster={poster}
+                  autoPlay={autoPlay}
+                  muted={autoPlay}
                   playsInline
-                  preload="metadata"
+                  preload={autoPlay ? "auto" : "metadata"}
                   crossOrigin="anonymous"
                   className={classNames("size-full object-contain")}
                 >
@@ -135,8 +145,10 @@ export const PKVideoPlayer = ({
                   ref={videoRef}
                   src={src}
                   poster={poster}
+                  autoPlay={autoPlay}
+                  muted={autoPlay}
                   playsInline
-                  preload="metadata"
+                  preload={autoPlay ? "auto" : "metadata"}
                   crossOrigin="anonymous"
                   className={classNames("size-full object-contain")}
                 >
@@ -212,16 +224,18 @@ export const PKVideoPlayer = ({
         />
       </div>
 
-      <div className={classNames("space-y-2")}>
-        <h1
-          className={classNames(
-            "text-xl font-black leading-tight text-white sm:text-2xl",
-          )}
-        >
-          {title}
-        </h1>
-        <p className={classNames("text-sm text-white/50")}>{subtitle}</p>
-      </div>
+      {showDetails ? (
+        <div className={classNames("space-y-2")}>
+          <h1
+            className={classNames(
+              "text-xl font-black leading-tight text-white sm:text-2xl",
+            )}
+          >
+            {title}
+          </h1>
+          <p className={classNames("text-sm text-white/50")}>{subtitle}</p>
+        </div>
+      ) : null}
     </div>
   );
 };

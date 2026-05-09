@@ -13,7 +13,6 @@ import {
   EpisodeList,
   MovieHero,
   ReportModal,
-  VideoPlayerModal,
 } from "./components";
 
 export default function MovieDetailPage() {
@@ -25,7 +24,6 @@ export default function MovieDetailPage() {
   );
   const { toggle, isSaved } = useWatchlist();
 
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
   const [selectedSeason, setSelectedSeason] = useState(1);
@@ -71,8 +69,6 @@ export default function MovieDetailPage() {
   const activeEpisode =
     currentSeason?.episodes.find((episode) => episode.id === selectedEpisode?.id) ??
     currentSeason?.episodes[0];
-  const activeEmbedUrl =
-    movie.type === "series" ? activeEpisode?.embedUrl : movie.sourceUrl;
   const activeDownloads =
     movie.type === "series"
       ? activeEpisode?.downloadLinks
@@ -80,14 +76,6 @@ export default function MovieDetailPage() {
 
   return (
     <div className={classNames("min-h-screen bg-[#0A0A0A] pb-24")}>
-      {isPlaying ? (
-        <VideoPlayerModal
-          movie={movie}
-          embedUrl={activeEmbedUrl}
-          onClose={() => setIsPlaying(false)}
-        />
-      ) : null}
-
       <DownloadModal
         isOpen={isDownloadOpen}
         title={movie.title}
@@ -101,7 +89,7 @@ export default function MovieDetailPage() {
         onClose={() => setIsReportOpen(false)}
       />
 
-      <MovieHero movie={movie} onPlay={() => setIsPlaying(true)} />
+      <MovieHero movie={movie} />
 
       <div
         className={classNames(
@@ -242,15 +230,12 @@ export default function MovieDetailPage() {
 
           {movie.type === "series" && movie.seasons?.length ? (
             <EpisodeList
+              movieId={movie.id}
               seasons={movie.seasons}
               selectedSeason={effectiveSelectedSeason}
               onSeasonChange={(season) => {
                 setSelectedSeason(season);
                 setSelectedEpisode(null);
-              }}
-              onEpisodePlay={(episode) => {
-                setSelectedEpisode(episode);
-                setIsPlaying(true);
               }}
               onEpisodeDownload={(episode) => {
                 setSelectedEpisode(episode);

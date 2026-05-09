@@ -1,22 +1,23 @@
 "use client";
 
+import Link from "next/link";
 import { Download, Play, Send } from "lucide-react";
 import type { Episode, Season } from "@/types/content";
 import { classNames } from "@/utils/classNames";
 
 interface EpisodeListProps {
+  movieId: string;
   seasons: Season[];
   selectedSeason: number;
   onSeasonChange: (seasonNumber: number) => void;
-  onEpisodePlay: (episode: Episode) => void;
   onEpisodeDownload: (episode: Episode) => void;
 }
 
 export const EpisodeList = ({
+  movieId,
   seasons,
   selectedSeason,
   onSeasonChange,
-  onEpisodePlay,
   onEpisodeDownload,
 }: EpisodeListProps) => {
   const currentSeason = seasons.find(
@@ -64,11 +65,13 @@ export const EpisodeList = ({
             className={classNames(
               "group flex flex-col sm:flex-row gap-3 lg:gap-4 p-3 lg:p-4",
               "bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5",
-              "transition-all cursor-pointer",
+              "transition-all",
             )}
-            onClick={() => onEpisodePlay(episode)}
           >
-            <div
+            <Link
+              href={`/movie/${movieId}/play`}
+              scroll={false}
+              replace
               className={classNames(
                 "relative w-full sm:w-40 lg:w-48 aspect-video rounded-xl",
                 "overflow-hidden bg-card shrink-0",
@@ -93,7 +96,7 @@ export const EpisodeList = ({
                   className={classNames("w-8 h-8 text-white fill-current")}
                 />
               </div>
-            </div>
+            </Link>
             <div className={classNames("flex flex-col justify-center flex-1")}>
               <div
                 className={classNames("flex items-center justify-between mb-1")}
@@ -106,13 +109,11 @@ export const EpisodeList = ({
                   အပိုင်း {episode.episodeNumber}
                 </span>
                 <div className={classNames("flex items-center gap-4")}>
-                  {episode.embedUrl ? (
-                    <button
-                      type="button"
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        onEpisodePlay(episode);
-                      }}
+                  {episode.sourceUrl ? (
+                    <Link
+                      href={`/movie/${movieId}/play`}
+                      scroll={false}
+                      replace
                       className={classNames(
                         "text-[10px] font-black text-accent hover:underline",
                         "uppercase flex items-center gap-1",
@@ -120,7 +121,7 @@ export const EpisodeList = ({
                     >
                       <Play className={classNames("w-3 h-3 fill-current")} />
                       Watch
-                    </button>
+                    </Link>
                   ) : null}
                   {episode.telegramUrl ? (
                     <a

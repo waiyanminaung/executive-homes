@@ -113,7 +113,8 @@ model Episode {
   description   String
   posterUrl     String
   telegramUrl   String?
-  embedUrl      String?
+  sourceUrl     String         @default("") @map("source_url")
+  provider      VideoProvider  @default(S3)
   downloadLinks DownloadLink[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt

@@ -329,6 +329,7 @@ export const usePKVideoPlayer = () => {
     video.addEventListener("loadedmetadata", updateDuration);
     video.addEventListener("ratechange", updatePlaybackRateState);
     video.addEventListener("volumechange", updateVolumeState);
+    updateVolumeState();
 
     if (video.readyState >= PK_PLAYER_READY_STATE_HAVE_FUTURE_DATA) {
       setIsVideoLoading(false);

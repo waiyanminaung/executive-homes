@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Play } from "lucide-react";
 import { Button } from "@geckoui/geckoui";
@@ -8,10 +9,9 @@ import type { Content } from "@/types/content";
 
 interface MovieHeroProps {
   movie: Content;
-  onPlay: () => void;
 }
 
-export const MovieHero = ({ movie, onPlay }: MovieHeroProps) => {
+export const MovieHero = ({ movie }: MovieHeroProps) => {
   const router = useRouter();
 
   const handleBack = () => {
@@ -61,19 +61,21 @@ export const MovieHero = ({ movie, onPlay }: MovieHeroProps) => {
           "absolute inset-0 flex items-center justify-center p-6",
         )}
       >
-        <Button
-          type="button"
-          onClick={onPlay}
+        <Link
+          href={`/movie/${movie.id}/play`}
+          scroll={false}
+          replace
           className={classNames(
             "w-20 h-20 lg:w-28 lg:h-28 bg-accent/90 backdrop-blur-sm",
             "rounded-full flex items-center justify-center text-white",
             "shadow-2xl shadow-accent/20 transition-colors border border-white/10",
           )}
+          aria-label="Play movie"
         >
           <Play
             className={classNames("w-8 h-8 lg:w-12 lg:h-12 fill-current ml-1")}
           />
-        </Button>
+        </Link>
       </div>
     </div>
   );

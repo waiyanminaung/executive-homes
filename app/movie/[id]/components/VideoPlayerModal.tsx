@@ -1,21 +1,33 @@
 "use client";
 
-import { ArrowLeft, Play } from "lucide-react";
-import { Button } from "@geckoui/geckoui";
+import { useParams, useRouter } from "next/navigation";
+import { ArrowLeft, VideoOff } from "lucide-react";
 import { classNames } from "@/utils/classNames";
+import { PKVideoPlayer } from "@/app/video-test/components/PKVideoPlayer";
+import type { ContentSourceProvider } from "@/constants/content";
 import type { Content } from "@/types/content";
 
 interface VideoPlayerModalProps {
   movie: Content;
-  embedUrl?: string;
-  onClose: () => void;
+  provider?: ContentSourceProvider;
+  sourceUrl?: string;
 }
 
 export const VideoPlayerModal = ({
   movie,
-  embedUrl,
-  onClose,
+  provider,
+  sourceUrl,
 }: VideoPlayerModalProps) => {
+  const params = useParams<{ id: string }>();
+  const router = useRouter();
+  const movieId = typeof params.id === "string" ? params.id : movie.id;
+
+  const handleClose = () => {
+    router.replace(`/movie/${movieId}`, { scroll: false });
+  };
+  const isS3Source = !!sourceUrl && provider === "S3";
+  const sourceType = sourceUrl?.includes(".m3u8") ? "hls" : "mp4";
+
   return (
     <div
       className={classNames(
@@ -29,46 +41,42 @@ export const VideoPlayerModal = ({
           "flex items-center gap-3 lg:gap-4",
         )}
       >
-        <Button
+        <button
           type="button"
-          variant="icon"
-          onClick={onClose}
+          onClick={handleClose}
           className={classNames(
             "p-2.5 lg:p-3 bg-white/10 hover:bg-white/20",
             "backdrop-blur-md rounded-full text-white transition-all",
             "border border-white/5",
           )}
+          aria-label="Close video player"
         >
           <ArrowLeft className={classNames("w-5 h-5 lg:w-6 lg:h-6")} />
-        </Button>
-        <div className={classNames("min-w-0")}>
-          <h2
-            className={classNames(
-              "text-xs lg:text-sm font-black uppercase tracking-widest text-white",
-              "truncate max-w-[200px] lg:max-w-md",
-            )}
-          >
-            {movie.title}
-          </h2>
-          <p
-            className={classNames(
-              "text-[9px] lg:text-[10px] text-white/50 uppercase tracking-widest",
-            )}
-          >
-            ယခု ပြသနေသည်
-          </p>
-        </div>
+        </button>
       </div>
 
       <div
         className={classNames(
-          "relative w-full h-full max-w-6xl mx-auto rounded-3xl overflow-hidden",
-          "shadow-[0_0_100px_rgba(229,9,20,0.1)] border border-white/5",
+          "relative w-full max-w-6xl mx-auto rounded-3xl overflow-hidden",
+          isS3Source ? "" : "h-full",
+          "border border-white/5 shadow-[0_0_100px_rgba(229,9,20,0.1)]",
         )}
       >
-        {embedUrl ? (
+        {isS3Source ? (
+          <div className={classNames("w-full bg-black")}>
+            <PKVideoPlayer
+              title={movie.title}
+              subtitle={provider}
+              src={sourceUrl}
+              sourceType={sourceType}
+              poster={movie.backdropUrl}
+              autoPlay
+              showDetails={false}
+            />
+          </div>
+        ) : sourceUrl ? (
           <iframe
-            src={embedUrl}
+            src={sourceUrl}
             className={classNames("w-full h-full border-0")}
             allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
             allowFullScreen
@@ -79,38 +87,28 @@ export const VideoPlayerModal = ({
               "absolute inset-0 bg-[#050505] flex items-center justify-center",
             )}
           >
-            <img
-              src={movie.backdropUrl}
-              alt="Video Backdrop"
-              className={classNames(
-                "absolute inset-0 w-full h-full object-cover opacity-20 blur-xl",
-              )}
-              referrerPolicy="no-referrer"
-            />
             <div className={classNames("relative z-10 text-center px-6")}>
               <div
                 className={classNames(
-                  "w-24 h-24 bg-accent/20 rounded-full flex items-center",
-                  "justify-center mx-auto mb-8 animate-pulse text-accent",
+                  "w-20 h-20 bg-white/5 rounded-full flex items-center",
+                  "justify-center mx-auto mb-6 text-white/30",
                 )}
               >
-                <Play className={classNames("w-10 h-10 fill-current")} />
+                <VideoOff className={classNames("w-9 h-9")} />
               </div>
               <h3
                 className={classNames(
-                  "text-3xl font-black uppercase tracking-tighter mb-4",
+                  "text-2xl lg:text-3xl font-black uppercase tracking-tighter mb-3",
                 )}
               >
-                ရုပ်ရှင်ကို ဖွင့်ရန် ပြင်ဆင်နေပါသည်...
+                Video not found
               </h3>
               <p
                 className={classNames(
                   "text-ink-secondary text-sm max-w-sm mx-auto",
                 )}
               >
-                ဤသည်မှာ ရုပ်ရှင်ပြသရန် နမူနာသာ ဖြစ်ပါသည်။ လက်တွေ့တွင်မူ
-                သင့်အတွက် အရည်အသွေးမြင့် ရုပ်ရှင်ကို တိုက်ရိုက်ပြသပေးမည်
-                ဖြစ်ပါသည်။
+                This title does not have a playable video source yet.
               </p>
             </div>
           </div>
