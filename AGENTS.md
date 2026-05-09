@@ -95,6 +95,10 @@ export type ClientProduct = Jsonify<Product>
 
 > Use `Client*` prefix for such types.
 
+## Video.js
+
+When working on Video.js React player code, use the project `videojs` skill first.
+
 ## Overview
 
 # Component Documentations
