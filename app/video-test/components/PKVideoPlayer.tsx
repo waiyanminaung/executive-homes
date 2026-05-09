@@ -45,6 +45,7 @@ export const PKVideoPlayer = ({
     containerRef,
     currentTime,
     duration,
+    bufferedPercent,
     focusPlayer,
     hideControls,
     isControlsVisible,
@@ -113,10 +114,7 @@ export const PKVideoPlayer = ({
         <Player.Provider>
           <Player.Container
             style={fullscreenVideoStyle}
-            className={classNames(
-              "relative bg-black",
-              isFullscreen ? "" : "size-full",
-            )}
+            className="bg-black size-full"
           >
             {sourceType === "hls" ? (
               <HlsVideo
@@ -197,6 +195,7 @@ export const PKVideoPlayer = ({
       <PKVideoPlayerControls
         currentTime={currentTime}
         duration={duration}
+        bufferedPercent={bufferedPercent}
         isFullscreen={isFullscreen}
         isMuted={isMuted}
         isPlaying={isPlaying}

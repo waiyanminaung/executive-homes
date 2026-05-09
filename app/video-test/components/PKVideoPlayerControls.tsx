@@ -20,6 +20,7 @@ import { formatVideoTime, PKVideoTimeline } from "./PKVideoTimeline";
 interface PKVideoPlayerControlsProps {
   currentTime: number;
   duration: number;
+  bufferedPercent: number;
   isFullscreen: boolean;
   isMuted: boolean;
   isPlaying: boolean;
@@ -46,6 +47,7 @@ interface RangeStyle extends CSSProperties {
 export const PKVideoPlayerControls = ({
   currentTime,
   duration,
+  bufferedPercent,
   isFullscreen,
   isMuted,
   isPlaying,
@@ -109,6 +111,7 @@ export const PKVideoPlayerControls = ({
       <PKVideoTimeline
         currentTime={currentTime}
         duration={duration}
+        bufferedPercent={bufferedPercent}
         showTimeLabels={false}
         onInteraction={onInteraction}
         onInteractionEnd={onInteractionEnd}
@@ -116,17 +119,25 @@ export const PKVideoPlayerControls = ({
         onSeek={handleSeek}
       />
 
-      <div className={classNames("mt-2 flex items-center justify-between gap-2")}>
-        <div className={classNames("flex min-w-0 items-center gap-1.5 sm:gap-2")}>
+      <div
+        className={classNames("mt-2 flex items-center justify-between gap-2")}
+      >
+        <div
+          className={classNames("flex min-w-0 items-center gap-1.5 sm:gap-2")}
+        >
           <PKVideoControlButton
             label={isPlaying ? "Pause" : "Play"}
             onClick={onPlayToggle}
             className={classNames("bg-black/45 hover:bg-black/55")}
           >
             {isPlaying ? (
-              <Pause className={classNames("size-[18px] fill-current stroke-[2.4]")} />
+              <Pause
+                className={classNames("size-[18px] fill-current stroke-[2.4]")}
+              />
             ) : (
-              <Play className={classNames("size-[18px] fill-current stroke-[2.4]")} />
+              <Play
+                className={classNames("size-[18px] fill-current stroke-[2.4]")}
+              />
             )}
           </PKVideoControlButton>
 
@@ -193,7 +204,9 @@ export const PKVideoPlayerControls = ({
             onTouchEnd={onInteractionEnd}
             onTouchMove={onInteraction}
             onTouchStart={onInteractionStart}
-            className={classNames("pk-player-range hidden w-20 sm:block lg:w-28")}
+            className={classNames(
+              "pk-player-range hidden w-20 sm:block lg:w-28",
+            )}
             style={volumeStyle}
             aria-label="Volume"
           />

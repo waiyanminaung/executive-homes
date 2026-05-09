@@ -49,7 +49,9 @@ export const usePKVideoPlayer = () => {
   const isControlsInteractionActiveRef = useRef(false);
   const isPointerInsidePlayerRef = useRef(false);
   const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const videoLoadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const videoLoadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const isInitialControlsWindowRef = useRef(true);
   const [centerFeedback, setCenterFeedback] = useState<CenterFeedback>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -61,6 +63,21 @@ export const usePKVideoPlayer = () => {
   const [isVideoLoading, setIsVideoLoading] = useState(true);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(PK_PLAYER_DEFAULT_VOLUME);
+  const [bufferedPercent, setBufferedPercent] = useState(0);
+
+  const getBufferedPercent = (video: HTMLVideoElement) => {
+    if (!Number.isFinite(video.duration) || video.duration <= 0) {
+      return 0;
+    }
+
+    let bufferedEnd = 0;
+
+    for (let index = 0; index < video.buffered.length; index += 1) {
+      bufferedEnd = Math.max(bufferedEnd, video.buffered.end(index));
+    }
+
+    return Math.min(100, (bufferedEnd / video.duration) * 100);
+  };
 
   const clearControlsTimeout = () => {
     if (controlsTimeoutRef.current) {
@@ -177,7 +194,9 @@ export const usePKVideoPlayer = () => {
       return;
     }
 
-    seekTo(Math.min(Math.max(video.currentTime + seconds, 0), video.duration || 0));
+    seekTo(
+      Math.min(Math.max(video.currentTime + seconds, 0), video.duration || 0),
+    );
   };
 
   const toggleMute = () => {
@@ -227,7 +246,10 @@ export const usePKVideoPlayer = () => {
   const hideControls = () => {
     isPointerInsidePlayerRef.current = false;
 
-    if (isInitialControlsWindowRef.current || isControlsInteractionActiveRef.current) {
+    if (
+      isInitialControlsWindowRef.current ||
+      isControlsInteractionActiveRef.current
+    ) {
       return;
     }
 
@@ -286,6 +308,9 @@ export const usePKVideoPlayer = () => {
     const updatePlaybackState = () => setIsPlaying(!video.paused);
     const updateDuration = () => setDuration(video.duration || 0);
     const updatePlaybackRateState = () => setPlaybackRate(video.playbackRate);
+    const updateBufferedState = () => {
+      setBufferedPercent(getBufferedPercent(video));
+    };
     const showVideoLoading = () => {
       clearVideoLoadingTimeout();
       videoLoadingTimeoutRef.current = setTimeout(() => {
@@ -328,8 +353,12 @@ export const usePKVideoPlayer = () => {
     video.addEventListener("durationchange", updateDuration);
     video.addEventListener("loadedmetadata", updateDuration);
     video.addEventListener("ratechange", updatePlaybackRateState);
+    video.addEventListener("progress", updateBufferedState);
+    video.addEventListener("loadedmetadata", updateBufferedState);
+    video.addEventListener("durationchange", updateBufferedState);
     video.addEventListener("volumechange", updateVolumeState);
     updateVolumeState();
+    updateBufferedState();
 
     if (video.readyState >= PK_PLAYER_READY_STATE_HAVE_FUTURE_DATA) {
       setIsVideoLoading(false);
@@ -353,6 +382,9 @@ export const usePKVideoPlayer = () => {
       video.removeEventListener("durationchange", updateDuration);
       video.removeEventListener("loadedmetadata", updateDuration);
       video.removeEventListener("ratechange", updatePlaybackRateState);
+      video.removeEventListener("progress", updateBufferedState);
+      video.removeEventListener("loadedmetadata", updateBufferedState);
+      video.removeEventListener("durationchange", updateBufferedState);
       video.removeEventListener("volumechange", updateVolumeState);
     };
   }, []);
@@ -423,6 +455,7 @@ export const usePKVideoPlayer = () => {
     isPlaying,
     isVideoLoading,
     playbackRate,
+    bufferedPercent,
     seekBy,
     seekTo,
     showControls,
