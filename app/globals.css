@@ -77,7 +77,6 @@ body {
 .pk-player-range::-moz-range-progress {
   height: 0.2rem;
   border-radius: 999px;
-  background: var(--pk-range-active-color, #ffffff);
 }
 
 .pk-player-range::-moz-range-thumb {
@@ -85,6 +84,5 @@ body {
   height: 0.52rem;
   border: 0;
   border-radius: 999px;
-  background: var(--pk-range-thumb-color, #ffffff);
   box-shadow: 0 0 0 2px rgb(255 255 255 / 0.1);
 }

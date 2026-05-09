@@ -13,7 +13,6 @@ interface PKVideoTimelineProps {
 interface RangeStyle extends CSSProperties {
   "--pk-range-active-color": string;
   "--pk-range-progress": string;
-  "--pk-range-thumb-color": string;
 }
 
 const formatTime = (seconds: number) => {
@@ -44,12 +43,17 @@ export const PKVideoTimeline = ({
   const seekStyle: RangeStyle = {
     "--pk-range-active-color": PK_PLAYER_THEME_COLOR,
     "--pk-range-progress": `${seekProgress}%`,
-    "--pk-range-thumb-color": PK_PLAYER_THEME_COLOR,
   };
 
   return (
-    <div className={classNames("grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5")}>
-      <span className={classNames("text-[11px] font-bold tabular-nums text-white")}>
+    <div
+      className={classNames(
+        "grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5",
+      )}
+    >
+      <span
+        className={classNames("text-[11px] font-bold tabular-nums text-white")}
+      >
         {formatTime(currentTime)}
       </span>
       <input
@@ -63,7 +67,9 @@ export const PKVideoTimeline = ({
         style={seekStyle}
         aria-label="Seek"
       />
-      <span className={classNames("text-[11px] font-bold tabular-nums text-white")}>
+      <span
+        className={classNames("text-[11px] font-bold tabular-nums text-white")}
+      >
         {formatTime(duration)}
       </span>
     </div>

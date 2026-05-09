@@ -5,7 +5,10 @@ import {
   PK_PLAYER_CENTER_FEEDBACK_MS,
   PK_PLAYER_CONTROLS_HIDE_DELAY_MS,
   PK_PLAYER_CONTROLS_LEAVE_HIDE_DELAY_MS,
+  PK_PLAYER_DEFAULT_VOLUME,
   PK_PLAYER_KEYBOARD_OUTSIDE_CONTROLS_HIDE_DELAY_MS,
+  PK_PLAYER_LOADING_INDICATOR_DELAY_MS,
+  PK_PLAYER_READY_STATE_HAVE_FUTURE_DATA,
   PK_PLAYER_SEEK_SECONDS,
 } from "@/constants/videoPlayer";
 
@@ -45,6 +48,7 @@ export const usePKVideoPlayer = () => {
   const feedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isPointerInsidePlayerRef = useRef(false);
   const leaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const videoLoadingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInitialControlsWindowRef = useRef(true);
   const [centerFeedback, setCenterFeedback] = useState<CenterFeedback>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -55,7 +59,7 @@ export const usePKVideoPlayer = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isVideoLoading, setIsVideoLoading] = useState(true);
   const [playbackRate, setPlaybackRate] = useState(1);
-  const [volume, setVolume] = useState(1);
+  const [volume, setVolume] = useState(PK_PLAYER_DEFAULT_VOLUME);
 
   const clearControlsTimeout = () => {
     if (controlsTimeoutRef.current) {
@@ -107,7 +111,10 @@ export const usePKVideoPlayer = () => {
     }
 
     if (video.paused) {
-      setIsVideoLoading(true);
+      if (video.readyState < PK_PLAYER_READY_STATE_HAVE_FUTURE_DATA) {
+        setIsVideoLoading(true);
+      }
+
       setIsPlaying(true);
       void video.play().catch(() => {
         setIsPlaying(false);
@@ -241,6 +248,10 @@ export const usePKVideoPlayer = () => {
       if (feedbackTimeoutRef.current) {
         clearTimeout(feedbackTimeoutRef.current);
       }
+
+      if (videoLoadingTimeoutRef.current) {
+        clearTimeout(videoLoadingTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -251,12 +262,38 @@ export const usePKVideoPlayer = () => {
       return;
     }
 
+    video.volume = PK_PLAYER_DEFAULT_VOLUME;
+
+    const clearVideoLoadingTimeout = () => {
+      if (videoLoadingTimeoutRef.current) {
+        clearTimeout(videoLoadingTimeoutRef.current);
+        videoLoadingTimeoutRef.current = null;
+      }
+    };
     const updatePlaybackState = () => setIsPlaying(!video.paused);
-    const updateTime = () => setCurrentTime(video.currentTime);
     const updateDuration = () => setDuration(video.duration || 0);
     const updatePlaybackRateState = () => setPlaybackRate(video.playbackRate);
-    const showVideoLoading = () => setIsVideoLoading(true);
-    const hideVideoLoading = () => setIsVideoLoading(false);
+    const showVideoLoading = () => {
+      clearVideoLoadingTimeout();
+      videoLoadingTimeoutRef.current = setTimeout(() => {
+        const currentVideo = videoRef.current;
+
+        if (
+          currentVideo &&
+          currentVideo.readyState < PK_PLAYER_READY_STATE_HAVE_FUTURE_DATA
+        ) {
+          setIsVideoLoading(true);
+        }
+      }, PK_PLAYER_LOADING_INDICATOR_DELAY_MS);
+    };
+    const hideVideoLoading = () => {
+      clearVideoLoadingTimeout();
+      setIsVideoLoading(false);
+    };
+    const updateTime = () => {
+      setCurrentTime(video.currentTime);
+      hideVideoLoading();
+    };
     const updateVolumeState = () => {
       setVolume(video.volume);
       setIsMuted(video.muted);
@@ -280,11 +317,12 @@ export const usePKVideoPlayer = () => {
     video.addEventListener("ratechange", updatePlaybackRateState);
     video.addEventListener("volumechange", updateVolumeState);
 
-    if (video.readyState >= 2) {
+    if (video.readyState >= PK_PLAYER_READY_STATE_HAVE_FUTURE_DATA) {
       setIsVideoLoading(false);
     }
 
     return () => {
+      clearVideoLoadingTimeout();
       video.removeEventListener("loadstart", showVideoLoading);
       video.removeEventListener("waiting", showVideoLoading);
       video.removeEventListener("stalled", showVideoLoading);

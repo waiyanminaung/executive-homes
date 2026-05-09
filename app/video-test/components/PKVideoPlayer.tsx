@@ -75,6 +75,13 @@ export const PKVideoPlayer = ({
     />
   ));
 
+  const fullscreenVideoStyle = isFullscreen
+    ? {
+        height: "min(100vh, calc(100vw * 9 / 16))",
+        width: "min(100vw, calc(100vh * 16 / 9))",
+      }
+    : undefined;
+
   return (
     <div className={classNames("space-y-4")}>
       <div
@@ -85,13 +92,27 @@ export const PKVideoPlayer = ({
         onPointerLeave={hideControls}
         onPointerDown={focusPlayer}
         className={classNames(
-          "relative overflow-hidden rounded-2xl bg-black",
-          "shadow-[0_24px_80px_rgba(0,0,0,0.45)] ring-1 ring-white/10",
+          "relative overflow-hidden bg-black",
+          isFullscreen
+            ? "flex h-screen w-screen items-center justify-center rounded-none"
+            : "rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.45)] ring-white/10",
         )}
       >
-        <div className={classNames("aspect-video w-full")}>
+        <div
+          className={classNames(
+            isFullscreen
+              ? "flex h-screen w-screen items-center justify-center"
+              : "aspect-video w-full",
+          )}
+        >
           <Player.Provider>
-            <Player.Container className={classNames("relative size-full bg-black")}>
+            <Player.Container
+              style={fullscreenVideoStyle}
+              className={classNames(
+                "relative bg-black",
+                isFullscreen ? "" : "size-full",
+              )}
+            >
               {sourceType === "hls" ? (
                 <HlsVideo
                   ref={videoRef}
@@ -180,7 +201,11 @@ export const PKVideoPlayer = ({
       </div>
 
       <div className={classNames("space-y-2")}>
-        <h1 className={classNames("text-xl font-black leading-tight text-white sm:text-2xl")}>
+        <h1
+          className={classNames(
+            "text-xl font-black leading-tight text-white sm:text-2xl",
+          )}
+        >
           {title}
         </h1>
         <p className={classNames("text-sm text-white/50")}>{subtitle}</p>
