@@ -8,6 +8,7 @@ import {
   RHFSelect,
   RHFTextarea,
 } from "@geckoui/geckoui";
+import { CONTENT_SOURCE_PROVIDER_OPTIONS } from "@/constants/content";
 import { classNames } from "@/utils/classNames";
 import type { Category } from "@/types/content";
 
@@ -91,12 +92,26 @@ export default function AdminContentFormFields({
             inputClassName={inputInnerClassName}
           />
         </Field>
-        <Field label="Embed URL">
+        <Field label="Source URL" required>
           <RHFInput
-            name="embedUrl"
+            name="sourceUrl"
             className={inputClassName}
             inputClassName={inputInnerClassName}
           />
+        </Field>
+        <Field label="Provider" required>
+          <RHFSelect
+            name="provider"
+            className="rounded-2xl border-white/5 bg-white/5"
+          >
+            {CONTENT_SOURCE_PROVIDER_OPTIONS.map((option) => (
+              <SelectOption
+                key={option.value}
+                value={option.value}
+                label={option.label}
+              />
+            ))}
+          </RHFSelect>
         </Field>
         <Field label="Telegram URL">
           <RHFInput

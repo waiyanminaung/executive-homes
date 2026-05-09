@@ -1,4 +1,6 @@
 import type { Content, DownloadLink, Episode, Season } from "@/types/content";
+import type { ContentSourceProvider } from "@/constants/content";
+import { CONTENT_SOURCE_PROVIDERS } from "@/constants/content";
 import { type Prisma } from "@/prisma/generated/prisma/client";
 
 export const contentInclude = {
@@ -37,6 +39,14 @@ const mapDownloadLinks = (
     quality: link.quality,
     size: link.size,
   }));
+};
+
+const mapContentSourceProvider = (provider: string): ContentSourceProvider => {
+  if (CONTENT_SOURCE_PROVIDERS.includes(provider as ContentSourceProvider)) {
+    return provider as ContentSourceProvider;
+  }
+
+  return "S3";
 };
 
 const mapEpisode = (
@@ -87,7 +97,8 @@ export const mapContent = (content: ContentWithRelations): Content => {
     posterUrl: content.posterUrl,
     backdropUrl: content.backdropUrl,
     telegramUrl: content.telegramUrl ?? undefined,
-    embedUrl: content.embedUrl ?? undefined,
+    sourceUrl: content.sourceUrl,
+    provider: mapContentSourceProvider(content.provider),
     downloadLinks,
     seasons: seasons.length ? seasons : undefined,
     categoryIds,

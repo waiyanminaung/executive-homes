@@ -6,7 +6,7 @@ import type { Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Film, Save, Tv, X } from "lucide-react";
 import { Button, LoadingButton } from "@geckoui/geckoui";
-import { DEFAULT_ADMIN_CONTENT_VALUES } from "@/constants/adminContent";
+import { DEFAULT_ADMIN_CONTENT_VALUES } from "@/constants/admin/content";
 import { useWrite } from "@/lib/spoosh";
 import { classNames } from "@/utils/classNames";
 import type { Category, Content } from "@/types/content";
@@ -37,7 +37,8 @@ const toFormValues = (content?: Content): MovieCreateInput => {
     posterUrl: content.posterUrl,
     backdropUrl: content.backdropUrl,
     telegramUrl: content.telegramUrl ?? "",
-    embedUrl: content.embedUrl ?? "",
+    sourceUrl: content.sourceUrl,
+    provider: content.provider,
     categoryIds: content.categoryIds,
     isTrending: !!content.isTrending,
     isPopular: !!content.isPopular,

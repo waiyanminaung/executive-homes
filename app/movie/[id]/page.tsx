@@ -72,7 +72,7 @@ export default function MovieDetailPage() {
     currentSeason?.episodes.find((episode) => episode.id === selectedEpisode?.id) ??
     currentSeason?.episodes[0];
   const activeEmbedUrl =
-    movie.type === "series" ? activeEpisode?.embedUrl : movie.embedUrl;
+    movie.type === "series" ? activeEpisode?.embedUrl : movie.sourceUrl;
   const activeDownloads =
     movie.type === "series"
       ? activeEpisode?.downloadLinks

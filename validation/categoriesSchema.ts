@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CATEGORY_NAME_MAX_LENGTH } from "@/constants/adminCategories";
+import { CATEGORY_NAME_MAX_LENGTH } from "@/constants/admin/categories";
 
 export const categoryIdParamSchema = z.object({
   id: z.string().min(1),

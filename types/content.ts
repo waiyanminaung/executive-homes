@@ -1,3 +1,5 @@
+import type { ContentSourceProvider } from "@/constants/content";
+
 export interface DownloadLink {
   url: string;
   quality: string;
@@ -41,7 +43,8 @@ export interface Content {
   posterUrl: string;
   backdropUrl: string;
   telegramUrl?: string;
-  embedUrl?: string;
+  sourceUrl: string;
+  provider: ContentSourceProvider;
   downloadLinks?: DownloadLink[];
   seasons?: Season[];
   categoryIds: string[];

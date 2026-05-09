@@ -90,7 +90,8 @@ export const movieRoutes = new Hono()
         posterUrl: body.posterUrl,
         backdropUrl: body.backdropUrl,
         telegramUrl: body.telegramUrl || null,
-        embedUrl: body.embedUrl || null,
+        sourceUrl: body.sourceUrl,
+        provider: body.provider,
         isTrending: body.isTrending,
         isPopular: body.isPopular,
         categories: body.categoryIds.length
@@ -128,7 +129,8 @@ export const movieRoutes = new Hono()
           posterUrl: body.posterUrl,
           backdropUrl: body.backdropUrl,
           telegramUrl: body.telegramUrl || null,
-          embedUrl: body.embedUrl || null,
+          sourceUrl: body.sourceUrl,
+          provider: body.provider,
           isTrending: body.isTrending,
           isPopular: body.isPopular,
           categories: {

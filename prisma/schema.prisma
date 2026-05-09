@@ -12,6 +12,11 @@ enum ContentType {
   SERIES
 }
 
+enum VideoProvider {
+  VK
+  S3
+}
+
 generator client {
   provider = "prisma-client"
   output   = "./generated/prisma"
@@ -61,7 +66,8 @@ model Content {
   posterUrl     String
   backdropUrl   String
   telegramUrl   String?
-  embedUrl      String?
+  sourceUrl     String            @default("") @map("source_url")
+  provider      VideoProvider     @default(S3)
   isTrending    Boolean           @default(false)
   isPopular     Boolean           @default(false)
   categories    ContentCategory[]

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { CONTENT_SOURCE_PROVIDERS } from "@/constants/content";
 
 export const movieListQuerySchema = z.object({
   category: z.string().optional(),
@@ -22,7 +23,8 @@ export const movieCreateSchema = z.object({
   posterUrl: z.string().min(1).max(500),
   backdropUrl: z.string().min(1).max(500),
   telegramUrl: z.string().max(500).optional(),
-  embedUrl: z.string().max(500).optional(),
+  sourceUrl: z.string().min(1).max(500),
+  provider: z.enum(CONTENT_SOURCE_PROVIDERS),
   categoryIds: z.array(z.string().min(1)).default([]),
   isTrending: z.boolean().default(false),
   isPopular: z.boolean().default(false),

@@ -5,7 +5,7 @@ import type { Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, X } from "lucide-react";
 import { Button, LoadingButton, RHFInput, RHFInputGroup } from "@geckoui/geckoui";
-import { DEFAULT_ADMIN_CATEGORY_VALUES } from "@/constants/adminCategories";
+import { DEFAULT_ADMIN_CATEGORY_VALUES } from "@/constants/admin/categories";
 import { useWrite } from "@/lib/spoosh";
 import { classNames } from "@/utils/classNames";
 import type { Category } from "@/types/content";
