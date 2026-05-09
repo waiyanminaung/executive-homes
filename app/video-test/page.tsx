@@ -8,7 +8,9 @@ import { VideoTestSidebar } from "./components/VideoTestSidebar";
 export default function VideoTestPage() {
   return (
     <main className={classNames("min-h-screen bg-[#080808] text-white")}>
-      <div className={classNames("mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8")}>
+      <div
+        className={classNames("mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:py-8")}
+      >
         <header
           className={classNames(
             "mb-6 flex flex-col gap-4 sm:flex-row sm:items-center",
@@ -51,11 +53,13 @@ export default function VideoTestPage() {
           </div>
         </header>
 
-        <div className={classNames("grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]")}>
+        <div
+          className={classNames(
+            "grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]",
+          )}
+        >
           <section className={classNames("min-w-0")}>
             <PKVideoPlayer
-              title={VIDEO_TEST_STREAM.title}
-              subtitle={VIDEO_TEST_STREAM.subtitle}
               src={VIDEO_TEST_STREAM.src}
               sourceType={VIDEO_TEST_STREAM.sourceType}
               poster={VIDEO_TEST_STREAM.poster}
