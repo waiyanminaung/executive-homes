@@ -4,6 +4,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, VideoOff } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import { PKVideoPlayer } from "@/app/video-test/components/PKVideoPlayer";
+import { PK_PLAYER_PROGRESS_STORAGE_PREFIX } from "@/constants/videoPlayer";
 import type { ContentSourceProvider } from "@/constants/content";
 import type { Content } from "@/types/content";
 
@@ -21,6 +22,26 @@ export const VideoPlayerModal = ({
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const movieId = typeof params.id === "string" ? params.id : movie.id;
+  const storageKey = `${PK_PLAYER_PROGRESS_STORAGE_PREFIX}${movieId}`;
+
+  const initialTime = (() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const storedTime = sessionStorage.getItem(storageKey);
+    const parsedTime = storedTime ? Number(storedTime) : Number.NaN;
+
+    if (Number.isFinite(parsedTime) && parsedTime > 0) {
+      return parsedTime;
+    }
+
+    return undefined;
+  })();
+
+  const handleTimeUpdate = (time: number) => {
+    sessionStorage.setItem(storageKey, time.toString());
+  };
 
   const handleClose = () => {
     router.replace(`/movie/${movieId}`, { scroll: false });
@@ -68,6 +89,8 @@ export const VideoPlayerModal = ({
             sourceType={sourceType}
             poster={movie.backdropUrl}
             autoPlay
+            initialTime={initialTime}
+            onTimeUpdate={handleTimeUpdate}
           />
         ) : sourceUrl ? (
           <iframe

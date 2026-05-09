@@ -14,6 +14,8 @@ export const PK_PLAYER_SEEK_SECONDS = 15;
 
 export const PK_PLAYER_DEFAULT_VOLUME = 0.6;
 
+export const PK_PLAYER_PROGRESS_STORAGE_PREFIX = "pk-player-progress:";
+
 export const PK_PLAYER_THEME_COLOR = "#e50914";
 
 export const PK_PLAYER_PLAYBACK_RATES = [0.5, 0.75, 1, 1.25, 1.5] as const;

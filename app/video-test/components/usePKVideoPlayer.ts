@@ -41,7 +41,15 @@ const isInteractiveKeyboardTarget = (target: EventTarget | null) => {
   );
 };
 
-export const usePKVideoPlayer = () => {
+interface PKVideoPlayerOptions {
+  initialTime?: number;
+  onTimeUpdate?: (time: number) => void;
+}
+
+export const usePKVideoPlayer = ({
+  initialTime,
+  onTimeUpdate,
+}: PKVideoPlayerOptions = {}) => {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -53,6 +61,8 @@ export const usePKVideoPlayer = () => {
     null,
   );
   const isInitialControlsWindowRef = useRef(true);
+  const hasAppliedInitialTimeRef = useRef(false);
+  const initialTimeRef = useRef<number | null>(null);
   const [centerFeedback, setCenterFeedback] = useState<CenterFeedback>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -64,6 +74,16 @@ export const usePKVideoPlayer = () => {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [volume, setVolume] = useState(PK_PLAYER_DEFAULT_VOLUME);
   const [bufferedPercent, setBufferedPercent] = useState(0);
+
+  useEffect(() => {
+    if (Number.isFinite(initialTime) && (initialTime ?? 0) > 0) {
+      initialTimeRef.current = initialTime ?? null;
+    } else {
+      initialTimeRef.current = null;
+    }
+
+    hasAppliedInitialTimeRef.current = false;
+  }, [initialTime]);
 
   const getBufferedPercent = (video: HTMLVideoElement) => {
     if (!Number.isFinite(video.duration) || video.duration <= 0) {
@@ -311,6 +331,21 @@ export const usePKVideoPlayer = () => {
     const updateBufferedState = () => {
       setBufferedPercent(getBufferedPercent(video));
     };
+    const applyInitialTime = () => {
+      if (hasAppliedInitialTimeRef.current) {
+        return;
+      }
+
+      const nextTime = initialTimeRef.current;
+
+      if (!Number.isFinite(nextTime) || !nextTime) {
+        return;
+      }
+
+      video.currentTime = Math.min(nextTime, video.duration || nextTime);
+      setCurrentTime(video.currentTime);
+      hasAppliedInitialTimeRef.current = true;
+    };
     const showVideoLoading = () => {
       clearVideoLoadingTimeout();
       videoLoadingTimeoutRef.current = setTimeout(() => {
@@ -331,6 +366,7 @@ export const usePKVideoPlayer = () => {
     const updateTime = () => {
       setCurrentTime(video.currentTime);
       hideVideoLoading();
+      onTimeUpdate?.(video.currentTime);
     };
     const updateVolumeState = () => {
       setVolume(video.volume);
@@ -356,9 +392,15 @@ export const usePKVideoPlayer = () => {
     video.addEventListener("progress", updateBufferedState);
     video.addEventListener("loadedmetadata", updateBufferedState);
     video.addEventListener("durationchange", updateBufferedState);
+    video.addEventListener("loadedmetadata", applyInitialTime);
+    video.addEventListener("canplay", applyInitialTime);
     video.addEventListener("volumechange", updateVolumeState);
     updateVolumeState();
     updateBufferedState();
+
+    if (video.readyState >= HTMLMediaElement.HAVE_METADATA) {
+      applyInitialTime();
+    }
 
     if (video.readyState >= PK_PLAYER_READY_STATE_HAVE_FUTURE_DATA) {
       setIsVideoLoading(false);
@@ -385,9 +427,11 @@ export const usePKVideoPlayer = () => {
       video.removeEventListener("progress", updateBufferedState);
       video.removeEventListener("loadedmetadata", updateBufferedState);
       video.removeEventListener("durationchange", updateBufferedState);
+      video.removeEventListener("loadedmetadata", applyInitialTime);
+      video.removeEventListener("canplay", applyInitialTime);
       video.removeEventListener("volumechange", updateVolumeState);
     };
-  }, []);
+  }, [onTimeUpdate]);
 
   useEffect(() => {
     const updateFullscreenState = () => {

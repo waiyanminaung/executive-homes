@@ -26,6 +26,8 @@ interface PKVideoPlayerProps {
   sourceType: VideoSourceType;
   autoPlay?: boolean;
   muted?: boolean;
+  initialTime?: number;
+  onTimeUpdate?: (time: number) => void;
   poster?: string;
   tracks?: VideoTrack[];
   containerClassName?: string;
@@ -36,6 +38,8 @@ export const PKVideoPlayer = ({
   sourceType,
   autoPlay = false,
   muted = false,
+  initialTime,
+  onTimeUpdate,
   poster,
   tracks = [],
   containerClassName,
@@ -68,7 +72,7 @@ export const PKVideoPlayer = ({
     updatePlaybackRate,
     videoRef,
     volume,
-  } = usePKVideoPlayer();
+  } = usePKVideoPlayer({ initialTime, onTimeUpdate });
 
   const mediaTracks = tracks.map((track) => (
     <track
