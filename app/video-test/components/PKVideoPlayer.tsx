@@ -84,7 +84,8 @@ export const PKVideoPlayer = ({
         width: "min(100vw, calc(100vh * 16 / 9))",
       }
     : undefined;
-  const centerControlFeedback = centerFeedback ?? (isPlaying ? "pause" : "play");
+  const centerControlFeedback =
+    centerFeedback ?? (isPlaying ? "pause" : "play");
 
   return (
     <div className={classNames("space-y-4")}>
@@ -106,7 +107,7 @@ export const PKVideoPlayer = ({
           className={classNames(
             isFullscreen
               ? "flex h-screen w-screen items-center justify-center"
-              : "aspect-video w-full",
+              : "w-full",
           )}
         >
           <Player.Provider>
