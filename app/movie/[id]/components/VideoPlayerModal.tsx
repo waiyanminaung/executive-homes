@@ -57,27 +57,22 @@ export const VideoPlayerModal = ({
 
       <div
         className={classNames(
-          "relative w-full max-w-6xl mx-auto rounded-3xl overflow-hidden",
-          isS3Source ? "" : "h-full",
+          "relative w-full max-w-6xl mx-auto",
+          "aspect-video max-h-[calc(100vh-2rem)] lg:max-h-[calc(100vh-5rem)]",
           "border border-white/5 shadow-[0_0_100px_rgba(229,9,20,0.1)]",
         )}
       >
         {isS3Source ? (
-          <div className={classNames("w-full bg-black")}>
-            <PKVideoPlayer
-              title={movie.title}
-              subtitle={provider}
-              src={sourceUrl}
-              sourceType={sourceType}
-              poster={movie.backdropUrl}
-              autoPlay
-              showDetails={false}
-            />
-          </div>
+          <PKVideoPlayer
+            src={sourceUrl}
+            sourceType={sourceType}
+            poster={movie.backdropUrl}
+            autoPlay
+          />
         ) : sourceUrl ? (
           <iframe
             src={sourceUrl}
-            className={classNames("w-full h-full border-0")}
+            className={classNames("absolute inset-0 size-full border-0")}
             allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
             allowFullScreen
           />

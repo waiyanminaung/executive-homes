@@ -22,25 +22,23 @@ interface VideoTrack {
 }
 
 interface PKVideoPlayerProps {
-  title: string;
-  subtitle: string;
   src: string;
   sourceType: VideoSourceType;
   autoPlay?: boolean;
-  showDetails?: boolean;
+  muted?: boolean;
   poster?: string;
   tracks?: VideoTrack[];
+  containerClassName?: string;
 }
 
 export const PKVideoPlayer = ({
-  title,
-  subtitle,
   src,
   sourceType,
   autoPlay = false,
-  showDetails = true,
+  muted = false,
   poster,
   tracks = [],
+  containerClassName,
 }: PKVideoPlayerProps) => {
   const {
     centerFeedback,
@@ -92,150 +90,130 @@ export const PKVideoPlayer = ({
     centerFeedback ?? (isPlaying ? "pause" : "play");
 
   return (
-    <div className={classNames(showDetails ? "space-y-4" : "")}>
+    <div
+      ref={containerRef}
+      tabIndex={0}
+      onClick={toggleSurfacePlay}
+      onPointerMove={showControlsFromPointer}
+      onPointerLeave={hideControls}
+      onPointerDown={focusPlayer}
+      className={classNames(
+        "relative h-full overflow-hidden bg-black",
+        isFullscreen && "flex h-screen w-screen items-center justify-center",
+        containerClassName,
+      )}
+    >
       <div
-        ref={containerRef}
-        tabIndex={0}
-        onClick={toggleSurfacePlay}
-        onPointerMove={showControlsFromPointer}
-        onPointerLeave={hideControls}
-        onPointerDown={focusPlayer}
         className={classNames(
-          "relative overflow-hidden bg-black",
           isFullscreen
-            ? "flex h-screen w-screen items-center justify-center rounded-none"
-            : classNames(
-                showDetails
-                  ? "rounded-2xl shadow-[0_24px_80px_rgba(0,0,0,0.45)] ring-white/10"
-                  : "",
-              ),
+            ? "flex h-screen w-screen items-center justify-center"
+            : "h-full w-full",
+        )}
+      >
+        <Player.Provider>
+          <Player.Container
+            style={fullscreenVideoStyle}
+            className={classNames(
+              "relative bg-black",
+              isFullscreen ? "" : "size-full",
+            )}
+          >
+            {sourceType === "hls" ? (
+              <HlsVideo
+                ref={videoRef}
+                src={src}
+                poster={poster}
+                autoPlay={autoPlay}
+                muted={muted}
+                playsInline
+                preload={autoPlay ? "auto" : "metadata"}
+                crossOrigin="anonymous"
+                className={classNames("size-full object-contain")}
+              >
+                {mediaTracks}
+              </HlsVideo>
+            ) : (
+              <Video
+                ref={videoRef}
+                src={src}
+                poster={poster}
+                autoPlay={autoPlay}
+                muted={muted}
+                playsInline
+                preload={autoPlay ? "auto" : "metadata"}
+                crossOrigin="anonymous"
+                className={classNames("size-full object-contain")}
+              >
+                {mediaTracks}
+              </Video>
+            )}
+          </Player.Container>
+        </Player.Provider>
+      </div>
+
+      <div
+        className={classNames(
+          "pointer-events-none absolute inset-0 z-10 flex items-center justify-center",
+          "transition-opacity duration-200 ease-out",
+          centerFeedback
+            ? "opacity-100"
+            : isControlsVisible
+              ? "opacity-100 sm:opacity-0"
+              : "opacity-0",
         )}
       >
         <div
           className={classNames(
-            isFullscreen
-              ? "flex h-screen w-screen items-center justify-center"
-              : "w-full",
+            "flex size-16 items-center justify-center rounded-full",
+            "bg-black/45 text-white",
           )}
         >
-          <Player.Provider>
-            <Player.Container
-              style={fullscreenVideoStyle}
-              className={classNames(
-                "relative bg-black",
-                isFullscreen ? "" : "size-full",
-              )}
-            >
-              {sourceType === "hls" ? (
-                <HlsVideo
-                  ref={videoRef}
-                  src={src}
-                  poster={poster}
-                  autoPlay={autoPlay}
-                  muted={autoPlay}
-                  playsInline
-                  preload={autoPlay ? "auto" : "metadata"}
-                  crossOrigin="anonymous"
-                  className={classNames("size-full object-contain")}
-                >
-                  {mediaTracks}
-                </HlsVideo>
-              ) : (
-                <Video
-                  ref={videoRef}
-                  src={src}
-                  poster={poster}
-                  autoPlay={autoPlay}
-                  muted={autoPlay}
-                  playsInline
-                  preload={autoPlay ? "auto" : "metadata"}
-                  crossOrigin="anonymous"
-                  className={classNames("size-full object-contain")}
-                >
-                  {mediaTracks}
-                </Video>
-              )}
-            </Player.Container>
-          </Player.Provider>
-        </div>
-
-        <div
-          className={classNames(
-            "pointer-events-none absolute inset-0 z-10 flex items-center justify-center",
-            "transition-opacity duration-200 ease-out",
-            centerFeedback
-              ? "opacity-100"
-              : isControlsVisible
-                ? "opacity-100 sm:opacity-0"
-                : "opacity-0",
+          {centerControlFeedback === "pause" ? (
+            <Pause className={classNames("size-8 fill-current")} />
+          ) : (
+            <Play className={classNames("size-8 fill-current")} />
           )}
-        >
-          <div
-            className={classNames(
-              "flex size-16 items-center justify-center rounded-full",
-              "bg-black/45 text-white",
-            )}
-          >
-            {centerControlFeedback === "pause" ? (
-              <Pause className={classNames("size-8 fill-current")} />
-            ) : (
-              <Play className={classNames("size-8 fill-current")} />
-            )}
-          </div>
         </div>
-
-        <div
-          aria-live="polite"
-          className={classNames(
-            "pointer-events-none absolute inset-0 z-10 flex items-center justify-center",
-            "transition-opacity duration-200 ease-out",
-            isVideoLoading ? "opacity-100" : "opacity-0",
-          )}
-        >
-          <div
-            className={classNames(
-              "flex size-14 items-center justify-center rounded-full",
-              "bg-black/45 text-white backdrop-blur-sm",
-            )}
-          >
-            <Spinner className={classNames("size-7")} />
-          </div>
-        </div>
-
-        <PKVideoPlayerControls
-          currentTime={currentTime}
-          duration={duration}
-          isFullscreen={isFullscreen}
-          isMuted={isMuted}
-          isPlaying={isPlaying}
-          isVisible={isControlsVisible}
-          playbackRate={playbackRate}
-          volume={volume}
-          onPlayToggle={togglePlay}
-          onSeek={seekTo}
-          onSeekBy={seekBy}
-          onFullscreenToggle={toggleFullscreen}
-          onInteractionEnd={endControlsInteraction}
-          onInteractionStart={startControlsInteraction}
-          onInteraction={showControls}
-          onMuteToggle={toggleMute}
-          onPlaybackRateChange={updatePlaybackRate}
-          onVolumeChange={updateVolume}
-        />
       </div>
 
-      {showDetails ? (
-        <div className={classNames("space-y-2")}>
-          <h1
-            className={classNames(
-              "text-xl font-black leading-tight text-white sm:text-2xl",
-            )}
-          >
-            {title}
-          </h1>
-          <p className={classNames("text-sm text-white/50")}>{subtitle}</p>
+      <div
+        aria-live="polite"
+        className={classNames(
+          "pointer-events-none absolute inset-0 z-10 flex items-center justify-center",
+          "transition-opacity duration-200 ease-out",
+          isVideoLoading ? "opacity-100" : "opacity-0",
+        )}
+      >
+        <div
+          className={classNames(
+            "flex size-14 items-center justify-center rounded-full",
+            "bg-black/45 text-white backdrop-blur-sm",
+          )}
+        >
+          <Spinner className={classNames("size-7")} />
         </div>
-      ) : null}
+      </div>
+
+      <PKVideoPlayerControls
+        currentTime={currentTime}
+        duration={duration}
+        isFullscreen={isFullscreen}
+        isMuted={isMuted}
+        isPlaying={isPlaying}
+        isVisible={isControlsVisible}
+        playbackRate={playbackRate}
+        volume={volume}
+        onPlayToggle={togglePlay}
+        onSeek={seekTo}
+        onSeekBy={seekBy}
+        onFullscreenToggle={toggleFullscreen}
+        onInteractionEnd={endControlsInteraction}
+        onInteractionStart={startControlsInteraction}
+        onInteraction={showControls}
+        onMuteToggle={toggleMute}
+        onPlaybackRateChange={updatePlaybackRate}
+        onVolumeChange={updateVolume}
+      />
     </div>
   );
 };
