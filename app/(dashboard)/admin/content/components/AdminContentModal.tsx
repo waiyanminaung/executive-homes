@@ -36,6 +36,8 @@ const toFormValues = (content?: Content): MovieCreateInput => {
     description: content.description,
     posterUrl: content.posterUrl,
     backdropUrl: content.backdropUrl,
+    width: content.width ?? DEFAULT_ADMIN_CONTENT_VALUES.width,
+    height: content.height ?? DEFAULT_ADMIN_CONTENT_VALUES.height,
     telegramUrl: content.telegramUrl ?? "",
     sourceUrl: content.sourceUrl,
     provider: content.provider,

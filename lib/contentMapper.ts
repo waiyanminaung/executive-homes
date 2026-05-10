@@ -103,6 +103,8 @@ export const mapContent = (content: ContentWithRelations): Content => {
     description: content.description,
     posterUrl: content.posterUrl,
     backdropUrl: content.backdropUrl,
+    width: content.width ?? undefined,
+    height: content.height ?? undefined,
     telegramUrl: content.telegramUrl ?? undefined,
     sourceUrl: content.sourceUrl,
     provider: mapContentSourceProvider(content.provider),

@@ -10,6 +10,8 @@ export const DEFAULT_ADMIN_CONTENT_VALUES: MovieCreateInput = {
   description: "",
   posterUrl: "",
   backdropUrl: "",
+  width: 1280,
+  height: 720,
   telegramUrl: "",
   sourceUrl: "",
   provider: "S3",

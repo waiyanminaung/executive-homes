@@ -65,6 +65,8 @@ model Content {
   description   String
   posterUrl     String
   backdropUrl   String
+  width         Int?
+  height        Int?
   telegramUrl   String?
   sourceUrl     String            @default("") @map("source_url")
   provider      VideoProvider     @default(S3)

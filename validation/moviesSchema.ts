@@ -22,6 +22,8 @@ export const movieCreateSchema = z.object({
   description: z.string().min(1).max(5000),
   posterUrl: z.string().min(1).max(500),
   backdropUrl: z.string().min(1).max(500),
+  width: z.coerce.number().int().min(1),
+  height: z.coerce.number().int().min(1),
   telegramUrl: z.string().max(500).optional(),
   sourceUrl: z.string().min(1).max(500),
   provider: z.enum(CONTENT_SOURCE_PROVIDERS),

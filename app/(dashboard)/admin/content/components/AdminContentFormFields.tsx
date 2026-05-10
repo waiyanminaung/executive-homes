@@ -37,7 +37,10 @@ export default function AdminContentFormFields({
           />
         </Field>
         <Field label="Type" required>
-          <RHFSelect name="type" className="rounded-2xl border-white/5 bg-white/5">
+          <RHFSelect
+            name="type"
+            className="rounded-2xl border-white/5 bg-white/5"
+          >
             <SelectOption value="movie" label="Movie" />
             <SelectOption value="series" label="Series" />
           </RHFSelect>
@@ -88,6 +91,22 @@ export default function AdminContentFormFields({
         <Field label="Backdrop URL" required>
           <RHFInput
             name="backdropUrl"
+            className={inputClassName}
+            inputClassName={inputInnerClassName}
+          />
+        </Field>
+        <Field label="Width" required>
+          <RHFInput
+            name="width"
+            type="number"
+            className={inputClassName}
+            inputClassName={inputInnerClassName}
+          />
+        </Field>
+        <Field label="Height" required>
+          <RHFInput
+            name="height"
+            type="number"
             className={inputClassName}
             inputClassName={inputInnerClassName}
           />

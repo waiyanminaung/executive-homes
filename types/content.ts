@@ -43,6 +43,8 @@ export interface Content {
   description: string;
   posterUrl: string;
   backdropUrl: string;
+  width?: number;
+  height?: number;
   telegramUrl?: string;
   sourceUrl: string;
   provider: ContentSourceProvider;
