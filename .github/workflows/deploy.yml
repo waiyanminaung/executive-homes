@@ -17,13 +17,13 @@ jobs:
           script: |
             set -e
             
-            if [ ! -d "~/pkmovie/.git" ]; then
+            if [ ! -d "~/pkmovie-app/.git" ]; then
               echo "Repository not found. Cloning..."
-              git clone https://github.com/${{ github.repository }}.git ~/pkmovie
-              cd ~/pkmovie
+              git clone https://github.com/${{ github.repository }}.git ~/pkmovie-app
+              cd ~/pkmovie-app
             else
               echo "Repository exists. Fetching updates..."
-              cd ~/pkmovie
+              cd ~/pkmovie-app
               git fetch --all
               git reset --hard origin/main
             fi
