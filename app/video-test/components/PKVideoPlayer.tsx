@@ -22,6 +22,7 @@ import {
   type VideoSourceType,
   type VideoTrack,
 } from "./PKVideoPlayerMedia";
+import { hasInitialTime } from "./useInitialResumeSeek";
 
 type CenterFeedback = "pause" | "play" | null;
 
@@ -52,7 +53,11 @@ const PKVideoPlayerContent = ({
   const fullscreen = Player.usePlayer(selectFullscreen);
   const playback = Player.usePlayer(selectPlayback);
   const feedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const initialTimeRef = useRef(initialTime);
   const [centerFeedback, setCenterFeedback] = useState<CenterFeedback>(null);
+  const [isResumePending, setIsResumePending] = useState(() =>
+    hasInitialTime(initialTime),
+  );
 
   const fullscreenVideoStyle = fullscreen?.fullscreen
     ? {
@@ -63,8 +68,9 @@ const PKVideoPlayerContent = ({
   const centerControlFeedback =
     centerFeedback ?? (playback?.paused ? "play" : "pause");
   const isCenterFeedbackVisible =
-    !!centerFeedback || (controls?.controlsVisible && !playback?.started);
-  const isVideoLoading = !!playback?.waiting;
+    !isResumePending &&
+    (!!centerFeedback || (controls?.controlsVisible && !playback?.started));
+  const isVideoLoading = !!playback?.waiting || isResumePending;
 
   const showCenterFeedback = (feedback: Exclude<CenterFeedback, null>) => {
     if (feedbackTimeoutRef.current) {
@@ -85,6 +91,15 @@ const PKVideoPlayerContent = ({
     showCenterFeedback(playback.paused ? "pause" : "play");
     playback.togglePaused();
   };
+
+  useEffect(() => {
+    if (initialTimeRef.current === initialTime) {
+      return;
+    }
+
+    initialTimeRef.current = initialTime;
+    setIsResumePending(hasInitialTime(initialTime));
+  }, [initialTime]);
 
   useEffect(() => {
     return () => {
@@ -117,6 +132,8 @@ const PKVideoPlayerContent = ({
 
       <PKVideoPlayerBridges
         initialTime={initialTime}
+        isResumePending={isResumePending}
+        onResumePendingChange={setIsResumePending}
         onTimeUpdate={onTimeUpdate}
       />
       <Hotkey

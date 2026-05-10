@@ -4,28 +4,18 @@ import { useEffect, useRef } from "react";
 import { selectTime } from "@videojs/react";
 import { PK_PLAYER_DEFAULT_VOLUME } from "@/constants/videoPlayer";
 import { Player } from "./PKVideoPlayerInstance";
+import {
+  getMediaTarget,
+  hasInitialTime,
+  useInitialResumeSeek,
+} from "./useInitialResumeSeek";
 
 interface PKVideoPlayerBridgesProps {
   initialTime?: number;
+  isResumePending?: boolean;
+  onResumePendingChange?: (isPending: boolean) => void;
   onTimeUpdate?: (time: number) => void;
 }
-
-const getMediaTarget = (media: unknown) => {
-  if (media instanceof HTMLMediaElement) {
-    return media;
-  }
-
-  if (
-    media &&
-    typeof media === "object" &&
-    "target" in media &&
-    media.target instanceof HTMLMediaElement
-  ) {
-    return media.target;
-  }
-
-  return null;
-};
 
 const DefaultVolumeBridge = () => {
   const media = Player.useMedia();
@@ -47,52 +37,62 @@ const DefaultVolumeBridge = () => {
 
 const InitialTimeBridge = ({
   initialTime,
-}: Pick<PKVideoPlayerBridgesProps, "initialTime">) => {
-  const time = Player.usePlayer(selectTime);
-  const appliedInitialTimeRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    if (!Number.isFinite(initialTime) || !initialTime || initialTime <= 0) {
-      appliedInitialTimeRef.current = null;
-      return;
-    }
-
-    if (!time || appliedInitialTimeRef.current === initialTime) {
-      return;
-    }
-
-    appliedInitialTimeRef.current = initialTime;
-    void time.seek(initialTime);
-  }, [initialTime, time]);
+  onResumePendingChange,
+}: Pick<
+  PKVideoPlayerBridgesProps,
+  "initialTime" | "onResumePendingChange"
+>) => {
+  useInitialResumeSeek({
+    initialTime,
+    onResumePendingChange,
+  });
 
   return null;
 };
 
 const TimeUpdateBridge = ({
+  initialTime,
+  isResumePending,
   onTimeUpdate,
-}: Pick<PKVideoPlayerBridgesProps, "onTimeUpdate">) => {
+}: Pick<
+  PKVideoPlayerBridgesProps,
+  "initialTime" | "isResumePending" | "onTimeUpdate"
+>) => {
   const time = Player.usePlayer(selectTime);
 
   useEffect(() => {
-    if (!time) {
+    if (!time || isResumePending) {
+      return;
+    }
+
+    if (hasInitialTime(initialTime) && time.currentTime <= 0) {
       return;
     }
 
     onTimeUpdate?.(time.currentTime);
-  }, [onTimeUpdate, time]);
+  }, [initialTime, isResumePending, onTimeUpdate, time]);
 
   return null;
 };
 
 export const PKVideoPlayerBridges = ({
   initialTime,
+  isResumePending,
+  onResumePendingChange,
   onTimeUpdate,
 }: PKVideoPlayerBridgesProps) => {
   return (
     <>
       <DefaultVolumeBridge />
-      <InitialTimeBridge initialTime={initialTime} />
-      <TimeUpdateBridge onTimeUpdate={onTimeUpdate} />
+      <InitialTimeBridge
+        initialTime={initialTime}
+        onResumePendingChange={onResumePendingChange}
+      />
+      <TimeUpdateBridge
+        initialTime={initialTime}
+        isResumePending={isResumePending}
+        onTimeUpdate={onTimeUpdate}
+      />
     </>
   );
 };

@@ -40,6 +40,10 @@ export const VideoPlayerModal = ({
   })();
 
   const handleTimeUpdate = (time: number) => {
+    if (!Number.isFinite(time) || time <= 0) {
+      return;
+    }
+
     sessionStorage.setItem(storageKey, time.toString());
   };
 
