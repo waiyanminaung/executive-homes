@@ -16,20 +16,23 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             set -e
+
+            REPO_DIR="~/pkmovie-app"
+            REPO_URL="https://github.com/${{ github.repository }}.git"
             
-            if [ ! -d "~/pkmovie-app/.git" ]; then
-              echo "Repository not found. Cloning..."
-              git clone https://github.com/${{ github.repository }}.git ~/pkmovie-app
-              cd ~/pkmovie-app
-            else
-              echo "Repository exists. Fetching updates..."
-              cd ~/pkmovie-app
-              git fetch --all
-              git reset --hard origin/main
+            if [ ! -d "$REPO_DIR/.git" ]; then
+              echo "Repository not found or .git missing. Cloning..."
+              rm -rf $REPO_DIR
+              git clone $REPO_URL $REPO_DIR
             fi
 
-            git checkout main
-            git pull --ff-only
+            cd $REPO_DIR
+
+         
+            echo "Fetching updates..."
+            git fetch --all
+            git reset --hard origin/main
+
             
             # Create .env file
             echo "${{ secrets.DOTENV_FILE }}" > .env
@@ -44,7 +47,7 @@ jobs:
             # Build Application
             npm run build
             
-            # PM2 Management (App Name ကို တန်းထည့်ထားသည်)
+            # PM2 Management 
             if pm2 describe "pkmovie-app" > /dev/null; then
               pm2 reload "pkmovie-app"
             else
