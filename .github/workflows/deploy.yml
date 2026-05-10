@@ -16,7 +16,18 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             set -e
-            cd ~/pkmovie
+            
+            if [ ! -d "~/pkmovie/.git" ]; then
+              echo "Repository not found. Cloning..."
+              git clone https://github.com/${{ github.repository }}.git ~/pkmovie
+              cd ~/pkmovie
+            else
+              echo "Repository exists. Fetching updates..."
+              cd ~/pkmovie
+              git fetch --all
+              git reset --hard origin/main
+            fi
+
             git checkout main
             git pull --ff-only
             
