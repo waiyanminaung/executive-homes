@@ -21,7 +21,7 @@ jobs:
             set -e
 
             REPO_DIR="~/pkmovie-app"
-            REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+            REPO_URL="https://x-access-token:${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
             
             if [ ! -d "$REPO_DIR/.git" ]; then
               echo "Repository not found or .git missing. Cloning..."
