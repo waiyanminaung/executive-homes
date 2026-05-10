@@ -28,7 +28,7 @@ jobs:
             
             # Prisma Operations
             npx prisma generate
-            npx prisma db push --accept-data-loss # --accept-data-loss က warning ကျော်ဖို့ဖြစ်တယ် (ဂရုစိုက်သုံးပါ)
+            npx prisma db push --accept-data-loss 
             
             # Build Application
             npm run build
