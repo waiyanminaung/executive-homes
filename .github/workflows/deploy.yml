@@ -21,7 +21,10 @@ jobs:
             set -e
 
             REPO_DIR="~/pkmovie-app"
-            REPO_URL="https://x-access-token:${{ secrets.MY_GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+            REPO_URL="git@github.com:${{ github.repository }}.git"
+
+            mkdir -p ~/.ssh
+            ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts
             
             if [ ! -d "$REPO_DIR/.git" ]; then
               echo "Repository not found or .git missing. Cloning..."
