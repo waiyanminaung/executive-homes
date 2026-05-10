@@ -4,6 +4,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 jobs: 
   deploy:
     runs-on: ubuntu-latest
@@ -18,7 +21,7 @@ jobs:
             set -e
 
             REPO_DIR="~/pkmovie-app"
-            REPO_URL="https://github.com/${{ github.repository }}.git"
+            REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
             
             if [ ! -d "$REPO_DIR/.git" ]; then
               echo "Repository not found or .git missing. Cloning..."
@@ -28,7 +31,6 @@ jobs:
 
             cd $REPO_DIR
 
-         
             echo "Fetching updates..."
             git fetch --all
             git reset --hard origin/main
