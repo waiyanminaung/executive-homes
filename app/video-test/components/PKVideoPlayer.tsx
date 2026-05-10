@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type PointerEvent } from "react";
 import {
   Hotkey,
   selectControls,
@@ -53,6 +53,8 @@ const PKVideoPlayerContent = ({
   const fullscreen = Player.usePlayer(selectFullscreen);
   const playback = Player.usePlayer(selectPlayback);
   const feedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pointerTypeRef = useRef<PointerEvent["pointerType"] | null>(null);
+  const touchControlsVisibleRef = useRef<boolean | null>(null);
   const initialTimeRef = useRef(initialTime);
   const [centerFeedback, setCenterFeedback] = useState<CenterFeedback>(null);
   const [isResumePending, setIsResumePending] = useState(() =>
@@ -88,8 +90,29 @@ const PKVideoPlayerContent = ({
       return;
     }
 
+    if (pointerTypeRef.current === "touch") {
+      const wasControlsVisible =
+        touchControlsVisibleRef.current ?? controls?.controlsVisible;
+
+      if (!wasControlsVisible) {
+        if (controls && !controls.controlsVisible) {
+          controls.toggleControls();
+        }
+
+        return;
+      }
+    }
+
     showCenterFeedback(playback.paused ? "pause" : "play");
     playback.togglePaused();
+  };
+
+  const handleSurfacePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    pointerTypeRef.current = event.pointerType;
+
+    if (event.pointerType === "touch") {
+      touchControlsVisibleRef.current = controls?.controlsVisible ?? null;
+    }
   };
 
   useEffect(() => {
@@ -114,6 +137,7 @@ const PKVideoPlayerContent = ({
       tabIndex={0}
       style={fullscreenVideoStyle}
       onClick={handleSurfaceClick}
+      onPointerDown={handleSurfacePointerDown}
       className={classNames(
         "relative h-full bg-black",
         fullscreen?.fullscreen &&
@@ -158,14 +182,14 @@ const PKVideoPlayerContent = ({
       >
         <div
           className={classNames(
-            "flex size-16 items-center justify-center rounded-full",
+            "flex md:size-16 size-11 items-center justify-center rounded-full",
             "bg-black/45 text-white",
           )}
         >
           {centerControlFeedback === "pause" ? (
-            <Pause className={classNames("size-8 fill-current")} />
+            <Pause className={classNames("md:size-8 size-6 fill-current")} />
           ) : (
-            <Play className={classNames("size-8 fill-current")} />
+            <Play className={classNames("md:size-8 size-6 fill-current")} />
           )}
         </div>
       </div>
@@ -180,7 +204,7 @@ const PKVideoPlayerContent = ({
       >
         <div
           className={classNames(
-            "flex size-14 items-center justify-center rounded-full",
+            "flex md:size-14 size-9 items-center justify-center rounded-full",
             "bg-black/45 text-white backdrop-blur-sm",
           )}
         >
