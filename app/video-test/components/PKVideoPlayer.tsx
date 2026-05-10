@@ -1,25 +1,29 @@
 "use client";
 
-import { createPlayer } from "@videojs/react";
-import { HlsVideo } from "@videojs/react/media/hls-video";
-import { Video, videoFeatures } from "@videojs/react/video";
+import { useEffect, useRef, useState } from "react";
+import {
+  Hotkey,
+  selectControls,
+  selectFullscreen,
+  selectPlayback,
+} from "@videojs/react";
 import { Spinner } from "@geckoui/geckoui";
 import { Pause, Play } from "lucide-react";
+import {
+  PK_PLAYER_CENTER_FEEDBACK_MS,
+  PK_PLAYER_SEEK_SECONDS,
+} from "@/constants/videoPlayer";
 import { classNames } from "@/utils/classNames";
+import { PKVideoPlayerBridges } from "./PKVideoPlayerBridges";
 import { PKVideoPlayerControls } from "./PKVideoPlayerControls";
-import { usePKVideoPlayer } from "./usePKVideoPlayer";
+import { Player } from "./PKVideoPlayerInstance";
+import {
+  PKVideoPlayerMedia,
+  type VideoSourceType,
+  type VideoTrack,
+} from "./PKVideoPlayerMedia";
 
-const Player = createPlayer({ features: videoFeatures });
-
-type VideoSourceType = "hls" | "mp4";
-
-interface VideoTrack {
-  src: string;
-  label: string;
-  srcLang: string;
-  kind?: "subtitles" | "captions";
-  default?: boolean;
-}
+type CenterFeedback = "pause" | "play" | null;
 
 interface PKVideoPlayerProps {
   src: string;
@@ -33,7 +37,7 @@ interface PKVideoPlayerProps {
   containerClassName?: string;
 }
 
-export const PKVideoPlayer = ({
+const PKVideoPlayerContent = ({
   src,
   sourceType,
   autoPlay = false,
@@ -44,124 +48,95 @@ export const PKVideoPlayer = ({
   tracks = [],
   containerClassName,
 }: PKVideoPlayerProps) => {
-  const {
-    centerFeedback,
-    containerRef,
-    currentTime,
-    duration,
-    bufferedPercent,
-    focusPlayer,
-    hideControls,
-    isControlsVisible,
-    isFullscreen,
-    isMuted,
-    isPlaying,
-    isVideoLoading,
-    playbackRate,
-    seekBy,
-    seekTo,
-    showControls,
-    showControlsFromPointer,
-    startControlsInteraction,
-    toggleFullscreen,
-    toggleMute,
-    togglePlay,
-    toggleSurfacePlay,
-    endControlsInteraction,
-    updateVolume,
-    updatePlaybackRate,
-    videoRef,
-    volume,
-  } = usePKVideoPlayer({ initialTime, onTimeUpdate });
+  const controls = Player.usePlayer(selectControls);
+  const fullscreen = Player.usePlayer(selectFullscreen);
+  const playback = Player.usePlayer(selectPlayback);
+  const feedbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [centerFeedback, setCenterFeedback] = useState<CenterFeedback>(null);
 
-  const mediaTracks = tracks.map((track) => (
-    <track
-      key={track.src}
-      src={track.src}
-      label={track.label}
-      srcLang={track.srcLang}
-      kind={track.kind ?? "subtitles"}
-      default={track.default}
-    />
-  ));
-
-  const fullscreenVideoStyle = isFullscreen
+  const fullscreenVideoStyle = fullscreen?.fullscreen
     ? {
         height: "min(100vh, calc(100vw * 9 / 16))",
         width: "min(100vw, calc(100vh * 16 / 9))",
       }
     : undefined;
   const centerControlFeedback =
-    centerFeedback ?? (isPlaying ? "pause" : "play");
+    centerFeedback ?? (playback?.paused ? "play" : "pause");
+  const isCenterFeedbackVisible =
+    !!centerFeedback || (controls?.controlsVisible && !playback?.started);
+  const isVideoLoading = !!playback?.waiting;
+
+  const showCenterFeedback = (feedback: Exclude<CenterFeedback, null>) => {
+    if (feedbackTimeoutRef.current) {
+      clearTimeout(feedbackTimeoutRef.current);
+    }
+
+    setCenterFeedback(feedback);
+    feedbackTimeoutRef.current = setTimeout(() => {
+      setCenterFeedback(null);
+    }, PK_PLAYER_CENTER_FEEDBACK_MS);
+  };
+
+  const handleSurfaceClick = () => {
+    if (!playback) {
+      return;
+    }
+
+    showCenterFeedback(playback.paused ? "pause" : "play");
+    playback.togglePaused();
+  };
+
+  useEffect(() => {
+    return () => {
+      if (feedbackTimeoutRef.current) {
+        clearTimeout(feedbackTimeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
-    <div
-      ref={containerRef}
+    <Player.Container
       tabIndex={0}
-      onClick={toggleSurfacePlay}
-      onPointerMove={showControlsFromPointer}
-      onPointerLeave={hideControls}
-      onPointerDown={focusPlayer}
+      style={fullscreenVideoStyle}
+      onClick={handleSurfaceClick}
       className={classNames(
         "relative h-full overflow-hidden bg-black",
-        isFullscreen && "flex h-screen w-screen items-center justify-center",
+        fullscreen?.fullscreen &&
+          "flex h-screen w-screen items-center justify-center",
         containerClassName,
       )}
     >
-      <div
-        className={classNames(
-          isFullscreen
-            ? "flex h-screen w-screen items-center justify-center"
-            : "h-full w-full",
-        )}
-      >
-        <Player.Provider>
-          <Player.Container
-            style={fullscreenVideoStyle}
-            className="bg-black size-full"
-          >
-            {sourceType === "hls" ? (
-              <HlsVideo
-                ref={videoRef}
-                src={src}
-                poster={poster}
-                autoPlay={autoPlay}
-                muted={muted}
-                playsInline
-                preload={autoPlay ? "auto" : "metadata"}
-                crossOrigin="anonymous"
-                className={classNames("size-full object-contain")}
-              >
-                {mediaTracks}
-              </HlsVideo>
-            ) : (
-              <Video
-                ref={videoRef}
-                src={src}
-                poster={poster}
-                autoPlay={autoPlay}
-                muted={muted}
-                playsInline
-                preload={autoPlay ? "auto" : "metadata"}
-                crossOrigin="anonymous"
-                className={classNames("size-full object-contain")}
-              >
-                {mediaTracks}
-              </Video>
-            )}
-          </Player.Container>
-        </Player.Provider>
-      </div>
+      <PKVideoPlayerMedia
+        src={src}
+        sourceType={sourceType}
+        autoPlay={autoPlay}
+        muted={muted}
+        poster={poster}
+        tracks={tracks}
+      />
+
+      <PKVideoPlayerBridges
+        initialTime={initialTime}
+        onTimeUpdate={onTimeUpdate}
+      />
+      <Hotkey
+        keys="ArrowLeft"
+        action="seekStep"
+        value={-PK_PLAYER_SEEK_SECONDS}
+        target="player"
+      />
+      <Hotkey
+        keys="ArrowRight"
+        action="seekStep"
+        value={PK_PLAYER_SEEK_SECONDS}
+        target="player"
+      />
 
       <div
         className={classNames(
           "pointer-events-none absolute inset-0 z-10 flex items-center justify-center",
           "transition-opacity duration-200 ease-out",
-          centerFeedback
-            ? "opacity-100"
-            : isControlsVisible
-              ? "opacity-100 sm:opacity-0"
-              : "opacity-0",
+          isCenterFeedbackVisible ? "opacity-100" : "opacity-0",
         )}
       >
         <div
@@ -196,27 +171,15 @@ export const PKVideoPlayer = ({
         </div>
       </div>
 
-      <PKVideoPlayerControls
-        currentTime={currentTime}
-        duration={duration}
-        bufferedPercent={bufferedPercent}
-        isFullscreen={isFullscreen}
-        isMuted={isMuted}
-        isPlaying={isPlaying}
-        isVisible={isControlsVisible}
-        playbackRate={playbackRate}
-        volume={volume}
-        onPlayToggle={togglePlay}
-        onSeek={seekTo}
-        onSeekBy={seekBy}
-        onFullscreenToggle={toggleFullscreen}
-        onInteractionEnd={endControlsInteraction}
-        onInteractionStart={startControlsInteraction}
-        onInteraction={showControls}
-        onMuteToggle={toggleMute}
-        onPlaybackRateChange={updatePlaybackRate}
-        onVolumeChange={updateVolume}
-      />
-    </div>
+      <PKVideoPlayerControls />
+    </Player.Container>
+  );
+};
+
+export const PKVideoPlayer = (props: PKVideoPlayerProps) => {
+  return (
+    <Player.Provider>
+      <PKVideoPlayerContent {...props} />
+    </Player.Provider>
   );
 };

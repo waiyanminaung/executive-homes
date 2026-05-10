@@ -52,7 +52,7 @@ export const VideoPlayerModal = ({
   return (
     <div
       className={classNames(
-        "fixed inset-0 z-[300] bg-black flex flex-col",
+        "fixed inset-0 z-[300] flex flex-col",
         "items-center justify-center p-4 lg:p-10",
       )}
     >

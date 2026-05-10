@@ -1,6 +1,15 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import {
+  Controls,
+  FullscreenButton,
+  MuteButton,
+  PlayButton,
+  SeekButton,
+  Time,
+  TimeSlider,
+  VolumeSlider,
+} from "@videojs/react";
 import {
   Maximize,
   Minimize,
@@ -15,109 +24,23 @@ import { PK_PLAYER_SEEK_SECONDS } from "@/constants/videoPlayer";
 import { classNames } from "@/utils/classNames";
 import { PKVideoControlButton } from "./PKVideoControlButton";
 import { PKVideoPlaybackSpeedMenu } from "./PKVideoPlaybackSpeedMenu";
-import { formatVideoTime, PKVideoTimeline } from "./PKVideoTimeline";
 
-interface PKVideoPlayerControlsProps {
-  currentTime: number;
-  duration: number;
-  bufferedPercent: number;
-  isFullscreen: boolean;
-  isMuted: boolean;
-  isPlaying: boolean;
-  isVisible: boolean;
-  playbackRate: number;
-  volume: number;
-  onPlayToggle: () => void;
-  onSeek: (time: number) => void;
-  onSeekBy: (seconds: number) => void;
-  onFullscreenToggle: () => void;
-  onInteraction: () => void;
-  onInteractionEnd: () => void;
-  onInteractionStart: () => void;
-  onMuteToggle: () => void;
-  onPlaybackRateChange: (playbackRate: number) => void;
-  onVolumeChange: (volume: number) => void;
-}
-
-interface RangeStyle extends CSSProperties {
-  "--pk-range-active-color": string;
-  "--pk-range-progress": string;
-}
-
-export const PKVideoPlayerControls = ({
-  currentTime,
-  duration,
-  bufferedPercent,
-  isFullscreen,
-  isMuted,
-  isPlaying,
-  isVisible,
-  playbackRate,
-  volume,
-  onPlayToggle,
-  onSeek,
-  onSeekBy,
-  onFullscreenToggle,
-  onInteraction,
-  onInteractionEnd,
-  onInteractionStart,
-  onMuteToggle,
-  onPlaybackRateChange,
-  onVolumeChange,
-}: PKVideoPlayerControlsProps) => {
-  const volumeProgress = isMuted ? 0 : volume * 100;
-  const volumeStyle: RangeStyle = {
-    "--pk-range-active-color": "#ffffff",
-    "--pk-range-progress": `${volumeProgress}%`,
-  };
-  const keepControlsVisible = (event: { stopPropagation: () => void }) => {
-    event.stopPropagation();
-    onInteraction();
-  };
-  const startControlsInteraction = (event: { stopPropagation: () => void }) => {
-    event.stopPropagation();
-    onInteractionStart();
-  };
-
-  const endControlsInteraction = (event: { stopPropagation: () => void }) => {
-    event.stopPropagation();
-    onInteractionEnd();
-  };
-
-  const handlePlaybackRateChange = (nextPlaybackRate: number) => {
-    onInteraction();
-    onPlaybackRateChange(nextPlaybackRate);
-  };
-
-  const handleSeek = (time: number) => {
-    onInteraction();
-    onSeek(time);
-  };
-
+export const PKVideoPlayerControls = () => {
   return (
-    <div
-      onClick={keepControlsVisible}
-      onPointerCancel={endControlsInteraction}
-      onPointerDown={startControlsInteraction}
-      onPointerUp={endControlsInteraction}
-      onTouchCancel={endControlsInteraction}
-      onTouchEnd={endControlsInteraction}
+    <Controls.Root
+      onClick={(event) => event.stopPropagation()}
       className={classNames(
-        "absolute inset-x-0 bottom-0 z-20 px-3 py-2.5 text-white",
+        "pk-video-controls absolute inset-x-0 bottom-0 z-20 px-3 py-2.5 text-white",
         "transition-opacity duration-200 ease-out sm:px-5 sm:py-3",
-        isVisible ? "opacity-100" : "pointer-events-none opacity-0",
       )}
     >
-      <PKVideoTimeline
-        currentTime={currentTime}
-        duration={duration}
-        bufferedPercent={bufferedPercent}
-        showTimeLabels={false}
-        onInteraction={onInteraction}
-        onInteractionEnd={onInteractionEnd}
-        onInteractionStart={onInteractionStart}
-        onSeek={handleSeek}
-      />
+      <TimeSlider.Root className={classNames("pk-video-slider w-full")}>
+        <TimeSlider.Track className={classNames("pk-video-slider__track")}>
+          <TimeSlider.Buffer className={classNames("pk-video-slider__buffer")} />
+          <TimeSlider.Fill className={classNames("pk-video-slider__fill")} />
+        </TimeSlider.Track>
+        <TimeSlider.Thumb className={classNames("pk-video-slider__thumb")} />
+      </TimeSlider.Root>
 
       <div
         className={classNames("mt-2 flex items-center justify-between gap-2")}
@@ -125,39 +48,48 @@ export const PKVideoPlayerControls = ({
         <div
           className={classNames("flex min-w-0 items-center gap-1.5 sm:gap-2")}
         >
-          <PKVideoControlButton
-            label={isPlaying ? "Pause" : "Play"}
-            onClick={onPlayToggle}
+          <PlayButton
             className={classNames("bg-black/45 hover:bg-black/55")}
-          >
-            {isPlaying ? (
-              <Pause
-                className={classNames("size-4.5 fill-current stroke-[2.4]")}
-              />
-            ) : (
-              <Play
-                className={classNames("size-4.5 fill-current stroke-[2.4]")}
-              />
+            render={(props, state) => (
+              <PKVideoControlButton {...props}>
+                {state.paused ? (
+                  <Play
+                    className={classNames(
+                      "size-4.5 fill-current stroke-[2.4]",
+                    )}
+                  />
+                ) : (
+                  <Pause
+                    className={classNames(
+                      "size-4.5 fill-current stroke-[2.4]",
+                    )}
+                  />
+                )}
+              </PKVideoControlButton>
             )}
-          </PKVideoControlButton>
+          />
 
-          <PKVideoControlButton
-            label="Seek backward"
-            onClick={() => onSeekBy(-PK_PLAYER_SEEK_SECONDS)}
+          <SeekButton
+            seconds={-PK_PLAYER_SEEK_SECONDS}
             className={classNames("bg-black/45 hover:bg-black/55")}
-          >
-            <RotateCcw className={classNames("size-4.5 stroke-[2.4]")} />
-          </PKVideoControlButton>
+            render={(props) => (
+              <PKVideoControlButton {...props}>
+                <RotateCcw className={classNames("size-4.5 stroke-[2.4]")} />
+              </PKVideoControlButton>
+            )}
+          />
 
-          <PKVideoControlButton
-            label="Seek forward"
-            onClick={() => onSeekBy(PK_PLAYER_SEEK_SECONDS)}
+          <SeekButton
+            seconds={PK_PLAYER_SEEK_SECONDS}
             className={classNames("bg-black/45 hover:bg-black/55")}
-          >
-            <RotateCw className={classNames("size-4.5 stroke-[2.4]")} />
-          </PKVideoControlButton>
+            render={(props) => (
+              <PKVideoControlButton {...props}>
+                <RotateCw className={classNames("size-4.5 stroke-[2.4]")} />
+              </PKVideoControlButton>
+            )}
+          />
 
-          <span
+          <Time.Group
             className={classNames(
               "rounded-full bg-black/45 px-3 py-1.5 text-[11px]",
               "font-semibold tabular-nums text-white",
@@ -165,8 +97,10 @@ export const PKVideoPlayerControls = ({
               "sm:px-3.5 sm:text-sm",
             )}
           >
-            {formatVideoTime(currentTime)} / {formatVideoTime(duration)}
-          </span>
+            <Time.Value />
+            <span className={classNames("px-1 text-white/65")}>/</span>
+            <Time.Value type="duration" />
+          </Time.Group>
         </div>
 
         <div
@@ -175,56 +109,50 @@ export const PKVideoPlayerControls = ({
             "bg-black/45 px-1 py-1 sm:gap-2 sm:px-2",
           )}
         >
-          <PKVideoControlButton label="Mute" onClick={onMuteToggle}>
-            {isMuted || volume === 0 ? (
-              <VolumeX className={classNames("size-4.5 stroke-[2.4]")} />
-            ) : (
-              <Volume2 className={classNames("size-4.5 stroke-[2.4]")} />
+          <MuteButton
+            render={(props, state) => (
+              <PKVideoControlButton {...props}>
+                {state.muted || state.volumeLevel === "off" ? (
+                  <VolumeX className={classNames("size-4.5 stroke-[2.4]")} />
+                ) : (
+                  <Volume2 className={classNames("size-4.5 stroke-[2.4]")} />
+                )}
+              </PKVideoControlButton>
             )}
-          </PKVideoControlButton>
+          />
 
-          <input
-            type="range"
-            min="0"
-            max="1"
-            step="0.01"
-            value={isMuted ? 0 : volume}
-            onBlur={onInteractionEnd}
-            onClick={onInteraction}
-            onFocus={onInteraction}
-            onPointerCancel={onInteractionEnd}
-            onPointerDown={onInteractionStart}
-            onPointerMove={onInteraction}
-            onPointerUp={onInteractionEnd}
-            onChange={(event) => {
-              onInteraction();
-              onVolumeChange(Number(event.target.value));
-            }}
-            onTouchCancel={onInteractionEnd}
-            onTouchEnd={onInteractionEnd}
-            onTouchMove={onInteraction}
-            onTouchStart={onInteractionStart}
+          <VolumeSlider.Root
             className={classNames(
-              "pk-player-range hidden w-20 sm:block lg:w-28",
+              "pk-video-slider pk-video-volume-slider hidden w-20 sm:flex lg:w-28",
             )}
-            style={volumeStyle}
-            aria-label="Volume"
-          />
+          >
+            <VolumeSlider.Track
+              className={classNames("pk-video-slider__track")}
+            >
+              <VolumeSlider.Fill
+                className={classNames("pk-video-slider__fill")}
+              />
+            </VolumeSlider.Track>
+            <VolumeSlider.Thumb
+              className={classNames("pk-video-slider__thumb")}
+            />
+          </VolumeSlider.Root>
 
-          <PKVideoPlaybackSpeedMenu
-            playbackRate={playbackRate}
-            onPlaybackRateChange={handlePlaybackRateChange}
-          />
+          <PKVideoPlaybackSpeedMenu />
 
-          <PKVideoControlButton label="Fullscreen" onClick={onFullscreenToggle}>
-            {isFullscreen ? (
-              <Minimize className={classNames("size-4.5 stroke-[2.4]")} />
-            ) : (
-              <Maximize className={classNames("size-4.5 stroke-[2.4]")} />
+          <FullscreenButton
+            render={(props, state) => (
+              <PKVideoControlButton {...props}>
+                {state.fullscreen ? (
+                  <Minimize className={classNames("size-4.5 stroke-[2.4]")} />
+                ) : (
+                  <Maximize className={classNames("size-4.5 stroke-[2.4]")} />
+                )}
+              </PKVideoControlButton>
             )}
-          </PKVideoControlButton>
+          />
         </div>
       </div>
-    </div>
+    </Controls.Root>
   );
 };
