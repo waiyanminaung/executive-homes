@@ -115,7 +115,7 @@ const PKVideoPlayerContent = ({
       style={fullscreenVideoStyle}
       onClick={handleSurfaceClick}
       className={classNames(
-        "relative h-full overflow-hidden bg-black",
+        "relative h-full bg-black",
         fullscreen?.fullscreen &&
           "flex h-screen w-screen items-center justify-center",
         containerClassName,

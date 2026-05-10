@@ -36,7 +36,9 @@ export const PKVideoPlayerControls = () => {
     >
       <TimeSlider.Root className={classNames("pk-video-slider w-full")}>
         <TimeSlider.Track className={classNames("pk-video-slider__track")}>
-          <TimeSlider.Buffer className={classNames("pk-video-slider__buffer")} />
+          <TimeSlider.Buffer
+            className={classNames("pk-video-slider__buffer")}
+          />
           <TimeSlider.Fill className={classNames("pk-video-slider__fill")} />
         </TimeSlider.Track>
         <TimeSlider.Thumb className={classNames("pk-video-slider__thumb")} />
@@ -54,44 +56,44 @@ export const PKVideoPlayerControls = () => {
               <PKVideoControlButton {...props}>
                 {state.paused ? (
                   <Play
-                    className={classNames(
-                      "size-4.5 fill-current stroke-[2.4]",
-                    )}
+                    className={classNames("size-4.5 fill-current stroke-[2.4]")}
                   />
                 ) : (
                   <Pause
-                    className={classNames(
-                      "size-4.5 fill-current stroke-[2.4]",
-                    )}
+                    className={classNames("size-4.5 fill-current stroke-[2.4]")}
                   />
                 )}
               </PKVideoControlButton>
             )}
           />
 
-          <SeekButton
-            seconds={-PK_PLAYER_SEEK_SECONDS}
-            className={classNames("bg-black/45 hover:bg-black/55")}
-            render={(props) => (
-              <PKVideoControlButton {...props}>
-                <RotateCcw className={classNames("size-4.5 stroke-[2.4]")} />
-              </PKVideoControlButton>
-            )}
-          />
+          <div className="ms:inline-flex hidden">
+            <SeekButton
+              seconds={-PK_PLAYER_SEEK_SECONDS}
+              className={classNames("bg-black/45 hover:bg-black/55")}
+              render={(props) => (
+                <PKVideoControlButton {...props}>
+                  <RotateCcw className={classNames("size-4.5 stroke-[2.4]")} />
+                </PKVideoControlButton>
+              )}
+            />
+          </div>
 
-          <SeekButton
-            seconds={PK_PLAYER_SEEK_SECONDS}
-            className={classNames("bg-black/45 hover:bg-black/55")}
-            render={(props) => (
-              <PKVideoControlButton {...props}>
-                <RotateCw className={classNames("size-4.5 stroke-[2.4]")} />
-              </PKVideoControlButton>
-            )}
-          />
+          <div className="ms:inline-flex hidden">
+            <SeekButton
+              seconds={PK_PLAYER_SEEK_SECONDS}
+              className={classNames("bg-black/45 hover:bg-black/55")}
+              render={(props) => (
+                <PKVideoControlButton {...props}>
+                  <RotateCw className={classNames("size-4.5 stroke-[2.4]")} />
+                </PKVideoControlButton>
+              )}
+            />
+          </div>
 
           <Time.Group
             className={classNames(
-              "rounded-full bg-black/45 px-3 py-1.5 text-[11px]",
+              "rounded-full bg-black/45 px-3 py-1.5 text-[13px]",
               "font-semibold tabular-nums text-white",
               "whitespace-nowrap",
               "sm:px-3.5 sm:text-sm",
@@ -106,7 +108,7 @@ export const PKVideoPlayerControls = () => {
         <div
           className={classNames(
             "flex shrink-0 items-center gap-1 rounded-full",
-            "bg-black/45 px-1 py-1 sm:gap-2 sm:px-2",
+            "bg-black/45 px-1 sm:py-1 sm:gap-2 sm:px-2",
           )}
         >
           <MuteButton
@@ -121,22 +123,24 @@ export const PKVideoPlayerControls = () => {
             )}
           />
 
-          <VolumeSlider.Root
-            className={classNames(
-              "pk-video-slider pk-video-volume-slider hidden w-20 sm:flex lg:w-28",
-            )}
-          >
-            <VolumeSlider.Track
-              className={classNames("pk-video-slider__track")}
+          <div className="sm:flex hidden">
+            <VolumeSlider.Root
+              className={classNames(
+                "pk-video-slider pk-video-volume-slider w-20 lg:w-28",
+              )}
             >
-              <VolumeSlider.Fill
-                className={classNames("pk-video-slider__fill")}
+              <VolumeSlider.Track
+                className={classNames("pk-video-slider__track")}
+              >
+                <VolumeSlider.Fill
+                  className={classNames("pk-video-slider__fill")}
+                />
+              </VolumeSlider.Track>
+              <VolumeSlider.Thumb
+                className={classNames("pk-video-slider__thumb")}
               />
-            </VolumeSlider.Track>
-            <VolumeSlider.Thumb
-              className={classNames("pk-video-slider__thumb")}
-            />
-          </VolumeSlider.Root>
+            </VolumeSlider.Root>
+          </div>
 
           <PKVideoPlaybackSpeedMenu />
 

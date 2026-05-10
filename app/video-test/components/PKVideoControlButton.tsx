@@ -3,8 +3,7 @@
 import { forwardRef, type ComponentPropsWithoutRef } from "react";
 import { classNames } from "@/utils/classNames";
 
-interface PKVideoControlButtonProps
-  extends ComponentPropsWithoutRef<"button"> {
+interface PKVideoControlButtonProps extends ComponentPropsWithoutRef<"button"> {
   label?: string;
 }
 
@@ -30,7 +29,7 @@ export const PKVideoControlButton = forwardRef<
       className={classNames(
         "size-8",
         "inline-flex items-center justify-center",
-        "rounded-full bg-transparent p-0 text-white",
+        "rounded-full p-0 text-white",
         "transition",
         "hover:bg-white/10 active:scale-100",
         "focus:outline-none focus-visible:outline-none focus-visible:ring-0",
