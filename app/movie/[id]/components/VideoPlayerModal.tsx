@@ -82,7 +82,7 @@ export const VideoPlayerModal = ({
           <button
             type="button"
             onClick={handleClose}
-            className="p-2.5 lg:p-3 bg-white/10 hover:bg-white/20 backdrop-blur-md  rounded-2xl  text-white transition-all border border-white/5"
+            className="cursor-pointer p-2.5 lg:p-3 bg-white/10 hover:bg-white/20 rounded-2xl  text-white transition-all border border-white/5"
           >
             <ArrowLeft className="size-4 group-hover:-translate-x-1 transition-transform" />
           </button>
@@ -99,10 +99,11 @@ export const VideoPlayerModal = ({
       </header>
 
       <main className="flex-1 flex flex-col items-center justify-center relative px-8 pb-8 transition-all duration-700 min-h-0 z-10">
-        <div className="w-full h-full">
+        <div className="w-full h-full flex items-center justify-center min-h-0">
           <div
             className={classNames(
               "max-w-full max-h-full",
+              "w-full",
               "mx-auto rounded-3xl overflow-hidden",
               aspectRatio ? "" : "aspect-video",
               "relative shadow-[0_0_100px_rgba(229,9,20,0.1)]",
