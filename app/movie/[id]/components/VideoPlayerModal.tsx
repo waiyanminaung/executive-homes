@@ -98,12 +98,11 @@ export const VideoPlayerModal = ({
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center relative px-8 pb-8 transition-all duration-700 min-h-0 z-10">
-        <div className="w-full h-full flex items-center justify-center min-h-0">
+      <main className="flex-1 flex items-center justify-center relative px-8 pb-8 transition-all duration-700 min-h-0 z-10">
+        <div className="w-full h-full min-h-0">
           <div
             className={classNames(
               "max-w-full max-h-full",
-              "w-full",
               "mx-auto rounded-3xl overflow-hidden",
               aspectRatio ? "" : "aspect-video",
               "relative shadow-[0_0_100px_rgba(229,9,20,0.1)]",
