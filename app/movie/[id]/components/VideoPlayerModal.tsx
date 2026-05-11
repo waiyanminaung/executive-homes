@@ -88,7 +88,7 @@ export const VideoPlayerModal = ({
           </button>
         </div>
 
-        <div className="hidden lg:flex flex-col">
+        <div className="flex flex-col relative -bottom-0.5">
           <h3 className="text-xs font-black tracking-tight text-white/90 truncate max-w-75">
             {movie.title}
           </h3>

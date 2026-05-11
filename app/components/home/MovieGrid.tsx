@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Flame, Film, Star, Zap } from "lucide-react";
 import { classNames } from "@/utils/classNames";
+import { CONTENT_IMAGE_BLUR_DATA_URL } from "@/constants/content";
 import type { Content } from "@/types/content";
 
 interface MovieGridProps {
@@ -58,7 +59,7 @@ export const MovieGrid = ({
         isSearchActive ? "max-w-4xl mx-auto" : "",
       )}
     >
-      {items.map((movie) => (
+      {items.map((movie, index) => (
         <Link
           href={`/movie/${movie.id}`}
           key={movie.id}
@@ -135,6 +136,10 @@ export const MovieGrid = ({
               alt={movie.title}
               fill
               sizes="(min-width: 1024px) 16vw, 33vw"
+              priority={!isSearchActive && index < 6}
+              loading={!isSearchActive && index < 6 ? "eager" : "lazy"}
+              placeholder="blur"
+              blurDataURL={CONTENT_IMAGE_BLUR_DATA_URL}
               className={classNames(
                 "object-cover transition-transform duration-500",
                 "group-hover:scale-110",

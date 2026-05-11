@@ -3,6 +3,7 @@ import { Inter, Noto_Sans_Myanmar } from "next/font/google";
 import { GeckoUIPortal } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import "./globals.css";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -35,8 +36,10 @@ export default function RootLayout({
       )}
     >
       <body className={classNames("min-h-full", "flex", "flex-col")}>
-        {children}
-        <GeckoUIPortal />
+        <NuqsAdapter>
+          {children}
+          <GeckoUIPortal />
+        </NuqsAdapter>
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { parseAsString, useQueryState } from "nuqs";
 import { Button } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import { PAGE_SIZE, SEARCH_DEBOUNCE_MS } from "@/constants/content";
@@ -20,10 +21,16 @@ import {
 } from "./components/home";
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useQueryState(
+    "search",
+    parseAsString.withDefault(""),
+  );
   const [isRequestOpen, setIsRequestOpen] = useState(false);
   const [isWatchlistOpen, setIsWatchlistOpen] = useState(false);
-  const [currentCategoryId, setCurrentCategoryId] = useState("all");
+  const [currentCategoryId, setCurrentCategoryId] = useQueryState(
+    "category",
+    parseAsString.withDefault("all"),
+  );
   const [currentPage, setCurrentPage] = useState(1);
 
   const { watchlist, remove, clear } = useWatchlist();
@@ -33,7 +40,10 @@ export default function Home() {
   });
 
   const searchInput = searchQuery.trim();
-  const debouncedSearchQuery = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
+  const debouncedSearchQuery = useDebouncedValue(
+    searchInput,
+    SEARCH_DEBOUNCE_MS,
+  );
   const search = debouncedSearchQuery;
   const isSearchInputActive = !!searchInput;
   const isSearchActive = !!search;
