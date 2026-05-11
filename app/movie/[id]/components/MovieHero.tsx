@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Play } from "lucide-react";
@@ -29,10 +30,13 @@ export const MovieHero = ({ movie }: MovieHeroProps) => {
         "relative h-[50vh] lg:h-[90vh] overflow-hidden bg-black",
       )}
     >
-      <img
+      <Image
         src={movie.backdropUrl}
         alt={movie.title}
-        className={classNames("w-full h-full object-cover")}
+        fill
+        priority
+        sizes="100vw"
+        className={classNames("object-cover")}
         referrerPolicy="no-referrer"
       />
       <div

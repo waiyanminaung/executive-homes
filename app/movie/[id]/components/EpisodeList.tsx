@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Download, Play, Send } from "lucide-react";
 import type { Episode, Season } from "@/types/content";
@@ -77,11 +78,13 @@ export const EpisodeList = ({
                 "overflow-hidden bg-card shrink-0",
               )}
             >
-              <img
+              <Image
                 src={episode.posterUrl}
                 alt={episode.title}
+                fill
+                sizes="(min-width: 1024px) 192px, (min-width: 640px) 160px, 100vw"
                 className={classNames(
-                  "w-full h-full object-cover transition-transform duration-500",
+                  "object-cover transition-transform duration-500",
                   "group-hover:scale-110 opacity-60 group-hover:opacity-100",
                 )}
                 referrerPolicy="no-referrer"

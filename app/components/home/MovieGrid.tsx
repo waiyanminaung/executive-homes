@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Flame, Film, Star, Zap } from "lucide-react";
 import { classNames } from "@/utils/classNames";
@@ -129,11 +130,13 @@ export const MovieGrid = ({
               ) : null}
             </div>
 
-            <img
+            <Image
               src={movie.posterUrl}
               alt={movie.title}
+              fill
+              sizes="(min-width: 1024px) 16vw, 33vw"
               className={classNames(
-                "w-full h-full object-cover transition-transform duration-500",
+                "object-cover transition-transform duration-500",
                 "group-hover:scale-110",
               )}
               referrerPolicy="no-referrer"
@@ -159,7 +162,9 @@ export const MovieGrid = ({
               </span>
               <div className={classNames("flex items-center gap-1")}>
                 <Star
-                  className={classNames("size-2.5 fill-black text-black sm:size-3")}
+                  className={classNames(
+                    "size-2.5 fill-black text-black sm:size-3",
+                  )}
                 />
                 <span
                   className={classNames(

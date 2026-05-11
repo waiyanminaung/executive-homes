@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Edit, Film, Tv, Zap, Flame } from "lucide-react";
 import { Button } from "@geckoui/geckoui";
@@ -27,13 +28,15 @@ export default function AdminContentListItem({
         <div
           className={classNames(
             "h-16 w-12 shrink-0 overflow-hidden rounded-lg border border-white/10",
-            "bg-card shadow-lg lg:h-20 lg:w-16",
+            "bg-card shadow-lg lg:h-20 lg:w-16 relative",
           )}
         >
-          <img
+          <Image
             src={item.posterUrl}
             alt={item.title}
-            className={classNames("h-full w-full object-cover")}
+            fill
+            sizes="(min-width: 1024px) 64px, 48px"
+            className={classNames("object-cover")}
             referrerPolicy="no-referrer"
           />
         </div>

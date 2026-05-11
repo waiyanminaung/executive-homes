@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { Heart, Trash2, X } from "lucide-react";
 import { Button } from "@geckoui/geckoui";
@@ -112,13 +113,17 @@ export const WatchlistModal = ({
                     href={`/movie/${movie.id}`}
                     className={classNames(
                       "w-16 h-24 lg:w-20 lg:h-28 rounded-lg lg:rounded-xl",
+                      "relative",
                       "overflow-hidden shrink-0 border border-white/5",
                     )}
                     onClick={onClose}
                   >
-                    <img
+                    <Image
                       src={movie.posterUrl}
-                      className={classNames("w-full h-full object-cover")}
+                      alt={movie.title}
+                      fill
+                      sizes="(min-width: 1024px) 80px, 64px"
+                      className={classNames("object-cover")}
                       referrerPolicy="no-referrer"
                     />
                   </Link>

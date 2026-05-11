@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRead } from "@/lib/spoosh";
 import type { AdminReportItem, AdminRequestItem } from "@/types/admin";
@@ -164,11 +165,14 @@ export default function AdminDashboardPage() {
                 key={movie.id}
                 className="rounded-2xl border border-white/5 bg-[#111] overflow-hidden"
               >
-                <div className="aspect-[16/10] overflow-hidden bg-black/30">
-                  <img
+                <div className="aspect-[16/10] overflow-hidden bg-black/30 relative">
+                  <Image
                     src={movie.posterUrl}
                     alt={movie.title}
-                    className="h-full w-full object-cover"
+                    fill
+                    sizes="(min-width: 1280px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                    referrerPolicy="no-referrer"
                   />
                 </div>
                 <div className="p-4">

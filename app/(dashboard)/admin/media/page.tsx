@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Copy, ExternalLink } from "lucide-react";
 import { Button } from "@geckoui/geckoui";
 import { useRead } from "@/lib/spoosh";
@@ -73,7 +74,11 @@ export default function AdminMediaPage() {
             No Media Found
           </div>
         ) : (
-          <div className={classNames("grid gap-6 p-4 sm:grid-cols-2 lg:p-8 xl:grid-cols-4")}>
+          <div
+            className={classNames(
+              "grid gap-6 p-4 sm:grid-cols-2 lg:p-8 xl:grid-cols-4",
+            )}
+          >
             {mediaEntries.map((entry) => (
               <article
                 key={entry.id}
@@ -84,14 +89,16 @@ export default function AdminMediaPage() {
               >
                 <div
                   className={classNames(
-                    "aspect-[4/5] overflow-hidden bg-card",
+                    "aspect-[4/5] overflow-hidden bg-card relative",
                   )}
                 >
-                  <img
+                  <Image
                     src={entry.url}
                     alt={`${entry.title} ${entry.label}`}
+                    fill
+                    sizes="(min-width: 1280px) 25vw, (min-width: 640px) 50vw, 100vw"
                     className={classNames(
-                      "h-full w-full object-cover transition-transform duration-500",
+                      "object-cover transition-transform duration-500",
                       "group-hover:scale-110",
                     )}
                   />
