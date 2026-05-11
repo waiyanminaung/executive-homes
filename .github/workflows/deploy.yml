@@ -1,87 +1,53 @@
-name: Pk Movie Build
+name: Deploy
 
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
-permissions:
-  contents: read
-
-jobs: 
+jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    steps: 
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          run_install: false
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Prisma Generate
-        run: pnpm prisma generate
-
-      - name: Build Application
-        run: pnpm run build
-
-      - name: Prepare deploy files
-        run: |
-          mkdir -p deploy
-          cp -r .next/standalone/* deploy/
-          mkdir -p deploy/.next/static
-          cp -r .next/static/* deploy/.next/static/
-          cp -r public deploy/public
-          cp -r prisma deploy/prisma
-          cp -r prisma.config.ts deploy/prisma.config.ts
-
-      - name: Create server directory (via SSH)
-        uses: appleboy/ssh-action@v1.0.3 
+    steps:
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@v1.2.2
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            sudo mkdir -p /var/www/pkmovie-app
-            sudo chown -R $USER:$USER /var/www/pkmovie-app
 
-      - name: Upload build output to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          source: "deploy/*"
-          target: "/var/www/pkmovie-app"
-          strip_components: 1 
+            REPO_DIR="/var/www/pkmovie"
+            REPO_URL="git@github.com:${{ github.repository }}.git"
 
-      - name: Run Database Migration and Start App (via SSH)
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            cd /var/www/pkmovie-app
-            
-            echo "${{ secrets.DOTENV_FILE }}" > .env
+            if [ ! -d "$REPO_DIR/.git" ]; then
+              echo "Repository not found or .git missing. Cloning..."
+              rm -rf $REPO_DIR
+              git clone $REPO_URL $REPO_DIR
+            fi
 
-            set -a            
-            source .env
-            set +a
-            
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            
-            npx prisma db push --accept-data-loss
-            
-            pm2 restart pkmovie-app || pm2 start server.js --name pkmovie-app
+            cd $REPO_DIR
+
+            # Pull latest code
+            git pull origin main
+
+            # Install dependencies
+            pnpm install --frozen-lockfile
+
+            # Generate Prisma client
+            pnpm run db:generate
+
+            # Load env and build
+            set -a && source .env && set +a
+            pnpm run build
+
+            # Prepare standalone output
+            mkdir -p .next/standalone/.next
+            cp -R .next/static .next/standalone/.next/
+            cp -R public .next/standalone/public
+
+            # Run database migrations
+            pnpm run db:push
+
+            # Restart PM2
+            pm2 reload ecosystem.config.cjs --env production
