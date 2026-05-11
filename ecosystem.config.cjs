@@ -1,8 +1,8 @@
 module.exports = {
   apps: [
     {
-      name: "pkmovie-app",
-      script: "pnpm",
+      name: "pkmovie",
+      script: "./node_modules/next/dist/bin/next",
       args: "start",
       instances: "max",
       exec_mode: "cluster",
