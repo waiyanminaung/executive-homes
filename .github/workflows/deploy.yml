@@ -42,6 +42,7 @@ jobs:
           cp -r .next/static/* deploy/.next/static/
           cp -r public deploy/public
           cp -r prisma deploy/prisma
+          cp -r prisma.config.ts deploy/prisma.config.ts
 
       - name: Create server directory (via SSH)
         uses: appleboy/ssh-action@v1.0.3 
@@ -73,6 +74,10 @@ jobs:
             cd /var/www/pkmovie-app
             
             echo "${{ secrets.DOTENV_FILE }}" > .env
+
+            set -a            
+            source .env
+            set +a
             
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
