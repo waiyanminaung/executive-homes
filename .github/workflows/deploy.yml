@@ -20,7 +20,7 @@ jobs:
           script: |
             set -e
 
-            REPO_DIR="~/pkmovie-app"
+            REPO_DIR="$HOME/pkmovie-app"
             REPO_URL="git@github.com:${{ github.repository }}.git"
 
             mkdir -p ~/.ssh
@@ -33,9 +33,7 @@ jobs:
             fi
 
             cd $REPO_DIR
-            git remote set-url origin $REPO_URL
-            echo "Fetching updates..."
-            git fetch --all
+            git fetch origin main
             git reset --hard origin/main
 
             
