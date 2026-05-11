@@ -17,16 +17,23 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
 
-            REPO_DIR="/var/www/pkmovie"
+
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+
+            node -v
+            pnpm -v
+
+            PROJECT_DIR="/var/www/pkmovie"
             REPO_URL="git@github.com:${{ github.repository }}.git"
 
-            if [ ! -d "$REPO_DIR/.git" ]; then
+            if [ ! -d "$PROJECT_DIR/.git" ]; then
               echo "Repository not found or .git missing. Cloning..."
-              rm -rf $REPO_DIR
-              git clone $REPO_URL $REPO_DIR
+              rm -rf $PROJECT_DIR
+              git clone $REPO_URL $PROJECT_DIR
             fi
 
-            cd $REPO_DIR
+            cd $PROJECT_DIR
 
             # Pull latest code
             git pull origin main
