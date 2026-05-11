@@ -20,7 +20,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 8. Never use `useMemo` or `useCallback` unless there is a performance issue. (If you are AI agent, avoid using them completely)
 9. Never check `obj.nested && 'property' in obj.nested`. Use optional chaining `obj.nested?.property` instead.
 10. Never document the changes with markdown file or something, unless explicitly requested.
-11. Always use `yarn` as package manager.
+11. Always use `pnpm` as package manager.
 12. Always run `lint` and `typecheck` to check for linting errors before submitting code.
 13. Always use `zod` with `react-hook-form` for form validation.
     And in hono, never check validation in service layer unless there is no way to do it in the controller layer.
