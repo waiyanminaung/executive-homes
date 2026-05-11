@@ -43,6 +43,9 @@ jobs:
 
             # Generate Prisma client
             pnpm run db:generate
+            
+            # Create .env file 
+            echo "${{ secrets.DOTENV_FILE }}" > .env
 
             # Load env and build
             set -a && source .env && set +a
