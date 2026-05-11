@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: "pkmovie-app",
-      script: ".next/standalone/server.js",
-      cwd: __dirname,
+      script: "pnpm",
+      args: "start",
       instances: "max",
       exec_mode: "cluster",
       env_production: {

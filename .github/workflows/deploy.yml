@@ -51,11 +51,6 @@ jobs:
             set -a && source .env && set +a
             pnpm run build
 
-            # Prepare standalone output
-            mkdir -p .next/standalone/.next
-            cp -R .next/static .next/standalone/.next/
-            cp -R public .next/standalone/public
-
             # Run database migrations
             pnpm run db:push
 
