@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { parseAsString, useQueryState } from "nuqs";
 import { Button } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
@@ -20,7 +20,7 @@ import {
   WatchlistModal,
 } from "./components/home";
 
-export default function Home() {
+function HomeContent() {
   const [searchQuery, setSearchQuery] = useQueryState(
     "search",
     parseAsString.withDefault(""),
@@ -157,5 +157,13 @@ export default function Home() {
         onClick={() => setIsWatchlistOpen(true)}
       />
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   );
 }
