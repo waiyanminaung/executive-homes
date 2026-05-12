@@ -20,7 +20,7 @@ const inputClassName =
   "w-full bg-white/5 border border-white/5 rounded-2xl px-4 focus-within:ring-1 focus-within:ring-accent/30 transition-all";
 const inputInnerClassName = "font-bold placeholder:text-white/20";
 const labelClassName =
-  "text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-white/40 ml-1";
+  "text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-white/45";
 const errorClassName = "text-red-400 text-xs font-semibold";
 
 export default function AdminContentFormFields({
@@ -150,11 +150,13 @@ export default function AdminContentFormFields({
       </Field>
 
       <div className={classNames("space-y-4")}>
-        <p className={labelClassName}>Display Categories</p>
+        <p className="ml-1 text-[10px] font-black uppercase tracking-widest text-white/70">
+          Display Categories
+        </p>
         <div
           className={classNames(
-            "grid grid-cols-2 gap-2 rounded-2xl border border-white/5",
-            "bg-white/5 p-4 lg:grid-cols-3",
+            "grid grid-cols-2 gap-2 rounded-2xl border border-white/10",
+            "bg-white/10 p-4 lg:grid-cols-3",
           )}
         >
           {categories.length ? (
@@ -164,8 +166,8 @@ export default function AdminContentFormFields({
                 name="categoryIds"
                 value={category.id}
                 label={category.name}
-                className="rounded-xl border border-transparent bg-white/[0.02] hover:border-white/5 hover:bg-white/[0.05]"
-                labelClassName="truncate text-[10px] font-bold uppercase tracking-widest text-white/60"
+                className="rounded-xl border border-white/10 bg-white/10 px-3 py-2 hover:border-white/20 hover:bg-white/15"
+                labelClassName="truncate text-[10px] font-bold uppercase tracking-widest text-white/80"
               />
             ))
           ) : (
@@ -213,7 +215,6 @@ function Field({
     <RHFInputGroup
       label={label}
       required={required}
-      className="space-y-2"
       labelClassName={labelClassName}
       errorClassName={errorClassName}
     >

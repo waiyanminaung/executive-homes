@@ -147,4 +147,20 @@ export const movieRoutes = new Hono()
 
       return c.json(mapContent(movie));
     },
-  );
+  )
+  .delete("/:id", zv("param", movieIdParamSchema), async (c) => {
+    const { id } = c.req.valid("param");
+    const movie = await prisma.content.findUnique({
+      where: { id },
+    });
+
+    if (!movie) {
+      return c.json({ error: "Movie not found" }, 404);
+    }
+
+    await prisma.content.delete({
+      where: { id },
+    });
+
+    return c.json({ success: true });
+  });

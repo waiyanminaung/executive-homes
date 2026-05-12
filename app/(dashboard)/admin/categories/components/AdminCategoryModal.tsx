@@ -4,7 +4,12 @@ import { FormProvider, useForm } from "react-hook-form";
 import type { Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Save, X } from "lucide-react";
-import { Button, LoadingButton, RHFInput, RHFInputGroup } from "@geckoui/geckoui";
+import {
+  Button,
+  LoadingButton,
+  RHFInput,
+  RHFInputGroup,
+} from "@geckoui/geckoui";
 import { DEFAULT_ADMIN_CATEGORY_VALUES } from "@/constants/admin/categories";
 import { useWrite } from "@/lib/spoosh";
 import { classNames } from "@/utils/classNames";
@@ -22,7 +27,7 @@ interface AdminCategoryModalProps {
 }
 
 const labelClassName =
-  "text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-white/40 ml-1";
+  "text-[9px] lg:text-[10px] font-black uppercase tracking-widest text-white/40";
 const errorClassName = "text-red-400 text-xs font-semibold";
 
 const toFormValues = (
@@ -107,7 +112,6 @@ export default function AdminCategoryModal({
           <RHFInputGroup
             label="Category Name"
             required
-            className="space-y-2"
             labelClassName={labelClassName}
             errorClassName={errorClassName}
           >

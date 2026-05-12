@@ -1,10 +1,21 @@
 "use client";
 
 import { useState } from "react";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
+import type { Resolver } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, CheckCircle2, X } from "lucide-react";
-import { Input, LoadingButton, Textarea } from "@geckoui/geckoui";
+import {
+  LoadingButton,
+  RHFInput,
+  RHFSelect,
+  RHFTextarea,
+  RHFInputGroup,
+  SelectOption,
+} from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import { useWrite } from "@/lib/spoosh";
+import { reportSchema, type ReportInput } from "@/validation/reportSchema";
 
 interface ReportModalProps {
   isOpen: boolean;
@@ -12,30 +23,54 @@ interface ReportModalProps {
   onClose: () => void;
 }
 
-const DEFAULT_REASON = "Broken Link / Video";
+const labelClassName =
+  "text-[10px] font-black uppercase tracking-widest text-white/50";
+const errorClassName = "text-red-400 text-xs font-semibold";
+
+const REPORT_REASONS = [
+  "လင့်ခ်ပျက်နေသည် / ဗီဒီယိုကြည့်မရပါ",
+  "စာတန်းထိုး မပါပါ",
+  "ရုပ်ရှင် မှားယွင်းနေသည်",
+  "အရုပ်မကြည်လင်ပါ",
+  "အခြား / အကြံပြုချက်",
+];
+const DEFAULT_REASON = REPORT_REASONS[0];
 
 export const ReportModal = ({ isOpen, title, onClose }: ReportModalProps) => {
-  const [reason, setReason] = useState(DEFAULT_REASON);
-  const [description, setDescription] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const methods = useForm<ReportInput>({
+    values: {
+      title,
+      reason: DEFAULT_REASON,
+      description: "",
+    },
+    resolver: zodResolver(reportSchema) as unknown as Resolver<ReportInput>,
+  });
+  const description = useWatch({
+    control: methods.control,
+    name: "description",
+  });
   const { trigger, loading } = useWrite((api) => api("reports").POST());
 
   if (!isOpen) return null;
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    if (!description.trim()) return;
+  const handleSubmit = methods.handleSubmit(async (values) => {
+    if (!values.description.trim()) return;
 
-    const result = await trigger({ body: { title, reason, description } });
+    const result = await trigger({ body: values });
     if (result.data) {
       setIsSubmitted(true);
+      methods.reset({
+        title,
+        reason: DEFAULT_REASON,
+        description: "",
+      });
       setTimeout(() => {
         setIsSubmitted(false);
-        setDescription("");
         onClose();
       }, 2500);
     }
-  };
+  });
 
   return (
     <div
@@ -47,7 +82,7 @@ export const ReportModal = ({ isOpen, title, onClose }: ReportModalProps) => {
     >
       <div
         className={classNames(
-          "bg-[#111] w-full max-w-md rounded-[2rem] p-6 lg:p-8",
+          "bg-[#111] w-full max-w-md rounded-[2rem] p-5 lg:p-6",
           "border border-white/5 relative overflow-hidden mx-4",
         )}
         onClick={(event) => event.stopPropagation()}
@@ -56,11 +91,11 @@ export const ReportModal = ({ isOpen, title, onClose }: ReportModalProps) => {
           type="button"
           onClick={onClose}
           className={classNames(
-            "absolute top-6 right-6 p-2 text-white/30 hover:text-white",
+            "absolute top-5 right-5 p-2 text-white/30 hover:text-white",
             "transition-colors",
           )}
         >
-          <X className={classNames("w-6 h-6")} />
+          <X className={classNames("w-5 h-5")} />
         </button>
 
         {isSubmitted ? (
@@ -80,7 +115,7 @@ export const ReportModal = ({ isOpen, title, onClose }: ReportModalProps) => {
             <div>
               <h3
                 className={classNames(
-                  "text-2xl font-black uppercase tracking-tighter mb-2",
+                  "text-xl font-black uppercase tracking-tighter mb-1",
                 )}
               >
                 တိုင်ကြားမှု လက်ခံရရှိပါသည်
@@ -97,9 +132,9 @@ export const ReportModal = ({ isOpen, title, onClose }: ReportModalProps) => {
             </div>
           </div>
         ) : (
-          <>
-            <div className={classNames("mb-6 lg:mb-8")}>
-              <div className={classNames("flex items-center gap-2 mb-2")}>
+          <FormProvider {...methods}>
+            <div className={classNames("mb-4 lg:mb-5")}>
+              <div className={classNames("flex items-center gap-2 mb-1")}>
                 <AlertCircle className={classNames("w-4 h-4 text-amber-500")} />
                 <span
                   className={classNames(
@@ -111,84 +146,76 @@ export const ReportModal = ({ isOpen, title, onClose }: ReportModalProps) => {
               </div>
               <h2
                 className={classNames(
-                  "text-2xl lg:text-3xl font-black uppercase tracking-tighter",
+                  "text-xl lg:text-2xl font-black uppercase tracking-tighter",
                 )}
               >
                 တစ်ခုခု အဆင်မပြေဖြစ်နေပါသလား?
               </h2>
               <p
                 className={classNames(
-                  "text-ink-secondary text-xs lg:text-sm mt-2 font-mono",
+                  "text-ink-secondary text-xs lg:text-sm mt-1 font-mono leading-snug",
                 )}
               >
                 တိုင်ကြားရန် - {title}
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className={classNames("space-y-6")}>
-              <div className={classNames("space-y-2")}>
-                <label
+            <form onSubmit={handleSubmit} className={classNames("space-y-4")}>
+              <RHFInput name="title" type="hidden" className="hidden" />
+              <RHFInputGroup
+                label="ပြဿနာအမျိုးအစား"
+                labelClassName={labelClassName}
+                errorClassName={errorClassName}
+              >
+                <RHFSelect
+                  name="reason"
                   className={classNames(
-                    "text-[10px] font-black uppercase tracking-widest",
-                    "text-white/50 ml-1",
+                    "w-full rounded-2xl border border-white/5 bg-white/5",
+                    "text-sm font-bold",
                   )}
                 >
-                  ပြဿနာအမျိုးအစား
-                </label>
-                <Input
-                  value={reason}
-                  onChange={(event) => setReason(event.target.value)}
-                  className={classNames(
-                    "w-full bg-white/5 border border-white/5 rounded-2xl",
-                    "py-4 px-6 text-sm font-bold placeholder:text-white/10",
-                    "focus-within:ring-1 focus-within:ring-accent/30",
-                    "focus-within:bg-white/10 transition-all",
-                  )}
-                  inputClassName={classNames("bg-transparent", "text-white")}
-                />
-              </div>
+                  {REPORT_REASONS.map((option) => (
+                    <SelectOption key={option} value={option} label={option} />
+                  ))}
+                </RHFSelect>
+              </RHFInputGroup>
 
-              <div className={classNames("space-y-2")}>
-                <label
-                  className={classNames(
-                    "text-[10px] font-black uppercase tracking-widest",
-                    "text-white/50 ml-1",
-                  )}
-                >
-                  အသေးစိတ်
-                </label>
-                <Textarea
-                  value={description}
-                  onChange={(event) => setDescription(event.target.value)}
+              <RHFInputGroup
+                label="အသေးစိတ်"
+                labelClassName={labelClassName}
+                errorClassName={errorClassName}
+              >
+                <RHFTextarea
+                  name="description"
                   rows={3}
                   placeholder="ဖြစ်နေတဲ့ ပြဿနာကို ရေးပေးပါ..."
                   className={classNames(
                     "w-full bg-white/5 border border-white/5 rounded-2xl",
-                    "py-4 px-6 text-sm font-bold placeholder:text-white/10",
+                    "py-3 px-6 text-sm font-bold placeholder:text-white/10",
                     "focus-within:ring-1 focus-within:ring-accent/30",
                     "focus-within:bg-white/10 transition-all resize-none",
                   )}
                 />
-              </div>
+              </RHFInputGroup>
 
               <LoadingButton
                 type="submit"
                 loading={loading}
                 loadingText="Sending..."
-                disabled={!description.trim()}
+                disabled={!description?.trim()}
                 className={classNames(
-                  "w-full bg-amber-500 text-black py-5 rounded-2xl",
+                  "w-full bg-amber-500 text-black py-3 rounded-2xl",
                   "font-black uppercase tracking-widest flex items-center",
                   "justify-center gap-3 hover:scale-[1.02] active:scale-95",
                   "transition-all disabled:opacity-50 disabled:hover:scale-100",
-                  "shadow-xl shadow-amber-500/10",
+                  "shadow-xl shadow-amber-500/10 text-[10px] lg:text-xs",
                 )}
               >
-                <AlertCircle className={classNames("w-5 h-5")} />
+                <AlertCircle className={classNames("w-4 h-4")} />
                 <span>တိုင်ကြားစာ ပို့မည်</span>
               </LoadingButton>
             </form>
-          </>
+          </FormProvider>
         )}
       </div>
     </div>

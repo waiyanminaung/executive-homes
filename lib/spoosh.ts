@@ -48,6 +48,12 @@ export type ApiSchema = {
       };
       body: MovieUpdateInput;
     };
+    DELETE: {
+      data: { success: true };
+      params: {
+        id: string;
+      };
+    };
   };
   categories: {
     GET: {

@@ -7,6 +7,7 @@ import { useRead } from "@/lib/spoosh";
 import { classNames } from "@/utils/classNames";
 import type { Category, Content, MovieListResponse } from "@/types/content";
 import AdminContentModal from "./components/AdminContentModal";
+import AdminDeleteContentModal from "./components/AdminDeleteContentModal";
 import AdminContentListItem from "./components/AdminContentListItem";
 import AdminContentPagination from "./components/AdminContentPagination";
 import AdminPageHeader from "../components/AdminPageHeader";
@@ -19,7 +20,7 @@ export default function AdminContentPage() {
   const { data: categoriesData } = useRead((api) => api("categories").GET(), {
     staleTime: 60000,
   });
-  const { data: moviesData, loading } = useRead((api) =>
+  const moviesRequest = useRead((api) =>
     api("movies").GET({
       query: {
         category: category ?? undefined,
@@ -29,16 +30,11 @@ export default function AdminContentPage() {
       },
     }),
   );
+  const { data: moviesData, loading } = moviesRequest;
 
   const categories = (categoriesData ?? []) as Category[];
   const response = (moviesData ?? { items: [], total: 0 }) as MovieListResponse;
   const totalPages = Math.max(1, Math.ceil(response.total / PAGE_SIZE));
-
-  const categoryLabel =
-    category === "all" || !category
-      ? "All Categories"
-      : (categories.find((item) => item.id === category)?.name ??
-        "Selected Category");
 
   const openContentModal = (content?: Content) => {
     Dialog.show({
@@ -54,6 +50,24 @@ export default function AdminContentPage() {
     });
   };
 
+  const refreshContent = () => {
+    moviesRequest.trigger();
+  };
+
+  const openDeleteModal = (content: Content) => {
+    Dialog.show({
+      className: "w-full max-w-sm bg-transparent p-0 shadow-none",
+      dismissOnOutsideClick: false,
+      content: ({ dismiss }) => (
+        <AdminDeleteContentModal
+          content={content}
+          onClose={dismiss}
+          onDeleted={refreshContent}
+        />
+      ),
+    });
+  };
+
   return (
     <div className="space-y-8">
       <AdminPageHeader
@@ -61,27 +75,17 @@ export default function AdminContentPage() {
         title="Library Management"
         description="Search the real content store, filter by menu category and inspect what is already live on the site."
         actions={
-          <div className="flex flex-wrap items-center gap-3">
-            <div
-              className={classNames(
-                "rounded-2xl border border-white/5 bg-white/5 px-4 py-3",
-                "text-sm text-white/45",
-              )}
-            >
-              {categoryLabel}
-            </div>
-            <Button
-              type="button"
-              onClick={() => openContentModal()}
-              className={classNames(
-                "rounded-xl bg-white px-6 py-3 text-[10px] font-black uppercase",
-                "tracking-widest text-black transition-all hover:scale-105 hover:bg-white/90",
-                "active:scale-95",
-              )}
-            >
-              Create Content
-            </Button>
-          </div>
+          <Button
+            type="button"
+            onClick={() => openContentModal()}
+            className={classNames(
+              "rounded-xl bg-white px-6 py-3 text-[10px] font-black uppercase",
+              "tracking-widest text-black transition-all hover:scale-105 hover:bg-white/90",
+              "active:scale-95",
+            )}
+          >
+            Create Content
+          </Button>
         }
       />
 
@@ -149,6 +153,7 @@ export default function AdminContentPage() {
                   key={item.id}
                   item={item}
                   onEdit={openContentModal}
+                  onDelete={openDeleteModal}
                 />
               ))}
             </div>

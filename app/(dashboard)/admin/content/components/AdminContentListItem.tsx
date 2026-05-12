@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Edit, Film, Tv, Zap, Flame } from "lucide-react";
+import { Edit, Film, Tv, Zap, Flame, Trash2 } from "lucide-react";
 import { Button } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import type { Content } from "@/types/content";
@@ -8,11 +8,13 @@ import type { Content } from "@/types/content";
 interface AdminContentListItemProps {
   item: Content;
   onEdit: (item: Content) => void;
+  onDelete: (item: Content) => void;
 }
 
 export default function AdminContentListItem({
   item,
   onEdit,
+  onDelete,
 }: AdminContentListItemProps) {
   const TypeIcon = item.type === "series" ? Tv : Film;
 
@@ -107,17 +109,30 @@ export default function AdminContentListItem({
         >
           Open
         </Link>
-        <Button
-          type="button"
-          variant="icon"
-          onClick={() => onEdit(item)}
-          className={classNames(
-            "rounded-xl bg-white/5 p-3 text-white/50 transition-all",
-            "hover:bg-white/10 hover:text-white",
-          )}
-        >
-          <Edit className="size-4" />
-        </Button>
+        <div className={classNames("flex items-center gap-2")}>
+          <Button
+            type="button"
+            variant="icon"
+            onClick={() => onEdit(item)}
+            className={classNames(
+              "!size-12 shrink-0 rounded-xl bg-white/5 text-white/50 transition-all",
+              "hover:bg-white/10 hover:text-white",
+            )}
+          >
+            <Edit className="size-4" />
+          </Button>
+          <Button
+            type="button"
+            variant="icon"
+            onClick={() => onDelete(item)}
+            className={classNames(
+              "!size-12 shrink-0 rounded-xl bg-red-500/10 text-red-500 transition-all",
+              "hover:bg-red-500/20",
+            )}
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </div>
       </div>
     </article>
   );
