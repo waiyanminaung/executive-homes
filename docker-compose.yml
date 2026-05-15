@@ -1,4 +1,24 @@
 services:
+  pkmovie-app-dev:
+    build:
+      context: .
+      target: development
+    image: waiyandev/pkmovie-app-dev:latest
+    container_name: pkmovie-app-dev
+    ports:
+      - "3000:3000"
+    command: ["pnpm", "dev", "--hostname", "0.0.0.0", "--port", "3000"]
+    env_file:
+      - .env.docker
+    environment:
+      - NODE_ENV=development
+      - WATCHPACK_POLLING=true
+    volumes:
+      - .:/app
+      - pkmovie_node_modules:/app/node_modules
+      - pkmovie_pnpm_store:/root/.pnpm-store
+    depends_on:
+      - pkmovie-db
   pkmovie-app:
     build:
       context: .
@@ -24,3 +44,6 @@ services:
       - pkmovie_db_data:/var/lib/postgresql/data
 volumes:
   pkmovie_db_data:
+  pkmovie_app_data:
+  pkmovie_node_modules:
+  pkmovie_pnpm_store:

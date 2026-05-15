@@ -1,24 +1,26 @@
 FROM node:lts-alpine3.22 AS base
 WORKDIR /app
-COPY package*.json ./
+COPY package.json pnpm-lock.yaml ./
+RUN corepack enable
 
 FROM base AS development
-RUN npm install
+RUN pnpm install
 COPY . .
-RUN npx prisma generate
-CMD ["npm", "run dev"]
+RUN pnpm db:generate
+CMD ["pnpm", "dev"]
 
 FROM base AS build
-RUN npm install --silent
+RUN pnpm install --frozen-lockfile
 COPY . .
-RUN npx prisma generate
-RUN npm run build
+RUN pnpm db:generate
+RUN pnpm build
 
 FROM base AS prod-deps
-RUN npm install --silent --omit=dev
+RUN pnpm install --frozen-lockfile --prod
 
 FROM node:lts-alpine3.22 AS production
 WORKDIR /app
+RUN corepack enable
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/public ./public
@@ -27,4 +29,4 @@ COPY --from=build /app/prisma ./prisma
 COPY --from=build /app/prisma.config.ts ./prisma.config.ts
 
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["pnpm", "start"]
