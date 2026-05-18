@@ -2,10 +2,15 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Heart, Trash2, X } from "lucide-react";
 import { Button } from "@geckoui/geckoui";
 import type { Content } from "@/types/content";
 import { classNames } from "@/utils/classNames";
+import {
+  getCurrentReturnToPath,
+  serializeReturnToSearchParams,
+} from "@/utils/navigationReturn";
 
 interface WatchlistModalProps {
   isOpen: boolean;
@@ -22,6 +27,10 @@ export const WatchlistModal = ({
   onRemove,
   onClear,
 }: WatchlistModalProps) => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const returnTo = getCurrentReturnToPath(pathname, searchParams);
+
   if (!isOpen) return null;
 
   return (
@@ -110,7 +119,9 @@ export const WatchlistModal = ({
                   )}
                 >
                   <Link
-                    href={`/movie/${movie.id}`}
+                    href={serializeReturnToSearchParams(`/movie/${movie.id}`, {
+                      returnTo,
+                    })}
                     className={classNames(
                       "w-16 h-24 lg:w-20 lg:h-28 rounded-lg lg:rounded-xl",
                       "relative",
@@ -129,7 +140,12 @@ export const WatchlistModal = ({
                   </Link>
                   <div className={classNames("flex-1 min-w-0")}>
                     <Link
-                      href={`/movie/${movie.id}`}
+                      href={serializeReturnToSearchParams(
+                        `/movie/${movie.id}`,
+                        {
+                          returnTo,
+                        },
+                      )}
                       className={classNames(
                         "text-base lg:text-xl font-bold text-white",
                         "hover:text-accent transition-colors truncate block",

@@ -2,9 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname, useSearchParams } from "next/navigation";
 import { Flame, Film, Star, Zap } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import { CONTENT_IMAGE_BLUR_DATA_URL } from "@/constants/content";
+import {
+  getCurrentReturnToPath,
+  serializeReturnToSearchParams,
+} from "@/utils/navigationReturn";
 import type { Content } from "@/types/content";
 
 interface MovieGridProps {
@@ -18,6 +23,10 @@ export const MovieGrid = ({
   isLoading,
   isSearchActive,
 }: MovieGridProps) => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const returnTo = getCurrentReturnToPath(pathname, searchParams);
+
   if (isLoading) {
     return (
       <div
@@ -61,7 +70,9 @@ export const MovieGrid = ({
     >
       {items.map((movie, index) => (
         <Link
-          href={`/movie/${movie.id}`}
+          href={serializeReturnToSearchParams(`/movie/${movie.id}`, {
+            returnTo,
+          })}
           key={movie.id}
           className={classNames("group cursor-pointer relative")}
         >

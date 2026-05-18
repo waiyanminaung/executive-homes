@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { createSerializer, parseAsString, useQueryState } from "nuqs";
 import { Download, Play, Send } from "lucide-react";
 import type { Episode, Season } from "@/types/content";
 import { classNames } from "@/utils/classNames";
+import { RETURN_TO_QUERY_KEY } from "@/utils/navigationReturn";
 
 interface EpisodeListProps {
   movieId: string;
@@ -14,6 +16,22 @@ interface EpisodeListProps {
   onEpisodeDownload: (episode: Episode) => void;
 }
 
+const serializeWatchSearchParams = createSerializer({
+  episode: parseAsString,
+  [RETURN_TO_QUERY_KEY]: parseAsString,
+});
+
+const getEpisodeWatchHref = (
+  movieId: string,
+  episodeId: string,
+  returnTo: string | null,
+) => {
+  return serializeWatchSearchParams(`/movie/${movieId}/watch`, {
+    episode: episodeId,
+    returnTo,
+  });
+};
+
 export const EpisodeList = ({
   movieId,
   seasons,
@@ -21,6 +39,7 @@ export const EpisodeList = ({
   onSeasonChange,
   onEpisodeDownload,
 }: EpisodeListProps) => {
+  const [returnTo] = useQueryState(RETURN_TO_QUERY_KEY, parseAsString);
   const currentSeason = seasons.find(
     (season) => season.seasonNumber === selectedSeason,
   );
@@ -70,9 +89,7 @@ export const EpisodeList = ({
             )}
           >
             <Link
-              href={`/movie/${movieId}/play`}
-              scroll={false}
-              replace
+              href={getEpisodeWatchHref(movieId, episode.id, returnTo)}
               className={classNames(
                 "relative w-full sm:w-40 lg:w-48 aspect-video rounded-xl",
                 "overflow-hidden bg-card shrink-0",
@@ -114,9 +131,7 @@ export const EpisodeList = ({
                 <div className={classNames("flex items-center gap-4")}>
                   {episode.sourceUrl ? (
                     <Link
-                      href={`/movie/${movieId}/play`}
-                      scroll={false}
-                      replace
+                      href={getEpisodeWatchHref(movieId, episode.id, returnTo)}
                       className={classNames(
                         "text-[10px] font-black text-accent hover:underline",
                         "uppercase flex items-center gap-1",
