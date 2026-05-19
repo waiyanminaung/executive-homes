@@ -19,18 +19,18 @@ services:
       - pkmovie_pnpm_store:/root/.pnpm-store
     depends_on:
       - pkmovie-db
-  pkmovie-app:
-    build:
-      context: .
-      target: production
-    image: waiyandev/pkmovie-app:latest
-    container_name: pkmovie-app
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env.docker
-    depends_on:
-      - pkmovie-db
+  # pkmovie-app:
+  #   build:
+  #     context: .
+  #     target: production
+  #   image: waiyandev/pkmovie-app:latest
+  #   container_name: pkmovie-app
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #     - .env.docker
+  #   depends_on:
+  #     - pkmovie-db
   pkmovie-db:
     image: postgres:15-alpine
     environment:

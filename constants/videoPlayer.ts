@@ -1,5 +1,7 @@
 export const PK_PLAYER_CENTER_FEEDBACK_MS = 900;
 
+export const WATCH_BACK_BUTTON_VISIBLE_MS = 1800;
+
 export const PK_PLAYER_SEEK_SECONDS = 15;
 
 export const PK_PLAYER_DEFAULT_VOLUME = 0.6;

@@ -1,8 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { createSerializer, parseAsString, useQueryState } from "nuqs";
+import { X } from "lucide-react";
+import { useWatchlist } from "@/components/@shared/useWatchlist";
+import { ReportModal } from "@/app/movie/[id]/components";
+import { WATCH_BACK_BUTTON_VISIBLE_MS } from "@/constants/videoPlayer";
 import { useRead } from "@/lib/spoosh";
 import type { Content, Episode } from "@/types/content";
 import { classNames } from "@/utils/classNames";
@@ -15,7 +20,6 @@ export type VideoWatchTab = "info";
 
 interface WatchSource {
   title: string;
-  time: string;
   sourceUrl?: string;
   provider?: Episode["provider"];
   poster?: string;
@@ -43,7 +47,6 @@ const getWatchSource = (
 
     return {
       title: episode ? `${movie.title} ${episode.title}` : movie.title,
-      time: episode?.duration ?? `${movie.year}`,
       sourceUrl: episode?.sourceUrl,
       provider: episode?.provider,
       poster: episode?.posterUrl ?? movie.backdropUrl,
@@ -53,7 +56,6 @@ const getWatchSource = (
 
   return {
     title: movie.title,
-    time: movie.duration ?? `${movie.year}`,
     sourceUrl: movie.sourceUrl,
     provider: movie.provider,
     poster: movie.backdropUrl,
@@ -63,15 +65,28 @@ const getWatchSource = (
 
 export const VideoWatchPage = () => {
   const params = useParams<{ id: string }>();
-  const router = useRouter();
   const movieId = typeof params.id === "string" ? params.id : "";
   const [episodeId] = useQueryState("episode", parseAsString);
   const [returnTo] = useQueryState(RETURN_TO_QUERY_KEY, parseAsString);
   const [activeTab, setActiveTab] = useState<VideoWatchTab | null>(null);
+  const [isReportOpen, setIsReportOpen] = useState(false);
+  const [isBackButtonActive, setIsBackButtonActive] = useState(false);
+  const backButtonIdleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
   const { data: movie, loading } = useRead(
     (api) => api("movies/:id").GET({ params: { id: movieId } }),
     { enabled: !!movieId },
   );
+  const { toggle, isSaved } = useWatchlist();
+
+  useEffect(() => {
+    return () => {
+      if (backButtonIdleTimeoutRef.current) {
+        clearTimeout(backButtonIdleTimeoutRef.current);
+      }
+    };
+  }, []);
 
   if (loading) {
     return (
@@ -103,9 +118,30 @@ export const VideoWatchPage = () => {
   }
 
   const source = getWatchSource(movie, episodeId);
+  const isInWatchlist = isSaved(movie.id);
+  const movieDetailHref = serializeMovieDetailSearchParams(
+    `/movie/${movie.id}`,
+    {
+      returnTo,
+    },
+  );
 
   const toggleActiveTab = (tab: VideoWatchTab) => {
     setActiveTab(activeTab === tab ? null : tab);
+  };
+
+  const handleVideoAreaMouseMove = () => {
+    if (!isBackButtonActive) {
+      setIsBackButtonActive(true);
+    }
+
+    if (backButtonIdleTimeoutRef.current) {
+      clearTimeout(backButtonIdleTimeoutRef.current);
+    }
+
+    backButtonIdleTimeoutRef.current = setTimeout(() => {
+      setIsBackButtonActive(false);
+    }, WATCH_BACK_BUTTON_VISIBLE_MS);
   };
 
   return (
@@ -115,7 +151,16 @@ export const VideoWatchPage = () => {
         "selection:bg-accent/40",
       )}
     >
-      <main className={classNames("relative min-h-0 flex-1 bg-black")}>
+      <ReportModal
+        isOpen={isReportOpen}
+        title={source.title}
+        onClose={() => setIsReportOpen(false)}
+      />
+
+      <main
+        className={classNames("relative min-h-0 flex-1 bg-black")}
+        onMouseMove={handleVideoAreaMouseMove}
+      >
         <VideoWatchPlayer
           key={source.storageId}
           sourceUrl={source.sourceUrl}
@@ -123,21 +168,32 @@ export const VideoWatchPage = () => {
           poster={source.poster}
           storageId={source.storageId}
         />
+
+        <Link
+          href={movieDetailHref}
+          className={classNames(
+            "absolute left-4 top-4 z-20 size-11 rounded-full",
+            "border border-white/10 bg-black/45 text-white backdrop-blur-md",
+            "flex items-center justify-center",
+            isBackButtonActive ? "opacity-100" : "opacity-45",
+            "transition-all hover:bg-white/10 hover:opacity-100",
+            "focus-visible:opacity-100 active:scale-95",
+            "lg:left-8 lg:top-8 lg:size-12",
+          )}
+          aria-label="Close"
+        >
+          <X className={classNames("size-5")} />
+        </Link>
       </main>
 
       <VideoWatchPanel activeTab={activeTab} movie={movie} />
 
       <VideoWatchBottomBar
         title={source.title}
-        time={source.time}
         activeTab={activeTab}
-        onBack={() =>
-          router.push(
-            serializeMovieDetailSearchParams(`/movie/${movie.id}`, {
-              returnTo,
-            }),
-          )
-        }
+        isInWatchlist={isInWatchlist}
+        onReport={() => setIsReportOpen(true)}
+        onToggleWatchlist={() => toggle(movie)}
         onToggleTab={toggleActiveTab}
       />
     </div>
