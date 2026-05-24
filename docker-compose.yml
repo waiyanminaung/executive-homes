@@ -7,7 +7,7 @@ services:
     container_name: pkmovie-app-dev
     ports:
       - "3000:3000"
-    command: ["pnpm", "dev", "--hostname", "0.0.0.0", "--port", "3000"]
+    command: ["sh", "-c", "pnpm install && pnpm dev --hostname 0.0.0.0 --port 3000"]
     env_file:
       - .env.docker
     environment:

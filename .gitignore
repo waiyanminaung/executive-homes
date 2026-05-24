@@ -49,3 +49,16 @@ GEMINI.md
 .windsurfrules
 .trae/rules/project_rules.md
 /prisma/generated
+
+# pnpm
+.pnpm-store/
+
+# Docker
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
