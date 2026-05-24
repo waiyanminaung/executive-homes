@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { createSerializer, parseAsString, useQueryState } from "nuqs";
+import { parseAsString, useQueryState } from "nuqs";
 import { Download, Play, Send } from "lucide-react";
 import type { Episode, Season } from "@/types/content";
 import { classNames } from "@/utils/classNames";
 import { RETURN_TO_QUERY_KEY } from "@/utils/navigationReturn";
+import { serializeMovieDetailSearchParams } from "./movieDetailSearchParams";
 
 interface EpisodeListProps {
   movieId: string;
@@ -16,18 +17,14 @@ interface EpisodeListProps {
   onEpisodeDownload: (episode: Episode) => void;
 }
 
-const serializeWatchSearchParams = createSerializer({
-  episode: parseAsString,
-  [RETURN_TO_QUERY_KEY]: parseAsString,
-});
-
 const getEpisodeWatchHref = (
   movieId: string,
   episodeId: string,
   returnTo: string | null,
 ) => {
-  return serializeWatchSearchParams(`/movie/${movieId}/watch`, {
+  return serializeMovieDetailSearchParams(`/movie/${movieId}`, {
     episode: episodeId,
+    play: "1",
     returnTo,
   });
 };

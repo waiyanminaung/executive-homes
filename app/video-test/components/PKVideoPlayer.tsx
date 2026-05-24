@@ -9,6 +9,10 @@ import {
 } from "@videojs/react";
 import { Spinner } from "@geckoui/geckoui";
 import { Pause, Play } from "lucide-react";
+import type {
+  WatchPartyPlaybackState,
+  WatchPartyPlaybackStatus,
+} from "@/types/watchParty";
 import {
   PK_PLAYER_CENTER_FEEDBACK_MS,
   PK_PLAYER_SEEK_SECONDS,
@@ -32,8 +36,13 @@ interface PKVideoPlayerProps {
   autoPlay?: boolean;
   muted?: boolean;
   initialTime?: number;
+  onPlaybackStateChange?: (state: {
+    currentTime: number;
+    status: WatchPartyPlaybackStatus;
+  }) => void;
   onTimeUpdate?: (time: number) => void;
   poster?: string;
+  syncState?: WatchPartyPlaybackState | null;
   tracks?: VideoTrack[];
   containerClassName?: string;
 }
@@ -44,8 +53,10 @@ const PKVideoPlayerContent = ({
   autoPlay = false,
   muted = false,
   initialTime,
+  onPlaybackStateChange,
   onTimeUpdate,
   poster,
+  syncState,
   tracks = [],
   containerClassName,
 }: PKVideoPlayerProps) => {
@@ -157,8 +168,10 @@ const PKVideoPlayerContent = ({
       <PKVideoPlayerBridges
         initialTime={initialTime}
         isResumePending={isResumePending}
+        onPlaybackStateChange={onPlaybackStateChange}
         onResumePendingChange={setIsResumePending}
         onTimeUpdate={onTimeUpdate}
+        syncState={syncState}
       />
       <Hotkey
         keys="ArrowLeft"

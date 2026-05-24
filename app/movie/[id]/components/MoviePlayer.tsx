@@ -5,13 +5,23 @@ import { VideoOff } from "lucide-react";
 import { PKVideoPlayer } from "@/app/video-test/components/PKVideoPlayer";
 import { PK_PLAYER_PROGRESS_STORAGE_PREFIX } from "@/constants/videoPlayer";
 import type { ContentSourceProvider } from "@/constants/content";
+import type {
+  WatchPartyPlaybackState,
+  WatchPartyPlaybackStatus,
+} from "@/types/watchParty";
 import { classNames } from "@/utils/classNames";
 
-interface VideoWatchPlayerProps {
-  sourceUrl?: string;
-  provider?: ContentSourceProvider;
+interface MoviePlayerProps {
+  isInteractionLocked?: boolean;
+  onPlaybackStateChange?: (state: {
+    currentTime: number;
+    status: WatchPartyPlaybackStatus;
+  }) => void;
   poster?: string;
+  provider?: ContentSourceProvider;
+  sourceUrl?: string;
   storageId: string;
+  syncState?: WatchPartyPlaybackState | null;
 }
 
 const getInitialTime = (storageKey: string) => {
@@ -29,12 +39,15 @@ const getInitialTime = (storageKey: string) => {
   return undefined;
 };
 
-export const VideoWatchPlayer = ({
-  sourceUrl,
-  provider,
+export const MoviePlayer = ({
+  isInteractionLocked = false,
+  onPlaybackStateChange,
   poster,
+  provider,
+  sourceUrl,
   storageId,
-}: VideoWatchPlayerProps) => {
+  syncState,
+}: MoviePlayerProps) => {
   const storageKey = `${PK_PLAYER_PROGRESS_STORAGE_PREFIX}${storageId}`;
   const [initialTime] = useState(() => getInitialTime(storageKey));
   const isS3Source = !!sourceUrl && provider === "S3";
@@ -50,15 +63,37 @@ export const VideoWatchPlayer = ({
 
   if (isS3Source) {
     return (
-      <PKVideoPlayer
-        src={sourceUrl}
-        sourceType={sourceType}
-        poster={poster}
-        autoPlay
-        initialTime={initialTime}
-        onTimeUpdate={handleTimeUpdate}
-        containerClassName={classNames("size-full")}
-      />
+      <div className={classNames("relative size-full")}>
+        <PKVideoPlayer
+          src={sourceUrl}
+          sourceType={sourceType}
+          poster={poster}
+          autoPlay
+          initialTime={initialTime}
+          onPlaybackStateChange={onPlaybackStateChange}
+          onTimeUpdate={handleTimeUpdate}
+          syncState={syncState}
+          containerClassName={classNames("size-full")}
+        />
+
+        {isInteractionLocked ? (
+          <div
+            className={classNames(
+              "absolute inset-0 z-30 flex items-end justify-center bg-transparent",
+            )}
+          >
+            <div
+              className={classNames(
+                "mb-28 rounded-full border border-white/10 bg-black/60 px-4 py-2",
+                "text-[10px] font-black uppercase tracking-[0.2em] text-white/75",
+                "backdrop-blur-sm",
+              )}
+            >
+              Host controls playback
+            </div>
+          </div>
+        ) : null}
+      </div>
     );
   }
 

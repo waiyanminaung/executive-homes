@@ -2,7 +2,12 @@
 
 import { useEffect, useRef } from "react";
 import { selectTime } from "@videojs/react";
+import { WATCH_PARTY_SYNC_DRIFT_SECONDS } from "@/constants/watchParty";
 import { PK_PLAYER_DEFAULT_VOLUME } from "@/constants/videoPlayer";
+import type {
+  WatchPartyPlaybackState,
+  WatchPartyPlaybackStatus,
+} from "@/types/watchParty";
 import { Player } from "./PKVideoPlayerInstance";
 import {
   getMediaTarget,
@@ -13,8 +18,13 @@ import {
 interface PKVideoPlayerBridgesProps {
   initialTime?: number;
   isResumePending?: boolean;
+  onPlaybackStateChange?: (state: {
+    currentTime: number;
+    status: WatchPartyPlaybackStatus;
+  }) => void;
   onResumePendingChange?: (isPending: boolean) => void;
   onTimeUpdate?: (time: number) => void;
+  syncState?: WatchPartyPlaybackState | null;
 }
 
 const DefaultVolumeBridge = () => {
@@ -75,11 +85,91 @@ const TimeUpdateBridge = ({
   return null;
 };
 
+const PlaybackStateBridge = ({
+  onPlaybackStateChange,
+}: Pick<PKVideoPlayerBridgesProps, "onPlaybackStateChange">) => {
+  const media = Player.useMedia();
+
+  useEffect(() => {
+    const mediaTarget = getMediaTarget(media);
+
+    if (!mediaTarget || !onPlaybackStateChange) {
+      return undefined;
+    }
+
+    const emitPlaybackState = () => {
+      onPlaybackStateChange({
+        currentTime: mediaTarget.currentTime,
+        status: mediaTarget.paused ? "paused" : "playing",
+      });
+    };
+
+    mediaTarget.addEventListener("play", emitPlaybackState);
+    mediaTarget.addEventListener("pause", emitPlaybackState);
+    mediaTarget.addEventListener("seeked", emitPlaybackState);
+    mediaTarget.addEventListener("timeupdate", emitPlaybackState);
+
+    return () => {
+      mediaTarget.removeEventListener("play", emitPlaybackState);
+      mediaTarget.removeEventListener("pause", emitPlaybackState);
+      mediaTarget.removeEventListener("seeked", emitPlaybackState);
+      mediaTarget.removeEventListener("timeupdate", emitPlaybackState);
+    };
+  }, [media, onPlaybackStateChange]);
+
+  return null;
+};
+
+const SyncPlaybackBridge = ({
+  syncState,
+}: Pick<PKVideoPlayerBridgesProps, "syncState">) => {
+  const media = Player.useMedia();
+  const appliedRevisionRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!syncState || appliedRevisionRef.current === syncState.revision) {
+      return;
+    }
+
+    const mediaTarget = getMediaTarget(media);
+
+    if (!mediaTarget) {
+      return;
+    }
+
+    appliedRevisionRef.current = syncState.revision;
+
+    if (
+      Math.abs(mediaTarget.currentTime - syncState.currentTime) >
+      WATCH_PARTY_SYNC_DRIFT_SECONDS
+    ) {
+      try {
+        mediaTarget.currentTime = syncState.currentTime;
+      } catch {
+        return;
+      }
+    }
+
+    if (syncState.status === "playing" && mediaTarget.paused) {
+      void mediaTarget.play().catch(() => undefined);
+      return;
+    }
+
+    if (syncState.status === "paused" && !mediaTarget.paused) {
+      mediaTarget.pause();
+    }
+  }, [media, syncState]);
+
+  return null;
+};
+
 export const PKVideoPlayerBridges = ({
   initialTime,
   isResumePending,
+  onPlaybackStateChange,
   onResumePendingChange,
   onTimeUpdate,
+  syncState,
 }: PKVideoPlayerBridgesProps) => {
   return (
     <>
@@ -93,6 +183,8 @@ export const PKVideoPlayerBridges = ({
         isResumePending={isResumePending}
         onTimeUpdate={onTimeUpdate}
       />
+      <PlaybackStateBridge onPlaybackStateChange={onPlaybackStateChange} />
+      <SyncPlaybackBridge syncState={syncState} />
     </>
   );
 };

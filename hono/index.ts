@@ -5,6 +5,7 @@ import {
   reportRoutes,
   requestRoutes,
   tmdbRoutes,
+  watchPartyRoutes,
 } from "./routes";
 import { auth } from "@/lib/auth";
 
@@ -15,6 +16,7 @@ router.route("/categories", categoryRoutes);
 router.route("/requests", requestRoutes);
 router.route("/reports", reportRoutes);
 router.route("/tmdb", tmdbRoutes);
+router.route("/watch-party", watchPartyRoutes);
 
 router.on(["POST", "GET"], "/auth/*", (c) => {
   return auth.handler(c.req.raw);

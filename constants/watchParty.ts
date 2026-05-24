@@ -1,0 +1,11 @@
+export const WATCH_PARTY_ROOM_QUERY_KEY = "room";
+
+export const WATCH_PARTY_HOST_TOKEN_QUERY_KEY = "token";
+
+export const WATCH_PARTY_SYNC_THROTTLE_MS = 1200;
+
+export const WATCH_PARTY_SYNC_DRIFT_SECONDS = 1.5;
+
+export const WATCH_PARTY_ROOM_TTL_MS = 4 * 60 * 60 * 1000;
+
+export const WATCH_PARTY_STREAM_KEEPALIVE_MS = 15000;

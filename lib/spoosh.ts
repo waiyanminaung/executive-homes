@@ -6,6 +6,7 @@ import { invalidationPlugin } from "@spoosh/plugin-invalidation";
 import type { AdminReportItem, AdminRequestItem } from "@/types/admin";
 import type { Category, Content, MovieListResponse } from "@/types/content";
 import type { TmdbMovieImportData } from "@/types/tmdb";
+import type { WatchPartyRoom } from "@/types/watchParty";
 import type {
   CategoryCreateInput,
   CategoryDeleteInput,
@@ -17,6 +18,10 @@ import type {
   MovieUpdateInput,
 } from "@/validation/moviesSchema";
 import type { TmdbMovieImportInput } from "@/validation/tmdbSchema";
+import type {
+  WatchPartyCreateRoomInput,
+  WatchPartySyncInput,
+} from "@/validation/watchPartySchema";
 
 export type ApiSchema = {
   movies: {
@@ -114,6 +119,32 @@ export type ApiSchema = {
     POST: {
       data: TmdbMovieImportData;
       body: TmdbMovieImportInput;
+    };
+  };
+  "watch-party/rooms": {
+    POST: {
+      data: WatchPartyRoom;
+      body: WatchPartyCreateRoomInput;
+    };
+  };
+  "watch-party/rooms/:roomId": {
+    GET: {
+      data: WatchPartyRoom;
+      params: {
+        roomId: string;
+      };
+      query?: {
+        token?: string;
+      };
+    };
+  };
+  "watch-party/rooms/:roomId/sync": {
+    POST: {
+      data: WatchPartyRoom;
+      params: {
+        roomId: string;
+      };
+      body: WatchPartySyncInput;
     };
   };
 };
