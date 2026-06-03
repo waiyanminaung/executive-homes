@@ -14,8 +14,8 @@ const SOCIAL_LINKS = [
 
 export function HomeFooter({ columns }: HomeFooterProps) {
   return (
-    <footer className="bg-[#0e2638] text-slate-300">
-      <div className="flex justify-center gap-4 border-b border-[#1f415a] py-4">
+    <footer className="bg-secondary-900 text-slate-300">
+      <div className="flex justify-center gap-4 border-b border-white/10 py-4">
         {SOCIAL_LINKS.map((social) => (
           <Link key={social.label} href={social.href} aria-label={social.label} className="opacity-90 transition-opacity hover:opacity-100">
             <Image src={social.src} alt={social.label} width={social.size} height={social.size} />
@@ -40,7 +40,7 @@ export function HomeFooter({ columns }: HomeFooterProps) {
             </div>
           ))}
         </div>
-        <div className="mt-8 border-t border-[#1f415a]" />
+        <div className="mt-8 border-t border-white/10" />
         <p className="mt-5 text-center text-sm font-semibold text-white/75">
           © 2026 Executive Homes Co., Ltd. All Rights Reserved.
         </p>

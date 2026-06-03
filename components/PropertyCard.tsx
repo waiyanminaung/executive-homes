@@ -46,7 +46,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
 
         <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded-2xl bg-black/70 px-2.5 py-1.5">
-          <span className="h-2 w-2 rounded-full bg-[#22bb33]" />
+          <span className="h-2 w-2 rounded-full bg-green-500" />
           <span className="text-[13px] font-semibold text-white">{property.status}</span>
         </span>
 
@@ -96,7 +96,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
           </dl>
         </div>
 
-        <p className="text-lg font-bold text-[#3b588a]">{property.price}</p>
+        <p className="text-lg font-bold text-secondary-900">{property.price}</p>
       </div>
     </article>
   );

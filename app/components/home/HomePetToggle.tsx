@@ -13,7 +13,7 @@ export function HomePetToggle({ value, onChange }: HomePetToggleProps) {
     <span
       className={classNames(
         "flex h-[30px] w-[30px] shrink-0 items-center justify-center rounded-full bg-white",
-        value ? "text-[#ae894c]" : "text-neutral-400",
+        value ? "text-primary-500" : "text-neutral-400",
       )}
     >
       <PawPrint className="h-4 w-4" />
@@ -27,8 +27,8 @@ export function HomePetToggle({ value, onChange }: HomePetToggleProps) {
       className={classNames(
         "flex h-[34px] items-center gap-1 rounded-full transition-colors duration-200",
         value
-          ? "bg-gradient-to-b from-[#ae894c] to-[#d4bc83] pl-2 pr-0.5"
-          : "bg-[#c5cace] pl-0.5 pr-2",
+          ? "bg-gradient-to-b from-primary-500 to-primary-400 pl-2 pr-0.5"
+          : "bg-neutral-300 pl-0.5 pr-2",
       )}
     >
       {value ? (

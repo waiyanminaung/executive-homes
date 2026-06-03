@@ -9,7 +9,7 @@ export function WhyExecutiveHomes() {
   const { ref, inView } = useInView();
 
   return (
-    <section className="relative mt-14 overflow-hidden bg-[#eeeae2] py-[90px]">
+    <section className="relative mt-14 overflow-hidden bg-muted py-[90px]">
       <Image
         src="/logo-icon.svg"
         alt=""
@@ -50,7 +50,7 @@ export function WhyExecutiveHomes() {
                     {item.description}
                   </p>
                 </div>
-                <Icon className="h-[90px] w-[90px] shrink-0 text-[#b99b63]" strokeWidth={1} />
+                <Icon className="h-[90px] w-[90px] shrink-0 text-primary-500/80" strokeWidth={1} />
               </article>
             );
           })}

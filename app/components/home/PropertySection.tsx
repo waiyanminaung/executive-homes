@@ -41,7 +41,7 @@ export function PropertySection({ section }: PropertySectionProps) {
         <h2 className="text-[28px] font-bold text-neutral-950">{section.title}</h2>
         <Link
           href="/properties"
-          className="flex items-center gap-1.5 text-sm font-semibold text-[#ae894c]"
+          className="flex items-center gap-1.5 text-sm font-semibold text-primary-500"
         >
           <span>View More</span>
           <ArrowRight className="h-4 w-4" />
@@ -55,7 +55,7 @@ export function PropertySection({ section }: PropertySectionProps) {
           className={classNames(
             "absolute -left-5 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2",
             "items-center justify-center rounded-xl bg-white",
-            "shadow-[0_8px_18px_rgb(0_0_0/0.2)] transition-all md:flex hover:scale-110 hover:bg-[#ae894c] hover:text-white hover:shadow-[0_8px_24px_rgb(174_137_76/0.4)]",
+            "shadow-[0_8px_18px_rgb(0_0_0/0.2)] transition-all md:flex hover:scale-110 hover:bg-primary-500 hover:text-white hover:shadow-[0_8px_24px_rgb(174_137_76/0.4)]",
             !canPrev && "invisible",
           )}
         >
@@ -80,7 +80,7 @@ export function PropertySection({ section }: PropertySectionProps) {
           className={classNames(
             "absolute -right-5 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2",
             "items-center justify-center rounded-xl bg-white",
-            "shadow-[0_8px_18px_rgb(0_0_0/0.2)] transition-all md:flex hover:scale-110 hover:bg-[#ae894c] hover:text-white hover:shadow-[0_8px_24px_rgb(174_137_76/0.4)]",
+            "shadow-[0_8px_18px_rgb(0_0_0/0.2)] transition-all md:flex hover:scale-110 hover:bg-primary-500 hover:text-white hover:shadow-[0_8px_24px_rgb(174_137_76/0.4)]",
             !canNext && "invisible",
           )}
         >

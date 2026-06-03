@@ -16,13 +16,13 @@ export function HomeHero() {
   const [petAllow, setPetAllow] = useState(false);
 
   const selectClass = classNames(
-    "h-[46px] rounded-md border border-[#e5e5ea] bg-white px-[18px]",
+    "h-[46px] rounded-md border border-border bg-white px-[18px]",
     "text-sm font-semibold text-neutral-600 shadow-none",
   );
 
   return (
     <section className="relative h-[698px] overflow-visible bg-[url('https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=2400&q=90')] bg-cover bg-center text-white">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#011023]/90 via-[#011023]/70 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-b from-secondary-950/90 via-secondary-950/70 to-transparent" />
 
       <div className="absolute left-0 right-0 top-[301px] flex flex-col items-center gap-2.5 px-6 text-center">
         <h1 className="max-w-[699px] animate-fade-up text-[40px] font-black leading-[1.5] tracking-tight [animation-delay:100ms]">
@@ -42,7 +42,7 @@ export function HomeHero() {
               onClick={() => setTab(t)}
               className={classNames(
                 "rounded-md px-[38px] py-2 text-base font-semibold capitalize text-white transition-all",
-                tab === t ? "bg-gradient-to-b from-[#ae894c] to-[#d4bc83]" : "",
+                tab === t ? "bg-gradient-to-b from-primary-500 to-primary-400" : "",
               )}
             >
               {t.charAt(0).toUpperCase() + t.slice(1)}
@@ -55,12 +55,13 @@ export function HomeHero() {
             <Input
               aria-label="Search keyword"
               placeholder="Type keyword..."
-              className="flex-1 border-[#e5e5ea] [&:focus-within]:border-[#ae894c]"
+              className="flex-1 border-border [&:focus-within]:border-primary-500"
               inputClassName="h-[46px] text-sm font-medium text-neutral-900"
             />
             <Button
               type="button"
-              className="h-[46px] rounded-md bg-gradient-to-b from-[#ae894c] to-[#d4bc83] px-[30px] text-sm font-semibold text-white"
+              variant="ghost"
+              className="h-[46px] rounded-md bg-gradient-to-b from-primary-500 to-primary-400 px-[30px] text-sm font-semibold !text-white hover:bg-gradient-to-b"
             >
               <Search className="h-4 w-4" />
               <span>Search</span>

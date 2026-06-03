@@ -105,6 +105,12 @@ When working on Video.js React player code, use the project `videojs` skill firs
 
 Gecko UI is a production-ready React component library built with TypeScript and Tailwind CSS.
 
+## Design Tokens
+
+- Do not hardcode brand colors in JSX classes. Define source variables in `app/globals.css` `:root` such as `--primary-500`, map them to Gecko/Tailwind variables like `--color-primary-500`, and expose the same values in `@theme` with `var(--primary-500)`.
+- Use normal Tailwind token classes in components, e.g. `text-primary-500`, `bg-primary-500`, `from-primary-500`, `to-primary-400`. Do not create page-specific token names like `home-gold` or object-based class maps.
+- Gecko UI reads `--color-primary-*`; override that scale globally in `:root` instead of working around Gecko with hardcoded colors or custom brand utility classes.
+
 ## Docs
 
 - [Full Docs](https://gecko.productionbug.com/llms-full.txt): Full documentation of all components.

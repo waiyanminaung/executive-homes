@@ -27,10 +27,15 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
     <header
       className={classNames(
         "fixed inset-x-0 top-0 z-[60] transition-all duration-300",
-        scrolled ? "bg-[#0e2638]/95 shadow-sm backdrop-blur-md" : "bg-transparent",
+        scrolled ? "bg-secondary-900/95 shadow-sm backdrop-blur-md" : "bg-transparent",
       )}
     >
-      <div className={classNames("container mx-auto grid grid-cols-[1fr_auto_1fr] items-center px-4 transition-all duration-300", scrolled ? "h-20" : "h-24")}>
+      <div
+        className={classNames(
+          "container mx-auto grid grid-cols-[1fr_auto_1fr] items-center px-4 transition-all duration-300",
+          scrolled ? "h-20" : "h-24",
+        )}
+      >
         <nav
           className={classNames(
             "hidden items-center gap-8 text-sm font-semibold md:flex transition-colors duration-300",
@@ -38,7 +43,11 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
           )}
         >
           {navItems.map((item) => (
-            <Link key={item.label} href={item.href} className="flex items-center gap-1 hover:text-[#ae894c] transition-colors">
+            <Link
+              key={item.label}
+              href={item.href}
+              className="flex items-center gap-1 transition-colors hover:text-primary-500"
+            >
               <span>{item.label}</span>
               {item.hasDropdown ? <ChevronDown className="h-3.5 w-3.5" /> : null}
             </Link>
@@ -59,7 +68,10 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
             "text-white/90",
           )}
         >
-          <Link href="/about-us" className="hidden hover:text-[#ae894c] transition-colors md:inline">
+          <Link
+            href="/about-us"
+            className="hidden transition-colors hover:text-primary-500 md:inline"
+          >
             About Us
           </Link>
           <Button
