@@ -41,9 +41,9 @@ export const HOME_HERO_FILTER_OPTIONS = {
 
 export const HOME_NAV_ITEMS: HomeNavItem[] = [
   { label: "Home", href: "/" },
-  { label: "Buy", href: "/buy", hasDropdown: true },
-  { label: "Rent", href: "/rent", hasDropdown: true },
-  { label: "Projects", href: "/projects", hasDropdown: true },
+  { label: "Buy", href: "#", hasDropdown: true },
+  { label: "Rent", href: "#", hasDropdown: true },
+  { label: "Projects", href: "#", hasDropdown: true },
 ];
 
 export const HOME_AREA_CARDS: AreaCard[] = [
@@ -82,7 +82,7 @@ export const HOME_AREA_CARDS: AreaCard[] = [
     name: "Ratchadamri",
     listings: 10,
     imageUrl:
-      "https://images.unsplash.com/photo-1598977123118-4e30ba3c4f55?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=85",
   },
   {
     name: "Chidlom",
@@ -211,7 +211,7 @@ const saleProperties: PropertyItem[] = [
     baths: 3,
     area: "260.00 sqm",
     imageUrls: [
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa12c98?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1580587771525-78b9dba3b914?auto=format&fit=crop&w=900&q=85",
     ],
@@ -258,7 +258,7 @@ const saleProperties: PropertyItem[] = [
     imageUrls: [
       "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa12c98?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=85",
     ],
   },
   {
@@ -304,9 +304,9 @@ const condoProperties: PropertyItem[] = [
     baths: 2,
     area: "95.00 sqm",
     imageUrls: [
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa12c98?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0f2?auto=format&fit=crop&w=900&q=85",
     ],
   },
   {
@@ -351,7 +351,7 @@ const condoProperties: PropertyItem[] = [
     imageUrls: [
       "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=900&q=85",
       "https://images.unsplash.com/photo-1484154218962-a197022b5858?auto=format&fit=crop&w=900&q=85",
-      "https://images.unsplash.com/photo-1545324418-cc1a3fa12c98?auto=format&fit=crop&w=900&q=85",
+      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=900&q=85",
     ],
   },
   {
@@ -399,45 +399,45 @@ export const HOME_FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: "Property for Sales",
     links: [
-      { label: "Condos for Sale", href: "/buy/condos" },
-      { label: "Houses for Sale", href: "/buy/houses" },
-      { label: "Apartment for Sale", href: "/buy/apartments" },
-      { label: "Office space for Sale", href: "/buy/offices" },
-      { label: "Retail space for Sale", href: "/buy/retail" },
-      { label: "Warehouse for Sale", href: "/buy/warehouses" },
+      { label: "Condos for Sale", href: "#" },
+      { label: "Houses for Sale", href: "#" },
+      { label: "Apartment for Sale", href: "#" },
+      { label: "Office space for Sale", href: "#" },
+      { label: "Retail space for Sale", href: "#" },
+      { label: "Warehouse for Sale", href: "#" },
     ],
   },
   {
     title: "Property for Rents",
     links: [
-      { label: "Condos for Rent", href: "/rent/condos" },
-      { label: "Houses for Rent", href: "/rent/houses" },
-      { label: "Apartment for Rent", href: "/rent/apartments" },
-      { label: "Office space for Rent", href: "/rent/offices" },
-      { label: "Retail space for Rent", href: "/rent/retail" },
-      { label: "Warehouse for Rent", href: "/rent/warehouses" },
+      { label: "Condos for Rent", href: "#" },
+      { label: "Houses for Rent", href: "#" },
+      { label: "Apartment for Rent", href: "#" },
+      { label: "Office space for Rent", href: "#" },
+      { label: "Retail space for Rent", href: "#" },
+      { label: "Warehouse for Rent", href: "#" },
     ],
   },
   {
     title: "Property Types",
     links: [
-      { label: "Apartment", href: "/types/apartment" },
-      { label: "Commercial Space", href: "/types/commercial-space" },
-      { label: "Condo", href: "/types/condo" },
-      { label: "House", href: "/types/house" },
-      { label: "Office Space", href: "/types/office-space" },
-      { label: "Pen House", href: "/types/pen-house" },
+      { label: "Apartment", href: "#" },
+      { label: "Commercial Space", href: "#" },
+      { label: "Condo", href: "#" },
+      { label: "House", href: "#" },
+      { label: "Office Space", href: "#" },
+      { label: "Pen House", href: "#" },
     ],
   },
   {
     title: "Property within Bangkok Area",
     links: [
-      { label: "Property for sale in Watthana", href: "/areas/watthana" },
-      { label: "Properties for sale in Khlong Toei", href: "/areas/khlong-toei" },
-      { label: "Properties for sale in Pathum Wan", href: "/areas/pathum-wan" },
-      { label: "Properties for sale in Huai Khwang", href: "/areas/huai-khwang" },
-      { label: "Properties for sale in Bang Rak", href: "/areas/bang-rak" },
-      { label: "Properties for sale in Ratchathewi", href: "/areas/ratchathewi" },
+      { label: "Property for sale in Watthana", href: "#" },
+      { label: "Properties for sale in Khlong Toei", href: "#" },
+      { label: "Properties for sale in Pathum Wan", href: "#" },
+      { label: "Properties for sale in Huai Khwang", href: "#" },
+      { label: "Properties for sale in Bang Rak", href: "#" },
+      { label: "Properties for sale in Ratchathewi", href: "#" },
     ],
   },
 ];

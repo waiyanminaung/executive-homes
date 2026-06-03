@@ -24,11 +24,11 @@ export function HomeFooter({ columns }: HomeFooterProps) {
       </div>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {columns.map((column) => (
             <div key={column.title}>
               <h3 className="text-base font-bold text-white">{column.title}</h3>
-              <ul className="mt-5 space-y-3">
+              <ul className="mt-4 space-y-2.5 md:mt-5 md:space-y-3">
                 {column.links.map((link) => (
                   <li key={link.label}>
                     <Link href={link.href} className="text-sm font-normal text-white/80">
@@ -41,7 +41,7 @@ export function HomeFooter({ columns }: HomeFooterProps) {
           ))}
         </div>
         <div className="mt-8 border-t border-white/10" />
-        <p className="mt-5 text-center text-sm font-semibold text-white/75">
+        <p className="mt-5 text-center text-xs font-semibold leading-5 text-white/75 md:text-sm">
           © 2026 Executive Homes Co., Ltd. All Rights Reserved.
         </p>
       </div>

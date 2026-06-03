@@ -36,12 +36,14 @@ export function PropertySection({ section }: PropertySectionProps) {
   }, [emblaApi]);
 
   return (
-    <section className="container mx-auto px-4 py-10">
-      <div className="mb-7 flex items-center justify-between gap-4">
-        <h2 className="text-[28px] font-bold text-neutral-950">{section.title}</h2>
+    <section className="container mx-auto px-4 py-8 md:py-10">
+      <div className="mb-5 flex items-center justify-between gap-4 md:mb-7">
+        <h2 className="text-2xl font-bold text-neutral-950 md:text-[28px]">
+          {section.title}
+        </h2>
         <Link
-          href="/properties"
-          className="flex items-center gap-1.5 text-sm font-semibold text-primary-500"
+          href="#"
+          className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary-500"
         >
           <span>View More</span>
           <ArrowRight className="h-4 w-4" />
@@ -64,13 +66,16 @@ export function PropertySection({ section }: PropertySectionProps) {
 
         <div className="-mx-3 -mt-2 -mb-4">
           <div className="overflow-hidden px-3 pt-2 pb-4" ref={emblaRef}>
-          <div className="-ml-5 flex">
-            {section.properties.map((property) => (
-              <div key={property.id} className="min-w-0 flex-[0_0_25%] self-stretch pl-5">
-                <PropertyCard property={property} />
-              </div>
-            ))}
-          </div>
+            <div className="-ml-4 flex md:-ml-5">
+              {section.properties.map((property) => (
+                <div
+                  key={property.id}
+                  className="min-w-0 flex-[0_0_88%] self-stretch pl-4 sm:flex-[0_0_48%] md:flex-[0_0_33.333%] md:pl-5 lg:flex-[0_0_25%]"
+                >
+                  <PropertyCard property={property} />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 

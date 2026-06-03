@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
 import { Button } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import type { HomeNavItem } from "@/app/types";
@@ -14,6 +14,7 @@ interface HomeHeaderProps {
 
 export function HomeHeader({ navItems }: HomeHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -33,9 +34,11 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
       <div
         className={classNames(
           "container mx-auto grid grid-cols-[1fr_auto_1fr] items-center px-4 transition-all duration-300",
-          scrolled ? "h-20" : "h-24",
+          scrolled ? "h-16 md:h-20" : "h-20 md:h-24",
         )}
       >
+        <div className="h-11 w-11 md:hidden" />
+
         <nav
           className={classNames(
             "hidden items-center gap-8 text-sm font-semibold md:flex transition-colors duration-300",
@@ -56,9 +59,9 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
 
         <Link href="/" className="flex justify-center" aria-label="Executive Homes">
           {scrolled ? (
-            <Image src="/logo-icon.svg" alt="Executive Homes" width={56} height={56} className="h-14 w-14" />
+            <Image src="/logo-icon.svg" alt="Executive Homes" width={56} height={56} className="h-12 w-12 md:h-14 md:w-14" />
           ) : (
-            <Image src="/logo-full.svg" alt="Executive Homes" width={140} height={72} className="h-[72px] w-[140px]" />
+            <Image src="/logo-full.svg" alt="Executive Homes" width={140} height={72} className="h-14 w-[109px] md:h-[72px] md:w-[140px]" />
           )}
         </Link>
 
@@ -68,8 +71,18 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
             "text-white/90",
           )}
         >
+          <button
+            type="button"
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur md:hidden"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+
           <Link
-            href="/about-us"
+            href="#"
             className="hidden transition-colors hover:text-primary-500 md:inline"
           >
             About Us
@@ -78,7 +91,7 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
             type="button"
             variant="outlined"
             className={classNames(
-              "h-10 rounded-md px-5 text-sm font-bold transition-all",
+              "hidden h-10 rounded-md px-5 text-sm font-bold transition-all md:inline-flex",
               "border-white/70 text-white hover:bg-white/10",
             )}
           >
@@ -86,6 +99,38 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
           </Button>
         </div>
       </div>
+
+      {menuOpen ? (
+        <div className="mx-4 mb-4 rounded-2xl border border-white/10 bg-secondary-900/95 p-4 shadow-[0_18px_40px_rgb(0_0_0/0.24)] backdrop-blur-md md:hidden">
+          <nav className="grid gap-1 text-sm font-semibold text-white">
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-between rounded-xl px-4 py-3 transition-colors hover:bg-white/10"
+              >
+                <span>{item.label}</span>
+                {item.hasDropdown ? <ChevronDown className="h-4 w-4 text-white/70" /> : null}
+              </Link>
+            ))}
+            <Link
+              href="#"
+              onClick={() => setMenuOpen(false)}
+              className="rounded-xl px-4 py-3 transition-colors hover:bg-white/10"
+            >
+              About Us
+            </Link>
+            <Link
+              href="#"
+              onClick={() => setMenuOpen(false)}
+              className="mt-2 rounded-xl bg-gradient-to-b from-primary-500 to-primary-400 px-4 py-3 text-center font-bold text-white"
+            >
+              Contact Us
+            </Link>
+          </nav>
+        </div>
+      ) : null}
     </header>
   );
 }

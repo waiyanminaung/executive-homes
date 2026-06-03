@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { classNames } from "@/utils/classNames";
 import type { AreaCard } from "@/app/types";
 
 interface AreaGridProps {
@@ -8,8 +9,10 @@ interface AreaGridProps {
 function AreaCard({ area, tall }: { area: AreaCard; tall?: boolean }) {
   return (
     <article
-      className="group relative overflow-hidden rounded-xl shadow-sm"
-      style={{ minHeight: tall ? 350 : 169 }}
+      className={classNames(
+        "group relative min-h-[180px] overflow-hidden rounded-xl shadow-sm",
+        tall && "lg:min-h-[372px]",
+      )}
     >
       <Image
         src={area.imageUrl}
@@ -31,15 +34,17 @@ export function AreaGrid({ areas }: AreaGridProps) {
   const [featured, ...rest] = areas;
 
   return (
-    <section className="container mx-auto px-4 pt-[149px] pb-16">
-      <h2 className="mb-6 text-[28px] font-bold text-neutral-950">Explore Bangkok Areas</h2>
-      <div className="flex gap-3">
+    <section className="container mx-auto px-4 pb-12 pt-10 md:pb-16 md:pt-[149px]">
+      <h2 className="mb-5 text-2xl font-bold text-neutral-950 md:mb-6 md:text-[28px]">
+        Explore Bangkok Areas
+      </h2>
+      <div className="grid gap-3 lg:flex">
         {featured && (
-          <div className="w-[22%] shrink-0">
+          <div className="lg:w-[22%] lg:shrink-0">
             <AreaCard area={featured} tall />
           </div>
         )}
-        <div className="flex-1 grid grid-cols-3 grid-rows-2 gap-3">
+        <div className="grid flex-1 grid-cols-2 gap-3 md:grid-cols-3 md:grid-rows-2">
           {rest.map((area) => (
             <AreaCard key={area.name} area={area} />
           ))}

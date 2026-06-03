@@ -68,7 +68,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col justify-between gap-5 p-[18px]">
+      <div className="flex flex-1 flex-col justify-between gap-4 p-4 md:gap-5 md:p-[18px]">
         <div className="flex flex-col gap-[10px]">
           <div className="flex flex-col gap-2.5">
             <h3 className="line-clamp-2 text-base font-bold leading-snug text-neutral-950">
@@ -77,7 +77,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
             <p className="text-sm font-normal text-neutral-900">{property.location}</p>
           </div>
 
-          <dl className="flex flex-wrap items-center gap-4 text-sm font-semibold text-neutral-900">
+          <dl className="flex flex-wrap items-center gap-3 text-sm font-semibold text-neutral-900 md:gap-4">
             <div className="flex items-center gap-1.5">
               <BedDouble className="h-[18px] w-[18px]" />
               <dt className="sr-only">Bedrooms</dt>
@@ -96,7 +96,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
           </dl>
         </div>
 
-        <p className="text-lg font-bold text-secondary-900">{property.price}</p>
+        <p className="text-base font-bold text-secondary-900 md:text-lg">{property.price}</p>
       </div>
     </article>
   );
