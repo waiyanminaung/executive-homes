@@ -1,8 +1,7 @@
-export { HomeNav } from "./Nav";
-export { HomeSearchBar } from "./SearchBar";
-export { HomeCategoryTabs } from "./CategoryTabs";
-export { MovieGrid } from "./MovieGrid";
-export { HomePagination } from "./Pagination";
-export { RequestModal } from "./RequestModal";
-export { WatchlistModal } from "./WatchlistModal";
-export { WatchlistButton } from "./WatchlistButton";
+export { AreaGrid } from "./AreaGrid";
+export { HomeFooter } from "./HomeFooter";
+export { HomeHeader } from "./HomeHeader";
+export { HomeHero } from "./HomeHero";
+export { HomePetToggle } from "./HomePetToggle";
+export { PropertySection } from "./PropertySection";
+export { WhyExecutiveHomes } from "./WhyExecutiveHomes";

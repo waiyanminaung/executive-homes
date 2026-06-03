@@ -201,3 +201,31 @@ When creating components, that doesn't exist in Gecko UI, follow these guideline
   And place such components inside `components/` folder at root level.
 - If components is shareable but the components need side effects like fetching data, triggering something eg.(updating themes, user settings etc),
   place such components inside `components/@shared/` folder at root level.
+
+## Implementing UI from Figma (MCP)
+
+**Component priority — never skip steps:**
+1. Use `@geckoui/geckoui` component if it exists (check docs first, don't guess API)
+2. Use existing project component from `components/` or page `components/` folder
+3. Only create new component if neither above fits
+
+**File organisation:**
+
+Support files (`types.ts`, `utils.ts`, `_mock.ts`, `constants.ts`) sit at the **page folder level** alongside `page.tsx` — not inside `components/`. The `components/` folder contains only `.tsx` files.
+
+```
+listings/
+  page.tsx
+  types.ts        ← page-scoped types (not API models)
+  utils.ts
+  constants.ts
+  components/
+    ListingCard.tsx
+    FilterBar.tsx
+    ListingDetailDrawer/   ← subfolder only when component has 4+ related files
+      index.tsx
+      types.ts
+      utils.ts
+```
+
+> `types.ts` here is for UI/component state only. API response types belong in `types/` at root.

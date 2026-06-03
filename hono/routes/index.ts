@@ -1,6 +1,1 @@
 export { categoryRoutes } from "./categories.routes";
-export { movieRoutes } from "./movies.routes";
-export { reportRoutes } from "./reports.routes";
-export { requestRoutes } from "./requests.routes";
-export { tmdbRoutes } from "./tmdb.routes";
-export { watchPartyRoutes } from "./watchParty.routes";

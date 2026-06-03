@@ -4,62 +4,15 @@ import { cachePlugin } from "@spoosh/plugin-cache";
 import { deduplicationPlugin } from "@spoosh/plugin-deduplication";
 import { invalidationPlugin } from "@spoosh/plugin-invalidation";
 import type { AdminReportItem, AdminRequestItem } from "@/types/admin";
-import type { Category, Content, MovieListResponse } from "@/types/content";
-import type { TmdbMovieImportData } from "@/types/tmdb";
-import type { WatchPartyRoom } from "@/types/watchParty";
+import type { Category } from "@/types/categories";
 import type {
   CategoryCreateInput,
   CategoryDeleteInput,
   CategoryOrderInput,
   CategoryUpdateInput,
 } from "@/validation/categoriesSchema";
-import type {
-  MovieCreateInput,
-  MovieUpdateInput,
-} from "@/validation/moviesSchema";
-import type { TmdbMovieImportInput } from "@/validation/tmdbSchema";
-import type {
-  WatchPartyCreateRoomInput,
-  WatchPartySyncInput,
-} from "@/validation/watchPartySchema";
 
 export type ApiSchema = {
-  movies: {
-    GET: {
-      data: MovieListResponse;
-      query?: {
-        category?: string;
-        page?: number;
-        pageSize?: number;
-        search?: string;
-      };
-    };
-    POST: {
-      data: Content;
-      body: MovieCreateInput;
-    };
-  };
-  "movies/:id": {
-    GET: {
-      data: Content;
-      params: {
-        id: string;
-      };
-    };
-    PUT: {
-      data: Content;
-      params: {
-        id: string;
-      };
-      body: MovieUpdateInput;
-    };
-    DELETE: {
-      data: { success: true };
-      params: {
-        id: string;
-      };
-    };
-  };
   categories: {
     GET: {
       data: Category[];
@@ -113,38 +66,6 @@ export type ApiSchema = {
         reason: string;
         description: string;
       };
-    };
-  };
-  "tmdb/movie": {
-    POST: {
-      data: TmdbMovieImportData;
-      body: TmdbMovieImportInput;
-    };
-  };
-  "watch-party/rooms": {
-    POST: {
-      data: WatchPartyRoom;
-      body: WatchPartyCreateRoomInput;
-    };
-  };
-  "watch-party/rooms/:roomId": {
-    GET: {
-      data: WatchPartyRoom;
-      params: {
-        roomId: string;
-      };
-      query?: {
-        token?: string;
-      };
-    };
-  };
-  "watch-party/rooms/:roomId/sync": {
-    POST: {
-      data: WatchPartyRoom;
-      params: {
-        roomId: string;
-      };
-      body: WatchPartySyncInput;
     };
   };
 };

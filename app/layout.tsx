@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Inter, Noto_Sans_Myanmar } from "next/font/google";
+import { Roboto, Noto_Sans_Myanmar } from "next/font/google";
 import { GeckoUIPortal } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
-const inter = Inter({
-  variable: "--font-inter",
+const roboto = Roboto({
+  variable: "--font-roboto",
   subsets: ["latin"],
+  weight: ["400", "500", "700", "900"],
 });
 
 const myanmar = Noto_Sans_Myanmar({
@@ -16,8 +17,8 @@ const myanmar = Noto_Sans_Myanmar({
 });
 
 export const metadata: Metadata = {
-  title: "Patekar",
-  description: "Patekar movie library",
+  title: "Executive Homes",
+  description: "Executive Homes",
 };
 
 export default function RootLayout({
@@ -29,10 +30,10 @@ export default function RootLayout({
     <html
       lang="en"
       className={classNames(
-        inter.variable,
+        roboto.variable,
         myanmar.variable,
         "h-full",
-        "antialiased dark",
+        "antialiased",
       )}
     >
       <body className={classNames("min-h-full", "flex", "flex-col")}>
