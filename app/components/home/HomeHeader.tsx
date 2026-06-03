@@ -26,7 +26,7 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
   return (
     <header
       className={classNames(
-        "fixed inset-x-0 top-0 z-30 transition-all duration-300",
+        "fixed inset-x-0 top-0 z-[60] transition-all duration-300",
         scrolled ? "bg-[#0e2638]/95 shadow-sm backdrop-blur-md" : "bg-transparent",
       )}
     >
