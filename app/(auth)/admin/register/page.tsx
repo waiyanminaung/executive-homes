@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { LoadingButton, RHFInput, RHFInputGroup } from "@geckoui/geckoui";
+import { LoadingButton } from "@geckoui/geckoui";
 import {
   ADMIN_REGISTER_REDIRECT_PATH,
   DEFAULT_ADMIN_REGISTER_VALUES,
@@ -16,6 +16,7 @@ import {
   type AdminRegisterFormValues,
 } from "@/validation/authSchema";
 import AdminAuthShell from "../components/AdminAuthShell";
+import AdminRegisterField from "./components/AdminRegisterField";
 
 export default function AdminRegisterPage() {
   const router = useRouter();
@@ -67,64 +68,36 @@ export default function AdminRegisterPage() {
     >
       <FormProvider {...methods}>
         <form onSubmit={handleRegister} className="space-y-5">
-          <RHFInputGroup
+          <AdminRegisterField
+            control={methods.control}
+            name="name"
             label="Full Name"
-            required
-            labelClassName="text-[10px] font-black uppercase tracking-widest text-white/40"
-            errorClassName="text-red-400 text-xs font-semibold"
-          >
-            <RHFInput
-              name="name"
-              placeholder="Admin Name"
-              className="w-full bg-white/5 border border-white/5 rounded-2xl py-1.5 px-4 focus-within:ring-1 focus-within:ring-accent/30 transition-all"
-              inputClassName="py-4 font-bold placeholder:text-white/20"
-            />
-          </RHFInputGroup>
+            placeholder="Admin Name"
+          />
 
-          <RHFInputGroup
+          <AdminRegisterField
+            control={methods.control}
+            name="email"
             label="Email Address"
-            required
-            labelClassName="text-[10px] font-black uppercase tracking-widest text-white/40"
-            errorClassName="text-red-400 text-xs font-semibold"
-          >
-            <RHFInput
-              name="email"
-              type="email"
-              placeholder="admin@patekar.com"
-              className="w-full bg-white/5 border border-white/5 rounded-2xl py-1.5 px-4 focus-within:ring-1 focus-within:ring-accent/30 transition-all"
-              inputClassName="py-4 font-bold placeholder:text-white/20"
-            />
-          </RHFInputGroup>
+            type="email"
+            placeholder="admin@patekar.com"
+          />
 
-          <RHFInputGroup
+          <AdminRegisterField
+            control={methods.control}
+            name="password"
             label="Password"
-            required
-            labelClassName="text-[10px] font-black uppercase tracking-widest text-white/40"
-            errorClassName="text-red-400 text-xs font-semibold"
-          >
-            <RHFInput
-              name="password"
-              type="password"
-              placeholder="••••••••"
-              className="w-full bg-white/5 border border-white/5 rounded-2xl py-1.5 px-4 focus-within:ring-1 focus-within:ring-accent/30 transition-all"
-              inputClassName="py-4 font-bold placeholder:text-white/20"
-            />
-          </RHFInputGroup>
+            type="password"
+            placeholder="••••••••"
+          />
 
-          <RHFInputGroup
+          <AdminRegisterField
+            control={methods.control}
+            name="confirmPassword"
             label="Confirm Password"
-            required
-            labelClassName="text-[10px] font-black uppercase tracking-widest text-white/40"
-            errorClassName="text-red-400 text-xs font-semibold"
-          >
-            <RHFInput
-              name="confirmPassword"
-              type="password"
-              placeholder="••••••••"
-              className="w-full bg-white/5 border border-white/5 rounded-2xl py-1.5 px-4 focus-within:ring-1 focus-within:ring-accent/30 transition-all"
-              inputClassName="py-4 font-bold placeholder:text-white/20"
-            />
-          </RHFInputGroup>
+            type="password"
+            placeholder="••••••••"
+          />
 
           {submitError ? (
             <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs font-bold">
