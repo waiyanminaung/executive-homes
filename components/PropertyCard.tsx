@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { type MouseEvent, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { Bath, BedDouble, Maximize2 } from "lucide-react";
+import { Bath, BedDouble, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import type { PropertyItem } from "@/app/types";
 
@@ -15,7 +15,7 @@ interface PropertyCardProps {
 export function PropertyCard({ property }: PropertyCardProps) {
   const images = property.imageUrls;
   const propertyHref = `/properties/${property.id}`;
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, watchDrag: false });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
@@ -29,6 +29,18 @@ export function PropertyCard({ property }: PropertyCardProps) {
       emblaApi.off("select", onSelect);
     };
   }, [emblaApi]);
+
+  const handlePrev = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    emblaApi?.scrollPrev();
+  };
+
+  const handleNext = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    emblaApi?.scrollNext();
+  };
 
   const handleDotClick = (event: MouseEvent<HTMLButtonElement>, imageIndex: number) => {
     event.preventDefault();
@@ -63,7 +75,16 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </span>
 
         {images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1">
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/50 px-2 py-1.5">
+            <button
+              type="button"
+              aria-label="Previous image"
+              onClick={handlePrev}
+              className="flex h-4 w-4 items-center justify-center text-white transition-opacity hover:opacity-70"
+            >
+              <ChevronLeft className="h-3.5 w-3.5" />
+            </button>
+
             {images.map((_, i) => (
               <button
                 key={i}
@@ -71,11 +92,20 @@ export function PropertyCard({ property }: PropertyCardProps) {
                 aria-label={`Image ${i + 1}`}
                 onClick={(event) => handleDotClick(event, i)}
                 className={classNames(
-                  "h-2 w-2 rounded-md shadow transition-opacity",
+                  "h-1.5 w-1.5 rounded-full transition-opacity",
                   i === selectedIndex ? "bg-white opacity-100" : "bg-white/60",
                 )}
               />
             ))}
+
+            <button
+              type="button"
+              aria-label="Next image"
+              onClick={handleNext}
+              className="flex h-4 w-4 items-center justify-center text-white transition-opacity hover:opacity-70"
+            >
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
           </div>
         )}
       </div>
@@ -108,7 +138,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
           </dl>
         </div>
 
-        <p className="text-base font-bold text-secondary-900 md:text-lg">{property.price}</p>
+        <p className="text-base font-bold text-primary-500 md:text-lg">{property.price}</p>
       </div>
     </Link>
   );
