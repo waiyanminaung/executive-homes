@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { type MouseEvent, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Bath, BedDouble, Maximize2 } from "lucide-react";
 import { classNames } from "@/utils/classNames";
@@ -13,6 +14,7 @@ interface PropertyCardProps {
 
 export function PropertyCard({ property }: PropertyCardProps) {
   const images = property.imageUrls;
+  const propertyHref = `/properties/${property.id}`;
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -28,8 +30,18 @@ export function PropertyCard({ property }: PropertyCardProps) {
     };
   }, [emblaApi]);
 
+  const handleDotClick = (event: MouseEvent<HTMLButtonElement>, imageIndex: number) => {
+    event.preventDefault();
+    event.stopPropagation();
+    emblaApi?.scrollTo(imageIndex);
+  };
+
   return (
-    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-[0_4px_12px_rgb(17_24_39/0.08)] transition-transform duration-300 hover:-translate-y-1">
+    <Link
+      href={propertyHref}
+      aria-label={property.title}
+      className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-[0_4px_12px_rgb(17_24_39/0.08)] transition-transform duration-300 hover:-translate-y-1"
+    >
       <div className="relative aspect-[305/219] overflow-hidden" ref={emblaRef}>
         <div className="flex h-full">
           {images.map((src, i) => (
@@ -57,7 +69,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
                 key={i}
                 type="button"
                 aria-label={`Image ${i + 1}`}
-                onClick={() => emblaApi?.scrollTo(i)}
+                onClick={(event) => handleDotClick(event, i)}
                 className={classNames(
                   "h-2 w-2 rounded-md shadow transition-opacity",
                   i === selectedIndex ? "bg-white opacity-100" : "bg-white/60",
@@ -98,6 +110,6 @@ export function PropertyCard({ property }: PropertyCardProps) {
 
         <p className="text-base font-bold text-secondary-900 md:text-lg">{property.price}</p>
       </div>
-    </article>
+    </Link>
   );
 }

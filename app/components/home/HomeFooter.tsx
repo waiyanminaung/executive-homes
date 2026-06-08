@@ -7,9 +7,9 @@ interface HomeFooterProps {
 }
 
 const SOCIAL_LINKS = [
-  { href: "#", label: "Facebook", src: "https://img.icons8.com/fluency/96/facebook-new.png", size: 45 },
-  { href: "#", label: "Instagram", src: "https://img.icons8.com/fluency/96/instagram-new.png", size: 45 },
-  { href: "#", label: "Line", src: "https://img.icons8.com/fluency/96/line-me.png", size: 45 },
+  { href: "https://facebook.com", label: "Facebook", src: "https://img.icons8.com/fluency/96/facebook-new.png", size: 45 },
+  { href: "https://instagram.com", label: "Instagram", src: "https://img.icons8.com/fluency/96/instagram-new.png", size: 45 },
+  { href: "https://line.me", label: "Line", src: "https://img.icons8.com/fluency/96/line-me.png", size: 45 },
 ];
 
 export function HomeFooter({ columns }: HomeFooterProps) {

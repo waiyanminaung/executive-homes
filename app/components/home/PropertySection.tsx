@@ -42,7 +42,7 @@ export function PropertySection({ section }: PropertySectionProps) {
           {section.title}
         </h2>
         <Link
-          href="#"
+          href="/properties"
           className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary-500"
         >
           <span>View More</span>

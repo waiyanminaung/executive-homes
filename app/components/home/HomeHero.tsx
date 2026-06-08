@@ -4,24 +4,37 @@ import { useState } from "react";
 import { Search } from "lucide-react";
 import { Button, Input, Select, SelectOption } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
-import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
+import { HOME_HERO_FILTER_OPTIONS, MOCK_PROPERTIES } from "@/app/constants";
 import { HomePetToggle } from "./HomePetToggle";
+import { HomeSearchResults } from "./HomeSearchResults";
 
 export function HomeHero() {
   const [tab, setTab] = useState<"rent" | "buy">("rent");
+  const [keyword, setKeyword] = useState("");
   const [type, setType] = useState<string | null>(null);
   const [location, setLocation] = useState<string | null>(null);
   const [price, setPrice] = useState<string | null>(null);
   const [bedrooms, setBedrooms] = useState<string | null>(null);
   const [petAllow, setPetAllow] = useState(false);
+  const [showResults, setShowResults] = useState(false);
 
   const selectClass = classNames(
     "h-[46px] rounded-md border border-border bg-white px-[18px]",
     "text-sm font-semibold text-neutral-600 shadow-none",
   );
 
+  const searchResults = MOCK_PROPERTIES.filter((property) => {
+    const keywordValue = keyword.trim().toLowerCase();
+    const matchesTab = tab === "rent" ? property.status === "Rent" : property.status === "Sale";
+    const matchesKeyword = keywordValue.length === 0 || `${property.title} ${property.location}`.toLowerCase().includes(keywordValue);
+    const matchesLocation = !location || property.location.toLowerCase().includes(location);
+    const matchesBedrooms = !bedrooms || bedrooms === "5+" || property.beds === Number(bedrooms);
+
+    return matchesTab && matchesKeyword && matchesLocation && matchesBedrooms;
+  });
+
   return (
-    <section className="relative overflow-hidden bg-[url('https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=2400&q=90')] bg-cover bg-center text-white md:h-[698px] md:overflow-visible">
+    <section className="relative overflow-hidden bg-[url('/banner.webp')] bg-cover bg-center text-white md:h-[698px] md:overflow-visible">
       <div className="absolute inset-0 bg-gradient-to-b from-secondary-950/90 via-secondary-950/70 to-transparent" />
 
       <div className="relative z-10 flex flex-col items-center gap-3 px-5 pt-28 text-center md:absolute md:left-0 md:right-0 md:top-[301px] md:gap-2.5 md:px-6 md:pt-0">
@@ -34,7 +47,7 @@ export function HomeHero() {
         </p>
       </div>
 
-      <div className="relative z-50 mt-8 w-full max-w-[954px] animate-fade-up px-4 pb-8 [animation-delay:500ms] md:absolute md:left-1/2 md:top-[560px] md:mt-0 md:-translate-x-1/2 md:px-6 md:pb-0 lg:px-0">
+      <div className="relative z-50 mt-8 w-full max-w-[954px] px-4 pb-8 md:absolute md:left-1/2 md:top-[560px] md:mt-0 md:-translate-x-1/2 md:px-6 md:pb-0 lg:px-0">
         <div className="mx-auto mb-4 grid w-full max-w-[280px] grid-cols-2 items-center rounded-lg border border-white/40 bg-black/60 p-1 md:flex md:w-fit md:max-w-none">
           {(["rent", "buy"] as const).map((t) => (
             <button
@@ -56,12 +69,15 @@ export function HomeHero() {
             <Input
               aria-label="Search keyword"
               placeholder="Type keyword..."
+              value={keyword}
+              onChange={(event) => setKeyword(event.target.value)}
               className="flex-1 border-border [&:focus-within]:border-primary-500"
               inputClassName="h-12 text-base font-medium text-neutral-900 md:h-[46px] md:text-sm"
             />
             <Button
               type="button"
               variant="ghost"
+              onClick={() => setShowResults(true)}
               className="h-12 rounded-md bg-gradient-to-b from-primary-500 to-primary-400 px-[30px] text-base font-semibold !text-white hover:bg-gradient-to-b md:h-[46px] md:text-sm"
             >
               <Search className="h-4 w-4" />
@@ -122,6 +138,8 @@ export function HomeHero() {
               <HomePetToggle value={petAllow} onChange={setPetAllow} />
             </div>
           </div>
+
+          {showResults ? <HomeSearchResults properties={searchResults} /> : null}
         </div>
       </div>
     </section>

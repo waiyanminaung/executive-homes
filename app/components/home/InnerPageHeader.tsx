@@ -7,26 +7,19 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import type { HomeNavItem } from "@/app/types";
 
-interface HomeHeaderProps {
+interface InnerPageHeaderProps {
   navItems: HomeNavItem[];
 }
 
-export function HomeHeader({ navItems }: HomeHeaderProps) {
+export function InnerPageHeader({ navItems }: InnerPageHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="absolute inset-x-0 top-0 z-[60] bg-transparent">
-      <div
-        className="container mx-auto grid h-20 grid-cols-[1fr_auto_1fr] items-center px-4 md:h-24"
-      >
+    <header className="bg-secondary-900/95 shadow-sm backdrop-blur-md">
+      <div className="container mx-auto grid h-16 grid-cols-[1fr_auto_1fr] items-center px-4 md:h-20">
         <div className="h-11 w-11 md:hidden" />
 
-        <nav
-          className={classNames(
-            "hidden items-center gap-8 text-sm font-semibold md:flex transition-colors duration-300",
-            "text-white/90",
-          )}
-        >
+        <nav className="hidden items-center gap-8 text-sm font-semibold text-white/90 md:flex">
           {navItems.map((item) => (
             <Link
               key={item.label}
@@ -40,21 +33,22 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
         </nav>
 
         <Link href="/" className="flex justify-center" aria-label="Executive Homes">
-          <Image src="/logo-full.svg" alt="Executive Homes" width={140} height={72} className="h-14 w-[109px] md:h-[72px] md:w-[140px]" />
+          <Image
+            src="/logo-icon.svg"
+            alt="Executive Homes"
+            width={56}
+            height={56}
+            className="h-12 w-12 md:h-14 md:w-14"
+          />
         </Link>
 
-        <div
-          className={classNames(
-            "flex items-center justify-end gap-6 text-sm font-semibold transition-colors duration-300",
-            "text-white/90",
-          )}
-        >
+        <div className="flex items-center justify-end gap-6 text-sm font-semibold text-white/90">
           <button
             type="button"
             aria-label="Toggle navigation menu"
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur md:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white md:hidden"
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
