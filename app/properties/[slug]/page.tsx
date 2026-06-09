@@ -10,14 +10,7 @@ import {
 } from "./components";
 import { PROPERTY_DETAIL } from "./constants";
 
-interface PropertyDetailPageProps {
-  params: Promise<{
-    slug?: string[];
-  }>;
-}
-
-export default async function PropertyDetailPage({ params }: PropertyDetailPageProps) {
-  await params;
+export default async function PropertyDetailPage() {
   const property = PROPERTY_DETAIL;
 
   return (
