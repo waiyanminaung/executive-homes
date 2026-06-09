@@ -6,6 +6,8 @@ import { type MouseEvent, useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import { Bath, BedDouble, ChevronLeft, ChevronRight, Maximize2 } from "lucide-react";
 import { classNames } from "@/utils/classNames";
+import { formatArea } from "@/utils/formatArea";
+import { formatPrice } from "@/utils/formatPrice";
 import type { PropertyItem } from "@/app/types";
 
 interface PropertyCardProps {
@@ -133,12 +135,14 @@ export function PropertyCard({ property }: PropertyCardProps) {
             <div className="flex items-center gap-1.5">
               <Maximize2 className="h-[18px] w-[18px]" />
               <dt className="sr-only">Area</dt>
-              <dd>{property.area}</dd>
+              <dd>{formatArea(property.area)}</dd>
             </div>
           </dl>
         </div>
 
-        <p className="text-base font-bold text-primary-500 md:text-lg">{property.price}</p>
+        <p className="text-base font-bold text-primary-500 md:text-lg">
+          {formatPrice(property.price)}{property.status === "Rent" ? "/mo" : ""}
+        </p>
       </div>
     </Link>
   );

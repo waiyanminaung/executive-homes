@@ -17,7 +17,7 @@ export interface PropertyItem {
   id: string;
   title: string;
   location: string;
-  price: string;
+  price: number;
   imageUrls: string[];
   status: "Sale" | "Rent";
   beds: number;

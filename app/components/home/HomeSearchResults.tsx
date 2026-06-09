@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { PropertyItem } from "@/app/types";
+import { formatPrice } from "@/utils/formatPrice";
 
 interface HomeSearchResultsProps {
   properties: PropertyItem[];
@@ -44,7 +45,9 @@ export function HomeSearchResults({ properties }: HomeSearchResultsProps) {
                 <span className="text-xs font-semibold text-primary-500">{property.status}</span>
                 <p className="truncate text-sm font-bold text-neutral-950">{property.title}</p>
                 <p className="truncate text-xs text-neutral-500">{property.location}</p>
-                <p className="mt-1 text-sm font-bold text-secondary-900">{property.price}</p>
+                <p className="mt-1 text-sm font-bold text-secondary-900">
+                  {formatPrice(property.price)}{property.status === "Rent" ? "/mo" : ""}
+                </p>
               </div>
             </Link>
           ))}

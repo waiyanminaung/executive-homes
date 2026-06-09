@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Search } from "lucide-react";
 import { Button, Input, Select, SelectOption } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
@@ -37,7 +38,14 @@ export function HomeHero() {
     <section className="relative overflow-hidden bg-[url('/banner.webp')] bg-cover bg-center text-white md:h-[698px] md:overflow-visible">
       <div className="absolute inset-0 bg-gradient-to-b from-secondary-950/90 via-secondary-950/70 to-transparent" />
 
-      <div className="relative z-10 flex flex-col items-center gap-3 px-5 pt-28 text-center md:absolute md:left-0 md:right-0 md:top-[301px] md:gap-2.5 md:px-6 md:pt-0">
+      <div className="relative z-10 flex flex-col items-center gap-3 px-5 pt-16 text-center md:absolute md:left-0 md:right-0 md:top-[190px] md:gap-2.5 md:px-6 md:pt-0">
+        <Image
+          src="/logo-full.svg"
+          alt="Executive Homes"
+          width={180}
+          height={92}
+          className="mb-2 h-24 w-[188px] animate-fade-up [animation-delay:0ms] md:h-[120px] md:w-[235px]"
+        />
         <h1 className="max-w-[340px] animate-fade-up text-[32px] font-black leading-[1.12] tracking-tight [animation-delay:100ms] md:max-w-[699px] md:text-[40px] md:leading-[1.5]">
           Your Gateway to Elite Living
         </h1>
@@ -47,7 +55,7 @@ export function HomeHero() {
         </p>
       </div>
 
-      <div className="relative z-50 mt-8 w-full max-w-[954px] px-4 pb-8 md:absolute md:left-1/2 md:top-[560px] md:mt-0 md:-translate-x-1/2 md:px-6 md:pb-0 lg:px-0">
+      <div className="relative z-50 mt-8 w-full max-w-[954px] px-4 pb-8 md:absolute md:bottom-10 md:left-1/2 md:mt-0 md:-translate-x-1/2 md:translate-y-1/2 md:px-6 md:pb-0 lg:px-0">
         <div className="mx-auto mb-4 grid w-full max-w-[280px] grid-cols-2 items-center rounded-lg border border-white/40 bg-black/60 p-1 md:flex md:w-fit md:max-w-none">
           {(["rent", "buy"] as const).map((t) => (
             <button

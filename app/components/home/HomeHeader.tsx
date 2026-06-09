@@ -9,9 +9,10 @@ import type { HomeNavItem } from "@/app/types";
 
 interface HomeHeaderProps {
   navItems: HomeNavItem[];
+  hideLogo?: boolean;
 }
 
-export function HomeHeader({ navItems }: HomeHeaderProps) {
+export function HomeHeader({ navItems, hideLogo }: HomeHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -39,9 +40,13 @@ export function HomeHeader({ navItems }: HomeHeaderProps) {
           ))}
         </nav>
 
-        <Link href="/" className="flex justify-center" aria-label="Executive Homes">
-          <Image src="/logo-full.svg" alt="Executive Homes" width={140} height={72} className="h-14 w-[109px] md:h-[72px] md:w-[140px]" />
-        </Link>
+        {!hideLogo ? (
+          <Link href="/" className="flex justify-center" aria-label="Executive Homes">
+            <Image src="/logo-full.svg" alt="Executive Homes" width={140} height={72} className="h-14 w-[109px] md:h-[72px] md:w-[140px]" />
+          </Link>
+        ) : (
+          <div />
+        )}
 
         <div
           className={classNames(

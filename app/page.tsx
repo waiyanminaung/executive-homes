@@ -16,7 +16,7 @@ import {
 export default function HomePage() {
   return (
     <>
-      <HomeHeader navItems={HOME_NAV_ITEMS} />
+      <HomeHeader navItems={HOME_NAV_ITEMS} hideLogo />
       <main className="min-h-screen bg-white">
         <HomeHero />
         <AreaGrid areas={HOME_AREA_CARDS} />

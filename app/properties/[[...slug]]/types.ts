@@ -18,8 +18,8 @@ export interface PropertyContactItem {
 }
 
 export interface PropertyDetail extends PropertyItem {
-  salePrice: string;
-  rentPrice: string;
+  salePrice: number;
+  rentPrice: number;
   address: string;
   description: string;
   detailStats: PropertyDetailStat[];

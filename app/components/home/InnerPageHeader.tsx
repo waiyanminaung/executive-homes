@@ -38,7 +38,7 @@ export function InnerPageHeader({ navItems }: InnerPageHeaderProps) {
             alt="Executive Homes"
             width={56}
             height={56}
-            className="h-12 w-12 md:h-14 md:w-14"
+            className="h-12 w-12 md:h-16 md:w-16"
           />
         </Link>
 

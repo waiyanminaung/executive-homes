@@ -1,5 +1,6 @@
 import type { PropertyDetail } from "../types";
 import { PropertyShareButton } from "./PropertyShareButton";
+import { formatPrice } from "@/utils/formatPrice";
 
 interface PropertyDetailSummaryProps {
   property: PropertyDetail;
@@ -25,14 +26,14 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-semibold text-neutral-600">For sale</span>
               <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
-                {property.rentPrice}
+                {formatPrice(property.rentPrice)}/mo
               </span>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
               <span className="text-sm font-semibold text-neutral-600">For rent</span>
               <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
-                {property.salePrice}
+                {formatPrice(property.salePrice)}
               </span>
             </div>
           </div>
