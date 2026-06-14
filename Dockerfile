@@ -1,18 +1,18 @@
 FROM node:lts-alpine3.22 AS base
 WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma
+COPY prisma.config.ts ./
 RUN corepack enable
 
 FROM base AS development
 RUN pnpm install
 COPY . .
-RUN pnpm db:generate
 CMD ["pnpm", "dev"]
 
 FROM base AS build
 RUN pnpm install --frozen-lockfile
 COPY . .
-RUN pnpm db:generate
 RUN pnpm build
 
 FROM base AS prod-deps

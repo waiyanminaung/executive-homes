@@ -1,22 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
-enum Role {
-  ADMIN
-}
-
-enum ContentType {
-  MOVIE
-  SERIES
-}
-
-enum VideoProvider {
-  VK
-  S3
-}
-
 generator client {
   provider      = "prisma-client"
   output        = "./generated/prisma"
@@ -27,141 +8,199 @@ datasource db {
   provider = "postgresql"
 }
 
+enum ListingStatus {
+  FOR_SALE
+  FOR_RENT
+  FOR_SALE_AND_RENT
+  SOLD
+  RENTED
+  OFF_MARKET
+}
+
+enum PropertyType {
+  CONDO
+  APARTMENT
+  HOUSE
+  VILLA
+  TOWNHOUSE
+  PENTHOUSE
+  OFFICE_SPACE
+  RETAIL_SPACE
+  COMMERCIAL_SPACE
+  WAREHOUSE
+}
+
+enum FeatureCategory {
+  UNIT_FEATURE
+  COMMON_FACILITY
+}
+
+enum TransitLine {
+  BTS_SUKHUMVIT
+  BTS_SILOM
+  MRT_BLUE
+  MRT_PURPLE
+  ARL
+  BRT
+}
+
+model Province {
+  id         String     @id @default(cuid())
+  name       String
+  slug       String     @unique
+  districts  District[]
+  properties Property[]
+
+  @@map("provinces")
+}
+
+model District {
+  id           String        @id @default(cuid())
+  name         String
+  slug         String
+  provinceId   String
+  province     Province      @relation(fields: [provinceId], references: [id], onDelete: Cascade)
+  subDistricts SubDistrict[]
+  properties   Property[]
+
+  @@unique([slug, provinceId])
+  @@map("districts")
+}
+
+model SubDistrict {
+  id         String     @id @default(cuid())
+  name       String
+  slug       String
+  districtId String
+  district   District   @relation(fields: [districtId], references: [id], onDelete: Cascade)
+  properties Property[]
+
+  @@unique([slug, districtId])
+  @@map("sub_districts")
+}
+
+model Property {
+  id            String        @id @default(cuid())
+  slug          String        @unique
+  title         String
+  description   String
+  propertyType  PropertyType
+  status        ListingStatus
+  salePrice     Float?
+  rentPrice     Float?
+  beds          Int?
+  baths         Int?
+  areaSqm       Float
+  address       String
+
+  provinceId    String
+  districtId    String?
+  subDistrictId String?
+  province      Province      @relation(fields: [provinceId], references: [id])
+  district      District?     @relation(fields: [districtId], references: [id])
+  subDistrict   SubDistrict?  @relation(fields: [subDistrictId], references: [id])
+
+  mapImageUrl   String?
+  isFeatured    Boolean       @default(false)
+  isPublished   Boolean       @default(false)
+
+  images          PropertyImage[]
+  features        PropertyFeature[]
+  transitStations PropertyTransit[]
+  enquiries       Enquiry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("properties")
+}
+
+model PropertyImage {
+  id         String   @id @default(cuid())
+  propertyId String
+  url        String
+  order      Int      @default(0)
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@map("property_images")
+}
+
+model Feature {
+  id         String            @id @default(cuid())
+  category   FeatureCategory
+  label      String
+  slug       String            @unique
+  properties PropertyFeature[]
+
+  @@map("features")
+}
+
+model PropertyFeature {
+  propertyId String
+  featureId  String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  feature    Feature  @relation(fields: [featureId], references: [id], onDelete: Cascade)
+
+  @@id([propertyId, featureId])
+  @@map("property_features")
+}
+
+model TransitStation {
+  id         String            @id @default(cuid())
+  name       String
+  slug       String            @unique
+  line       TransitLine
+  properties PropertyTransit[]
+
+  @@map("transit_stations")
+}
+
+model PropertyTransit {
+  id             String         @id @default(cuid())
+  propertyId     String
+  stationId      String
+  distanceMeters Int
+  property       Property       @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  station        TransitStation @relation(fields: [stationId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, stationId])
+  @@map("property_transit")
+}
+
+model Enquiry {
+  id          String    @id @default(cuid())
+  propertyId  String?
+  property    Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
+  name        String
+  email       String
+  phone       String?
+  message     String
+  listingType String?
+  isRead      Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  @@map("enquiries")
+}
+
 model User {
   id            String    @id
   name          String
-  email         String
+  email         String    @unique
   emailVerified Boolean   @default(false)
   image         String?
+  role          String    @default("ADMIN")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
 
-  role String @default("ADMIN")
-
-  @@unique([email])
   @@map("user")
-}
-
-model Category {
-  id         String            @id @default(cuid())
-  name       String
-  orderIndex Int               @default(0)
-  contents   ContentCategory[]
-  createdAt  DateTime          @default(now())
-  updatedAt  DateTime          @updatedAt
-
-  @@map("categories")
-}
-
-model Content {
-  id            String            @id @default(cuid())
-  type          ContentType
-  title         String
-  year          Int
-  rating        Float
-  duration      String?
-  genre         String[]
-  description   String
-  posterUrl     String
-  backdropUrl   String
-  width         Int?
-  height        Int?
-  telegramUrl   String?
-  sourceUrl     String            @default("") @map("source_url")
-  provider      VideoProvider     @default(S3)
-  isTrending    Boolean           @default(false)
-  isPopular     Boolean           @default(false)
-  categories    ContentCategory[]
-  seasons       Season[]
-  downloadLinks DownloadLink[]
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-
-  @@map("content")
-}
-
-model ContentCategory {
-  contentId  String
-  categoryId String
-  content    Content  @relation(fields: [contentId], references: [id], onDelete: Cascade)
-  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  @@id([contentId, categoryId])
-  @@map("content_categories")
-}
-
-model Season {
-  id           String    @id @default(cuid())
-  seasonNumber Int
-  contentId    String
-  content      Content   @relation(fields: [contentId], references: [id], onDelete: Cascade)
-  episodes     Episode[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-
-  @@unique([contentId, seasonNumber])
-  @@map("seasons")
-}
-
-model Episode {
-  id            String         @id @default(cuid())
-  seasonId      String
-  season        Season         @relation(fields: [seasonId], references: [id], onDelete: Cascade)
-  seasonNumber  Int
-  episodeNumber Int
-  title         String
-  duration      String
-  description   String
-  posterUrl     String
-  telegramUrl   String?
-  sourceUrl     String         @default("") @map("source_url")
-  provider      VideoProvider  @default(S3)
-  downloadLinks DownloadLink[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-
-  @@unique([seasonId, episodeNumber])
-  @@map("episodes")
-}
-
-model DownloadLink {
-  id        String   @id @default(cuid())
-  quality   String
-  size      String
-  url       String
-  contentId String?
-  episodeId String?
-  content   Content? @relation(fields: [contentId], references: [id], onDelete: Cascade)
-  episode   Episode? @relation(fields: [episodeId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now())
-
-  @@map("download_links")
-}
-
-model Request {
-  id        String   @id @default(cuid())
-  title     String
-  createdAt DateTime @default(now())
-
-  @@map("requests")
-}
-
-model Report {
-  id          String   @id @default(cuid())
-  title       String
-  reason      String?
-  description String
-  createdAt   DateTime @default(now())
-
-  @@map("reports")
 }
 
 model Session {
   id        String   @id
   expiresAt DateTime
-  token     String
+  token     String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   ipAddress String?
@@ -169,7 +208,6 @@ model Session {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([token])
   @@index([userId])
   @@map("session")
 }

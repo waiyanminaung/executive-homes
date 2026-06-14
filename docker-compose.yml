@@ -1,10 +1,10 @@
 services:
-  pkmovie-app-dev:
+  executive-homes-app:
     build:
       context: .
       target: development
-    image: waiyandev/pkmovie-app-dev:latest
-    container_name: pkmovie-app-dev
+    image: waiyandev/executive-homes-app-dev:latest
+    container_name: executive-homes-app
     ports:
       - "3000:3000"
     command: ["sh", "-c", "pnpm install && pnpm dev --hostname 0.0.0.0 --port 3000"]
@@ -13,37 +13,33 @@ services:
     environment:
       - NODE_ENV=development
       - WATCHPACK_POLLING=true
+      - CI=true
     volumes:
       - .:/app
-      - pkmovie_node_modules:/app/node_modules
-      - pkmovie_pnpm_store:/root/.pnpm-store
+      - executive_homes_node_modules:/app/node_modules
+      - executive_homes_pnpm_store:/root/.pnpm-store
     depends_on:
-      - pkmovie-db
-  # pkmovie-app:
-  #   build:
-  #     context: .
-  #     target: production
-  #   image: waiyandev/pkmovie-app:latest
-  #   container_name: pkmovie-app
-  #   ports:
-  #     - "3000:3000"
-  #   env_file:
-  #     - .env.docker
-  #   depends_on:
-  #     - pkmovie-db
-  pkmovie-db:
+      executive-homes-db:
+        condition: service_healthy
+
+  executive-homes-db:
     image: postgres:15-alpine
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=pkmovie
-    container_name: pkmovie-db
+      - POSTGRES_DB=executive_homes
+    container_name: executive-homes-db
     ports:
       - "5433:5432"
     volumes:
-      - pkmovie_db_data:/var/lib/postgresql/data
+      - executive_homes_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d executive_homes"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
-  pkmovie_db_data:
-  pkmovie_app_data:
-  pkmovie_node_modules:
-  pkmovie_pnpm_store:
+  executive_homes_db_data:
+  executive_homes_node_modules:
+  executive_homes_pnpm_store:

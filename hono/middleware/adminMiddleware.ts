@@ -1,4 +1,3 @@
-import { Role } from "@/prisma/generated/prisma/client";
 import { createMiddleware } from "hono/factory";
 
 interface SessionUserWithRole {
@@ -8,7 +7,7 @@ interface SessionUserWithRole {
 export const adminMiddleware = createMiddleware(async (c, next) => {
   const user = c.get("user") as SessionUserWithRole | undefined;
 
-  if (user?.role !== Role.ADMIN) {
+  if (user?.role !== "ADMIN") {
     return c.json({ error: "Forbidden" }, 403);
   }
 
