@@ -41,9 +41,65 @@ export const HOME_HERO_FILTER_OPTIONS = {
 
 export const HOME_NAV_ITEMS: HomeNavItem[] = [
   { label: "Home", href: "/" },
-  { label: "Buy", href: "/properties/for-sale", hasDropdown: true },
-  { label: "Rent", href: "/properties/for-rent", hasDropdown: true },
-  { label: "Projects", href: "/properties/projects", hasDropdown: true },
+  {
+    label: "Buy",
+    href: "/property-for-sale",
+    hasDropdown: true,
+    dropdownColumns: [
+      {
+        title: "Property Types",
+        links: [
+          { label: "Condos", href: "/condo-for-sale" },
+          { label: "Apartments", href: "/apartment-for-sale" },
+          { label: "Houses", href: "/house-for-sale" },
+          { label: "Office Spaces", href: "/office-space-for-sale" },
+          { label: "Penthouses", href: "/penthouse-for-sale" },
+          { label: "Villas", href: "/villa-for-sale" },
+        ],
+      },
+      {
+        title: "Bangkok Districts",
+        links: [
+          { label: "Sukhumvit", href: "/property-for-sale/bangkok/sukhumvit" },
+          { label: "Sathorn", href: "/property-for-sale/bangkok/sathon" },
+          { label: "Silom", href: "/property-for-sale/bangkok/silom" },
+          { label: "Watthana", href: "/property-for-sale/bangkok/watthana" },
+          { label: "Pathum Wan", href: "/property-for-sale/bangkok/pathum-wan" },
+          { label: "Khlong Toei", href: "/property-for-sale/bangkok/khlong-toei" },
+        ],
+      },
+    ],
+  },
+  {
+    label: "Rent",
+    href: "/property-for-rent",
+    hasDropdown: true,
+    dropdownColumns: [
+      {
+        title: "Property Types",
+        links: [
+          { label: "Condos", href: "/condo-for-rent" },
+          { label: "Apartments", href: "/apartment-for-rent" },
+          { label: "Houses", href: "/house-for-rent" },
+          { label: "Office Spaces", href: "/office-space-for-rent" },
+          { label: "Penthouses", href: "/penthouse-for-rent" },
+          { label: "Villas", href: "/villa-for-rent" },
+        ],
+      },
+      {
+        title: "Bangkok Districts",
+        links: [
+          { label: "Sukhumvit", href: "/property-for-rent/bangkok/sukhumvit" },
+          { label: "Sathorn", href: "/property-for-rent/bangkok/sathon" },
+          { label: "Silom", href: "/property-for-rent/bangkok/silom" },
+          { label: "Watthana", href: "/property-for-rent/bangkok/watthana" },
+          { label: "Pathum Wan", href: "/property-for-rent/bangkok/pathum-wan" },
+          { label: "Khlong Toei", href: "/property-for-rent/bangkok/khlong-toei" },
+        ],
+      },
+    ],
+  },
+  { label: "Projects", href: "/property-for-sale" },
 ];
 
 export const HOME_AREA_CARDS: AreaCard[] = [
@@ -411,45 +467,45 @@ export const HOME_FOOTER_COLUMNS: FooterColumn[] = [
   {
     title: "Property for Sales",
     links: [
-      { label: "Condos for Sale", href: "/properties/condos-for-sale" },
-      { label: "Houses for Sale", href: "/properties/houses-for-sale" },
-      { label: "Apartment for Sale", href: "/properties/apartments-for-sale" },
-      { label: "Office space for Sale", href: "/properties/office-space-for-sale" },
-      { label: "Retail space for Sale", href: "/properties/retail-space-for-sale" },
-      { label: "Warehouse for Sale", href: "/properties/warehouse-for-sale" },
+      { label: "Condos for Sale", href: "/condo-for-sale" },
+      { label: "Houses for Sale", href: "/house-for-sale" },
+      { label: "Apartment for Sale", href: "/apartment-for-sale" },
+      { label: "Office space for Sale", href: "/office-space-for-sale" },
+      { label: "Commercial space for Sale", href: "/commercial-space-for-sale" },
+      { label: "Penthouse for Sale", href: "/penthouse-for-sale" },
     ],
   },
   {
     title: "Property for Rents",
     links: [
-      { label: "Condos for Rent", href: "/properties/condos-for-rent" },
-      { label: "Houses for Rent", href: "/properties/houses-for-rent" },
-      { label: "Apartment for Rent", href: "/properties/apartments-for-rent" },
-      { label: "Office space for Rent", href: "/properties/office-space-for-rent" },
-      { label: "Retail space for Rent", href: "/properties/retail-space-for-rent" },
-      { label: "Warehouse for Rent", href: "/properties/warehouse-for-rent" },
+      { label: "Condos for Rent", href: "/condo-for-rent" },
+      { label: "Houses for Rent", href: "/house-for-rent" },
+      { label: "Apartment for Rent", href: "/apartment-for-rent" },
+      { label: "Office space for Rent", href: "/office-space-for-rent" },
+      { label: "Commercial space for Rent", href: "/commercial-space-for-rent" },
+      { label: "Penthouse for Rent", href: "/penthouse-for-rent" },
     ],
   },
   {
     title: "Property Types",
     links: [
-      { label: "Apartment", href: "/properties/apartment" },
-      { label: "Commercial Space", href: "/properties/commercial-space" },
-      { label: "Condo", href: "/properties/condo" },
-      { label: "House", href: "/properties/house" },
-      { label: "Office Space", href: "/properties/office-space" },
-      { label: "Pen House", href: "/properties/penthouse" },
+      { label: "Apartment", href: "/apartment-for-sale" },
+      { label: "Commercial Space", href: "/commercial-space-for-sale" },
+      { label: "Condo", href: "/condo-for-sale" },
+      { label: "House", href: "/house-for-sale" },
+      { label: "Office Space", href: "/office-space-for-sale" },
+      { label: "Penthouse", href: "/penthouse-for-sale" },
     ],
   },
   {
     title: "Property within Bangkok Area",
     links: [
-      { label: "Property for sale in Watthana", href: "/properties/sale-watthana" },
-      { label: "Properties for sale in Khlong Toei", href: "/properties/sale-khlong-toei" },
-      { label: "Properties for sale in Pathum Wan", href: "/properties/sale-pathum-wan" },
-      { label: "Properties for sale in Huai Khwang", href: "/properties/sale-huai-khwang" },
-      { label: "Properties for sale in Bang Rak", href: "/properties/sale-bang-rak" },
-      { label: "Properties for sale in Ratchathewi", href: "/properties/sale-ratchathewi" },
+      { label: "Property for sale in Watthana", href: "/property-for-sale/bangkok/watthana" },
+      { label: "Properties for sale in Khlong Toei", href: "/property-for-sale/bangkok/khlong-toei" },
+      { label: "Properties for sale in Pathum Wan", href: "/property-for-sale/bangkok/pathum-wan" },
+      { label: "Properties for sale in Huai Khwang", href: "/property-for-sale/bangkok/huai-khwang" },
+      { label: "Properties for sale in Bang Rak", href: "/property-for-sale/bangkok/bang-rak" },
+      { label: "Properties for sale in Ratchathewi", href: "/property-for-sale/bangkok/ratchathewi" },
     ],
   },
 ];

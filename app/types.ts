@@ -1,9 +1,15 @@
 import type { LucideIcon } from "lucide-react";
 
+export interface NavDropdownColumn {
+  title: string;
+  links: Array<{ label: string; href: string }>;
+}
+
 export interface HomeNavItem {
   label: string;
   href: string;
   hasDropdown?: boolean;
+  dropdownColumns?: NavDropdownColumn[];
 }
 
 export interface AreaCard {

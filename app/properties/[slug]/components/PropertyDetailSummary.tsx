@@ -4,9 +4,10 @@ import { formatPrice } from "@/utils/formatPrice";
 
 interface PropertyDetailSummaryProps {
   property: PropertyDetail;
+  listingType?: "sale" | "rent";
 }
 
-export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) {
+export function PropertyDetailSummary({ property, listingType }: PropertyDetailSummaryProps) {
   const LocationIcon = property.detailStats[0].icon;
 
   return (
@@ -23,19 +24,23 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
           </p>
 
           <div className="mt-4 grid gap-2">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold text-neutral-600">For sale</span>
-              <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
-                {formatPrice(property.rentPrice)}/mo
-              </span>
-            </div>
+            {listingType !== "rent" && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-semibold text-neutral-600">For sale</span>
+                <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
+                  {formatPrice(property.salePrice)}
+                </span>
+              </div>
+            )}
 
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm font-semibold text-neutral-600">For rent</span>
-              <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
-                {formatPrice(property.salePrice)}
-              </span>
-            </div>
+            {listingType !== "sale" && (
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-sm font-semibold text-neutral-600">For rent</span>
+                <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
+                  {formatPrice(property.rentPrice)}/mo
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

@@ -9,10 +9,19 @@ import { ListingPagination } from "./ListingPagination";
 
 const PAGE_SIZE = 12;
 
-export function ListingPage() {
+interface ListingPageProps {
+  listingType?: "for-sale" | "for-rent";
+  propertyType?: string;
+  defaultLocation?: string;
+  pageTitle?: string;
+}
+
+export function ListingPage({ listingType, defaultLocation, pageTitle }: ListingPageProps) {
+  const defaultTab = listingType === "for-rent" ? "rent" : "buy";
   const [q] = useQueryState("q", parseAsString.withDefault(""));
-  const [tab] = useQueryState("tab", parseAsString.withDefault("buy"));
-  const [location] = useQueryState("location");
+  const [tab] = useQueryState("tab", parseAsString.withDefault(defaultTab));
+  const [locationParam] = useQueryState("location");
+  const location = locationParam ?? defaultLocation ?? null;
   const [bedrooms] = useQueryState("bedrooms");
   const [sort] = useQueryState("sort", parseAsString.withDefault("default"));
   const [page] = useQueryState("page", parseAsInteger.withDefault(1));
@@ -39,8 +48,7 @@ export function ListingPage() {
   const safePage = Math.min(page, totalPages);
   const paginated = sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
 
-  const title =
-    tab === "rent" ? "Apartments for Rent in Bangkok" : "Properties for Sale in Bangkok";
+  const title = pageTitle ?? (tab === "rent" ? "Properties for Rent in Bangkok" : "Properties for Sale in Bangkok");
 
   return (
     <>

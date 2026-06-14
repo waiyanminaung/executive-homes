@@ -10,8 +10,14 @@ import {
 } from "./components";
 import { PROPERTY_DETAIL } from "./constants";
 
-export default async function PropertyDetailPage() {
+interface PageProps {
+  searchParams: Promise<{ listing?: string }>;
+}
+
+export default async function PropertyDetailPage({ searchParams }: PageProps) {
   const property = PROPERTY_DETAIL;
+  const { listing } = await searchParams;
+  const listingType = listing === "sale" || listing === "rent" ? listing : undefined;
 
   return (
     <>
@@ -23,7 +29,7 @@ export default async function PropertyDetailPage() {
 
           <div className="mt-[30px] grid gap-6 lg:grid-cols-[minmax(0,908px)_359px] lg:items-start">
             <div className="grid gap-5">
-              <PropertyDetailSummary property={property} />
+              <PropertyDetailSummary property={property} listingType={listingType} />
               <PropertyDetailContent property={property} />
             </div>
 

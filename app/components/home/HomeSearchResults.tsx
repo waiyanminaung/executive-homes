@@ -17,7 +17,7 @@ export function HomeSearchResults({ properties }: HomeSearchResultsProps) {
           <p className="text-xs text-neutral-500">{properties.length} matching properties</p>
         </div>
 
-        <Link href="/properties/search" className="flex items-center gap-1 text-sm font-semibold text-primary-500">
+        <Link href="/property-for-sale" className="flex items-center gap-1 text-sm font-semibold text-primary-500">
           <span>View all</span>
           <ArrowRight className="h-4 w-4" />
         </Link>
@@ -28,7 +28,7 @@ export function HomeSearchResults({ properties }: HomeSearchResultsProps) {
           {properties.slice(0, 3).map((property) => (
             <Link
               key={property.id}
-              href={`/properties/${property.id}`}
+              href={`/property/${property.id}`}
               className="grid grid-cols-[86px_minmax(0,1fr)] gap-3 rounded-xl border border-gray-200 p-2 transition-colors hover:bg-gray-50"
             >
               <div className="relative h-20 overflow-hidden rounded-lg bg-neutral-200">

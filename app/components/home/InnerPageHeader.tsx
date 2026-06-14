@@ -3,9 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import type { HomeNavItem } from "@/app/types";
+import { HeaderNav } from "./HeaderNav";
+import { MobileMenu } from "./MobileMenu";
 
 interface InnerPageHeaderProps {
   navItems: HomeNavItem[];
@@ -15,22 +17,11 @@ export function InnerPageHeader({ navItems }: InnerPageHeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="bg-secondary-900/95 shadow-sm backdrop-blur-md">
+    <header className="relative z-[100] bg-secondary-900/95 shadow-sm backdrop-blur-md">
       <div className="container mx-auto grid h-16 grid-cols-[1fr_auto_1fr] items-center px-4 md:h-20">
         <div className="h-11 w-11 md:hidden" />
 
-        <nav className="hidden items-center gap-8 text-sm font-semibold text-white/90 md:flex">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className="flex items-center gap-1 transition-colors hover:text-primary-500"
-            >
-              <span>{item.label}</span>
-              {item.hasDropdown ? <ChevronDown className="h-3.5 w-3.5" /> : null}
-            </Link>
-          ))}
-        </nav>
+        <HeaderNav navItems={navItems} />
 
         <Link href="/" className="flex justify-center" aria-label="Executive Homes">
           <Image
@@ -67,37 +58,7 @@ export function InnerPageHeader({ navItems }: InnerPageHeaderProps) {
         </div>
       </div>
 
-      {menuOpen ? (
-        <div className="mx-4 mb-4 rounded-2xl border border-white/10 bg-secondary-900/95 p-4 shadow-[0_18px_40px_rgb(0_0_0/0.24)] backdrop-blur-md md:hidden">
-          <nav className="grid gap-1 text-sm font-semibold text-white">
-            {navItems.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                onClick={() => setMenuOpen(false)}
-                className="flex items-center justify-between rounded-xl px-4 py-3 transition-colors hover:bg-white/10"
-              >
-                <span>{item.label}</span>
-                {item.hasDropdown ? <ChevronDown className="h-4 w-4 text-white/70" /> : null}
-              </Link>
-            ))}
-            <Link
-              href="/about"
-              onClick={() => setMenuOpen(false)}
-              className="rounded-xl px-4 py-3 transition-colors hover:bg-white/10"
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact"
-              onClick={() => setMenuOpen(false)}
-              className="mt-2 rounded-xl bg-gradient-to-b from-primary-500 to-primary-400 px-4 py-3 text-center font-bold text-white"
-            >
-              Contact Us
-            </Link>
-          </nav>
-        </div>
-      ) : null}
+      {menuOpen && <MobileMenu navItems={navItems} onClose={() => setMenuOpen(false)} />}
     </header>
   );
 }

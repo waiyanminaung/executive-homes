@@ -12,7 +12,7 @@ export function SimilarProperties() {
         </h2>
 
         <Link
-          href="/properties/for-sale/surat-thani"
+          href="/property-for-sale/surat-thani"
           className="hidden items-center gap-1.5 text-sm font-semibold text-primary-500 sm:flex"
         >
           <span>View More</span>
