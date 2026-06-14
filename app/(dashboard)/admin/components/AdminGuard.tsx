@@ -21,8 +21,8 @@ export default function AdminGuard({ children }: AdminGuardProps) {
 
   if (session.isPending) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0A0A0A] text-white/30">
-        <Spinner className="size-8" />
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Spinner className="size-6 text-primary-600" />
       </div>
     );
   }

@@ -22,6 +22,7 @@ export default function AdminRegisterPage() {
   const router = useRouter();
   const session = authClient.useSession();
   const [submitError, setSubmitError] = useState<string | null>(null);
+
   const methods = useForm<AdminRegisterFormValues>({
     values: DEFAULT_ADMIN_REGISTER_VALUES,
     resolver: zodResolver(adminRegisterSchema),
@@ -51,70 +52,39 @@ export default function AdminRegisterPage() {
   });
 
   return (
-    <AdminAuthShell
-      title="Admin Register"
-      subtitle="ပိတ်ကား - စီမံခန့်ခွဲသူ အကောင့် ဖွင့်ရန်"
-      footer={
-        <p className="text-center text-xs text-white/40 font-semibold">
-          Already have admin access?{" "}
-          <Link
-            href="/admin/login"
-            className="text-white hover:text-accent transition-colors"
-          >
-            Sign in
-          </Link>
-        </p>
-      }
-    >
+    <AdminAuthShell title="Create admin account">
       <FormProvider {...methods}>
         <form onSubmit={handleRegister} className="space-y-5">
-          <AdminRegisterField
-            control={methods.control}
-            name="name"
-            label="Full Name"
-            placeholder="Admin Name"
-          />
-
-          <AdminRegisterField
-            control={methods.control}
-            name="email"
-            label="Email Address"
-            type="email"
-            placeholder="admin@patekar.com"
-          />
-
-          <AdminRegisterField
-            control={methods.control}
-            name="password"
-            label="Password"
-            type="password"
-            placeholder="••••••••"
-          />
-
-          <AdminRegisterField
-            control={methods.control}
-            name="confirmPassword"
-            label="Confirm Password"
-            type="password"
-            placeholder="••••••••"
-          />
+          <AdminRegisterField name="name" label="Full name" placeholder="John Smith" />
+          <AdminRegisterField name="email" label="Email address" type="email" placeholder="admin@example.com" />
+          <AdminRegisterField name="password" label="Password" type="password" placeholder="••••••••" />
+          <AdminRegisterField name="confirmPassword" label="Confirm password" type="password" placeholder="••••••••" />
 
           {submitError ? (
-            <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-xs font-bold">
+            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">
               {submitError}
-            </div>
+            </p>
           ) : null}
 
           <LoadingButton
             type="submit"
             loading={methods.formState.isSubmitting}
-            loadingText="Registering..."
-            className="w-full bg-white text-black py-5 rounded-2xl font-black uppercase tracking-widest flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-white/10 disabled:opacity-50 disabled:scale-100"
+            loadingText="Creating account..."
+            className="w-full bg-primary-700 hover:bg-primary-800 text-white font-semibold py-2.5 rounded-lg transition-colors"
           >
-            အကောင့် ဖွင့်မည်
+            Create account
           </LoadingButton>
         </form>
       </FormProvider>
+
+      <div className="mt-6 text-center">
+        <Link
+          href="/admin/login"
+          className="text-sm text-gray-500 hover:text-primary-700 transition-colors"
+        >
+          Already have an account? Sign in
+        </Link>
+      </div>
     </AdminAuthShell>
   );
 }

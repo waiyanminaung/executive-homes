@@ -1,6 +1,13 @@
 import { ADMIN_MIN_PASSWORD_LENGTH } from "@/constants/auth";
 import { z } from "zod";
 
+export const adminLoginSchema = z.object({
+  email: z.email("Please enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+
+export type AdminLoginFormValues = z.infer<typeof adminLoginSchema>;
+
 export const adminRegisterSchema = z
   .object({
     name: z.string().trim().min(1, "Name is required"),
