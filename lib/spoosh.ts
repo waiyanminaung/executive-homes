@@ -3,69 +3,38 @@ import { create } from "@spoosh/react";
 import { cachePlugin } from "@spoosh/plugin-cache";
 import { deduplicationPlugin } from "@spoosh/plugin-deduplication";
 import { invalidationPlugin } from "@spoosh/plugin-invalidation";
-import type { AdminReportItem, AdminRequestItem } from "@/types/admin";
-import type { Category } from "@/types/categories";
-import type {
-  CategoryCreateInput,
-  CategoryDeleteInput,
-  CategoryOrderInput,
-  CategoryUpdateInput,
-} from "@/validation/categoriesSchema";
+import type { PropertyListItem, PropertyDetail, Province } from "@/types/property";
+import type { PropertyCreateInput, PropertyUpdateInput } from "@/validation/propertySchema";
 
 export type ApiSchema = {
-  categories: {
+  "admin/properties": {
     GET: {
-      data: Category[];
+      data: { properties: PropertyListItem[]; total: number; page: number; limit: number };
+      query?: { page?: string; limit?: string };
     };
     POST: {
-      data: Category;
-      body: CategoryCreateInput;
+      data: { property: PropertyDetail };
+      body: PropertyCreateInput;
     };
   };
-  "categories/:id": {
-    PUT: {
-      data: Category;
-      params: {
-        id: string;
-      };
-      body: CategoryUpdateInput;
+  "admin/properties/:id": {
+    GET: {
+      data: { property: PropertyDetail };
+      params: { id: string };
+    };
+    PATCH: {
+      data: { property: PropertyDetail };
+      params: { id: string };
+      body: PropertyUpdateInput;
     };
     DELETE: {
       data: { ok: true };
-      params: {
-        id: string;
-      };
-      body: CategoryDeleteInput;
+      params: { id: string };
     };
   };
-  "categories/order": {
-    PATCH: {
-      data: { ok: true };
-      body: CategoryOrderInput;
-    };
-  };
-  requests: {
+  "admin/provinces": {
     GET: {
-      data: AdminRequestItem[];
-    };
-    POST: {
-      data: { ok: true };
-      body: {
-        title: string;
-      };
-    };
-  };
-  reports: {
-    GET: {
-      data: AdminReportItem[];
-    };
-    POST: {
-      data: { ok: true };
-      body: {
-        title: string;
-        reason: string;
-        description: string;
-      };
+      data: { provinces: Province[] };
     };
   };
 };
