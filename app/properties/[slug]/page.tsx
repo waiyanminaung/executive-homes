@@ -33,6 +33,7 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
       transitStations: { include: { station: true } },
       province: { select: { name: true } },
       district: { select: { name: true } },
+      subDistrict: { select: { name: true } },
     },
   });
 
@@ -40,7 +41,7 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
 
   const isRent = raw.status === "FOR_RENT";
   const price = isRent ? (raw.rentPrice ?? 0) : (raw.salePrice ?? raw.rentPrice ?? 0);
-  const locationLabel = raw.district?.name ?? raw.province?.name ?? raw.address;
+  const locationLabel = raw.subDistrict?.name ?? raw.district?.name ?? raw.province?.name ?? raw.address;
 
   const unitFeatures = raw.features
     .filter((pf) => pf.feature.category === "UNIT_FEATURE")
