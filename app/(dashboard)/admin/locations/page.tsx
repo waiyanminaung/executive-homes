@@ -238,7 +238,7 @@ export default function AdminLocationsPage() {
   const getDistricts = (provinceId: string) => districts.filter((d) => d.provinceId === provinceId);
   const getSubDistricts = (districtId: string) => subDistricts.filter((s) => s.districtId === districtId);
 
-  const refetchAll = () => { refetchProvinces(); refetchDistricts(); refetchSubDistricts(); };
+  const refetchAll = () => Promise.all([refetchProvinces(), refetchDistricts(), refetchSubDistricts()]);
 
   const openProvinceForm = (editing: Province | null = null) => {
     Dialog.show({
