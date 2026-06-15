@@ -16,6 +16,7 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
   const lat = watch("lat");
   const lng = watch("lng");
   const provinceId = watch("provinceId");
+  const districtId = watch("districtId");
   const hasCoords = lat != null && lng != null;
 
   const { data: districtsData } = useRead((api) =>
@@ -23,9 +24,19 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
   );
   const districts = districtsData?.districts ?? [];
 
+  const { data: subDistrictsData } = useRead((api) =>
+    api("admin/locations/subdistricts").GET({ query: districtId ? { districtId } : undefined }),
+  );
+  const subDistricts = subDistrictsData?.subDistricts ?? [];
+
   useEffect(() => {
     setValue("districtId", null);
+    setValue("subDistrictId", null);
   }, [provinceId, setValue]);
+
+  useEffect(() => {
+    setValue("subDistrictId", null);
+  }, [districtId, setValue]);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
@@ -56,6 +67,18 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
             ))}
           </RHFSelect>
           <RHFError name="districtId" />
+        </div>
+      )}
+
+      {districtId && (
+        <div className="space-y-1.5">
+          <label className="block text-sm font-medium text-gray-700">Subdistrict</label>
+          <RHFSelect<string> name="subDistrictId" placeholder="Select subdistrict...">
+            {subDistricts.map((s) => (
+              <SelectOption key={s.id} value={s.id} label={s.name} />
+            ))}
+          </RHFSelect>
+          <RHFError name="subDistrictId" />
         </div>
       )}
 
