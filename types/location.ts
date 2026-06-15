@@ -10,3 +10,10 @@ export interface District {
   slug: string;
   provinceId: string;
 }
+
+export interface SubDistrict {
+  id: string;
+  name: string;
+  slug: string;
+  districtId: string;
+}
