@@ -20,3 +20,14 @@ export type DistrictCreateInput = z.infer<typeof districtCreateSchema>;
 
 export const districtUpdateSchema = districtCreateSchema.partial();
 export type DistrictUpdateInput = z.infer<typeof districtUpdateSchema>;
+
+export const subDistrictCreateSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must be lowercase with hyphens only"),
+  districtId: z.string().min(1, "District is required"),
+});
+
+export type SubDistrictCreateInput = z.infer<typeof subDistrictCreateSchema>;
+
+export const subDistrictUpdateSchema = subDistrictCreateSchema.partial();
+export type SubDistrictUpdateInput = z.infer<typeof subDistrictUpdateSchema>;
