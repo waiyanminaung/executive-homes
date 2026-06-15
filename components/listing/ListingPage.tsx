@@ -1,13 +1,42 @@
 "use client";
 
-import { parseAsBoolean, parseAsInteger, parseAsString, useQueryState } from "nuqs";
-import { MOCK_PROPERTIES } from "@/app/constants";
+import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
+import { Spinner } from "@geckoui/geckoui";
+import { useRead } from "@/lib/spoosh";
 import { PropertyCard } from "@/components/PropertyCard";
+import type { PropertyItem } from "@/app/types";
 import { ListingSearchBar } from "./ListingSearchBar";
 import { ListingResultsBar } from "./ListingResultsBar";
 import { ListingPagination } from "./ListingPagination";
 
-const PAGE_SIZE = 12;
+
+function toPropertyItem(p: {
+  id: string;
+  slug: string;
+  title: string;
+  address: string;
+  salePrice: number | null;
+  rentPrice: number | null;
+  status: string;
+  beds: number | null;
+  baths: number | null;
+  areaSqm: number;
+  images: { url: string }[];
+}): PropertyItem {
+  const isRent = p.status === "FOR_RENT";
+  const price = isRent ? (p.rentPrice ?? 0) : (p.salePrice ?? p.rentPrice ?? 0);
+  return {
+    id: p.slug,
+    title: p.title,
+    location: p.address,
+    price,
+    imageUrls: p.images.map((img) => img.url),
+    status: isRent ? "Rent" : "Sale",
+    beds: p.beds ?? 0,
+    baths: p.baths ?? 0,
+    area: `${p.areaSqm.toFixed(2)} sqm`,
+  };
+}
 
 interface ListingPageProps {
   listingType?: "for-sale" | "for-rent";
@@ -16,37 +45,31 @@ interface ListingPageProps {
   pageTitle?: string;
 }
 
-export function ListingPage({ listingType, defaultLocation, pageTitle }: ListingPageProps) {
+export function ListingPage({ listingType, propertyType, pageTitle }: ListingPageProps) {
   const defaultTab = listingType === "for-rent" ? "rent" : "buy";
   const [q] = useQueryState("q", parseAsString.withDefault(""));
   const [tab] = useQueryState("tab", parseAsString.withDefault(defaultTab));
-  const [locationParam] = useQueryState("location");
-  const location = locationParam ?? defaultLocation ?? null;
   const [bedrooms] = useQueryState("bedrooms");
   const [sort] = useQueryState("sort", parseAsString.withDefault("default"));
   const [page] = useQueryState("page", parseAsInteger.withDefault(1));
-  useQueryState("pet", parseAsBoolean.withDefault(false));
 
-  const filtered = MOCK_PROPERTIES.filter((p) => {
-    const keyword = q.trim().toLowerCase();
-    const matchesTab = tab === "rent" ? p.status === "Rent" : p.status === "Sale";
-    const matchesKeyword =
-      !keyword || `${p.title} ${p.location}`.toLowerCase().includes(keyword);
-    const matchesLocation = !location || p.location.toLowerCase().includes(location);
-    const matchesBedrooms =
-      !bedrooms || bedrooms === "5+" ? !bedrooms || p.beds >= 5 : p.beds === Number(bedrooms);
-    return matchesTab && matchesKeyword && matchesLocation && matchesBedrooms;
-  });
+  const status = tab === "rent" ? "FOR_RENT" : "FOR_SALE";
 
-  const sorted = [...filtered].sort((a, b) => {
-    if (sort === "price-asc") return a.price - b.price;
-    if (sort === "price-desc") return b.price - a.price;
-    return 0;
-  });
+  const query = {
+    page: String(page),
+    limit: "12",
+    status,
+    ...(q ? { q } : {}),
+    ...(bedrooms ? { beds: bedrooms } : {}),
+    ...(sort !== "default" ? { sort } : {}),
+    ...(propertyType ? { type: propertyType } : {}),
+  };
 
-  const totalPages = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
-  const safePage = Math.min(page, totalPages);
-  const paginated = sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+  const { data, loading } = useRead((api) => api("properties").GET({ query }));
+
+  const properties = (data?.properties ?? []).map(toPropertyItem);
+  const total = data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / 12));
 
   const title = pageTitle ?? (tab === "rent" ? "Properties for Rent in Bangkok" : "Properties for Sale in Bangkok");
 
@@ -56,11 +79,15 @@ export function ListingPage({ listingType, defaultLocation, pageTitle }: Listing
 
       <main className="min-h-screen bg-neutral-50">
         <div className="mx-auto max-w-[1292px] px-4 py-8 md:px-6 xl:px-0">
-          <ListingResultsBar title={title} count={sorted.length} />
+          <ListingResultsBar title={title} count={total} />
 
-          {paginated.length > 0 ? (
+          {loading ? (
+            <div className="mt-20 flex items-center justify-center">
+              <Spinner className="w-8 h-8 text-primary-600" />
+            </div>
+          ) : properties.length > 0 ? (
             <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-5">
-              {paginated.map((property) => (
+              {properties.map((property) => (
                 <PropertyCard key={property.id} property={property} />
               ))}
             </div>

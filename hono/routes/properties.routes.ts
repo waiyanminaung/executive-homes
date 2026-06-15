@@ -9,6 +9,12 @@ import {
 } from "@/validation/propertySchema";
 import type { AppEnv } from "@/hono/types";
 
+const PROPERTY_INCLUDE = {
+  images: { orderBy: { order: "asc" as const } },
+  features: { include: { feature: true } },
+  transitStations: { include: { station: true } },
+};
+
 const propertyRoutes = new Hono<AppEnv>();
 
 propertyRoutes.use("*", authMiddleware, adminMiddleware);
@@ -23,19 +29,9 @@ propertyRoutes.get("/", zv("query", propertyListQuerySchema), async (c) => {
       take: limit,
       orderBy: { createdAt: "desc" },
       select: {
-        id: true,
-        slug: true,
-        title: true,
-        propertyType: true,
-        status: true,
-        salePrice: true,
-        rentPrice: true,
-        beds: true,
-        baths: true,
-        areaSqm: true,
-        isFeatured: true,
-        isPublished: true,
-        createdAt: true,
+        id: true, slug: true, title: true, propertyType: true, status: true,
+        salePrice: true, rentPrice: true, beds: true, baths: true, areaSqm: true,
+        isFeatured: true, isPublished: true, createdAt: true,
       },
     }),
     prisma.property.count(),
@@ -45,19 +41,24 @@ propertyRoutes.get("/", zv("query", propertyListQuerySchema), async (c) => {
 });
 
 propertyRoutes.post("/", zv("json", propertyCreateSchema), async (c) => {
-  const { imageUrls, ...data } = c.req.valid("json");
+  const { imageUrls, featureIds, transitStations, ...data } = c.req.valid("json");
 
   const property = await prisma.property.create({
     data: {
       ...data,
-      images: {
-        create: imageUrls.map((url, order) => ({ url, order })),
-      },
+      images: { create: imageUrls.map((url, order) => ({ url, order })) },
+      features: { create: featureIds.map((featureId) => ({ featureId })) },
+      transitStations: { create: transitStations },
     },
-    include: { images: true },
+    include: PROPERTY_INCLUDE,
   });
 
-  return c.json({ property }, 201);
+  return c.json({
+    property: {
+      ...property,
+      features: property.features.map((pf) => pf.feature),
+    },
+  }, 201);
 });
 
 propertyRoutes.get("/:id", async (c) => {
@@ -65,54 +66,56 @@ propertyRoutes.get("/:id", async (c) => {
 
   const property = await prisma.property.findUnique({
     where: { id },
-    include: { images: { orderBy: { order: "asc" } } },
+    include: PROPERTY_INCLUDE,
   });
 
-  if (!property) {
-    return c.json({ error: "Property not found" }, 404);
-  }
+  if (!property) return c.json({ error: "Property not found" }, 404);
 
-  return c.json({ property });
+  return c.json({
+    property: {
+      ...property,
+      features: property.features.map((pf) => pf.feature),
+    },
+  });
 });
 
 propertyRoutes.patch("/:id", zv("json", propertyUpdateSchema), async (c) => {
   const id = c.req.param("id");
-  const { imageUrls, ...data } = c.req.valid("json");
+  const { imageUrls, featureIds, transitStations, ...data } = c.req.valid("json");
 
   const existing = await prisma.property.findUnique({ where: { id } });
-
-  if (!existing) {
-    return c.json({ error: "Property not found" }, 404);
-  }
+  if (!existing) return c.json({ error: "Property not found" }, 404);
 
   const property = await prisma.property.update({
     where: { id },
     data: {
       ...data,
       ...(imageUrls !== undefined && {
-        images: {
-          deleteMany: {},
-          create: imageUrls.map((url, order) => ({ url, order })),
-        },
+        images: { deleteMany: {}, create: imageUrls.map((url, order) => ({ url, order })) },
+      }),
+      ...(featureIds !== undefined && {
+        features: { deleteMany: {}, create: featureIds.map((featureId) => ({ featureId })) },
+      }),
+      ...(transitStations !== undefined && {
+        transitStations: { deleteMany: {}, create: transitStations },
       }),
     },
-    include: { images: { orderBy: { order: "asc" } } },
+    include: PROPERTY_INCLUDE,
   });
 
-  return c.json({ property });
+  return c.json({
+    property: {
+      ...property,
+      features: property.features.map((pf) => pf.feature),
+    },
+  });
 });
 
 propertyRoutes.delete("/:id", async (c) => {
   const id = c.req.param("id");
-
   const existing = await prisma.property.findUnique({ where: { id } });
-
-  if (!existing) {
-    return c.json({ error: "Property not found" }, 404);
-  }
-
+  if (!existing) return c.json({ error: "Property not found" }, 404);
   await prisma.property.delete({ where: { id } });
-
   return c.json({ ok: true });
 });
 

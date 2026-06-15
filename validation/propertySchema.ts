@@ -44,6 +44,13 @@ export const propertyCreateSchema = z.object({
   isFeatured: z.boolean(),
   isPublished: z.boolean(),
   imageUrls: z.array(z.string()),
+  featureIds: z.array(z.string()),
+  transitStations: z.array(
+    z.object({
+      stationId: z.string().min(1, "Station is required"),
+      distanceMeters: z.coerce.number().int().min(1).max(9999),
+    }),
+  ),
 });
 
 export type PropertyCreateInput = z.infer<typeof propertyCreateSchema>;

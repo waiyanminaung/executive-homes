@@ -1,3 +1,6 @@
+import type { Feature } from "./feature";
+import type { PropertyTransitItem } from "./transitStation";
+
 export interface PropertyListItem {
   id: string;
   slug: string;
@@ -42,6 +45,8 @@ export interface PropertyDetail {
   createdAt: string;
   updatedAt: string;
   images: PropertyImage[];
+  features: Feature[];
+  transitStations: PropertyTransitItem[];
 }
 
 export interface Province {

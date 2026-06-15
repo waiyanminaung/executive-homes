@@ -1,8 +1,9 @@
 "use client";
 
-import { useFormContext } from "react-hook-form";
 import { RHFInput, RHFTextarea, RHFSelect, RHFError, SelectOption } from "@geckoui/geckoui";
 import { PROPERTY_TYPES, LISTING_STATUSES } from "@/validation/propertySchema";
+import { useSlugAutoFill } from "@/utils/useSlugAutoFill";
+import { SlugInput } from "@/components/SlugInput";
 
 const PROPERTY_TYPE_LABELS: Record<string, string> = {
   CONDO: "Condo",
@@ -26,24 +27,8 @@ const LISTING_STATUS_LABELS: Record<string, string> = {
   OFF_MARKET: "Off Market",
 };
 
-const generateSlug = (title: string) =>
-  title
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-
 export default function PropertyFormBasicSection() {
-  const { setValue, getValues, watch } = useFormContext();
-  const title = watch("title") as string;
-
-  const handleTitleBlur = () => {
-    const currentSlug = getValues("slug") as string;
-    if (!currentSlug) {
-      setValue("slug", generateSlug(title ?? ""));
-    }
-  };
+  const { onBlur: handleTitleBlur } = useSlugAutoFill("title");
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
@@ -55,11 +40,7 @@ export default function PropertyFormBasicSection() {
         <RHFError name="title" />
       </div>
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-gray-700">Slug</label>
-        <RHFInput name="slug" placeholder="modern-condo-sukhumvit-11" />
-        <RHFError name="slug" />
-      </div>
+      <SlugInput placeholder="modern-condo-sukhumvit-11" />
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">

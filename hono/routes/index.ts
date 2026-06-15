@@ -1,2 +1,8 @@
 export { default as propertyRoutes } from "./properties.routes";
 export { default as provincesRoutes } from "./provinces.routes";
+export { default as featuresRoutes } from "./features.routes";
+export { default as transitStationsRoutes } from "./transitStations.routes";
+export { default as locationsRoutes } from "./locations.routes";
+export { default as adminEnquiriesRoutes } from "./adminEnquiries.routes";
+export { default as publicPropertiesRoutes } from "./publicProperties.routes";
+export { default as publicEnquiriesRoutes } from "./publicEnquiries.routes";

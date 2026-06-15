@@ -6,6 +6,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { LoadingButton, RHFInput, RHFTextarea } from "@geckoui/geckoui";
 import { Send } from "lucide-react";
 import { contactSchema, type ContactFormValues } from "@/validation/contactSchema";
+import { useWrite } from "@/lib/spoosh";
 import { classNames } from "@/utils/classNames";
 
 const fieldClassName = classNames(
@@ -16,6 +17,8 @@ const fieldClassName = classNames(
 
 export function ContactForm() {
   const [submitted, setSubmitted] = useState(false);
+  const { trigger: submitEnquiry } = useWrite((api) => api("enquiries").POST());
+
   const methods = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     values: {
@@ -27,7 +30,8 @@ export function ContactForm() {
     },
   });
 
-  const handleSubmit = methods.handleSubmit(() => {
+  const handleSubmit = methods.handleSubmit(async (values) => {
+    await submitEnquiry({ body: { ...values, phone: values.phone || undefined } });
     setSubmitted(true);
     methods.reset();
   });
@@ -71,6 +75,7 @@ export function ContactForm() {
 
         <LoadingButton
           type="submit"
+          loading={methods.formState.isSubmitting}
           className="mt-6 h-12 w-full rounded-lg bg-primary-500 text-base font-semibold !text-white transition-colors hover:bg-primary-600"
         >
           <Send className="h-4 w-4" />

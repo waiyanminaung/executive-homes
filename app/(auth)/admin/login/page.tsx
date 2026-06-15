@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,18 +15,11 @@ import AdminAuthShell from "../components/AdminAuthShell";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const session = authClient.useSession();
 
   const methods = useForm<AdminLoginFormValues>({
     values: DEFAULT_ADMIN_LOGIN_VALUES,
     resolver: zodResolver(adminLoginSchema),
   });
-
-  useEffect(() => {
-    if (session.data) {
-      router.replace("/admin");
-    }
-  }, [router, session.data]);
 
   const handleLogin = methods.handleSubmit(async (values) => {
     const { error } = await authClient.signIn.email({

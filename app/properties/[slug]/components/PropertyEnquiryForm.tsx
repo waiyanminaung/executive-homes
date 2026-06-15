@@ -5,6 +5,7 @@ import { FormProvider, useForm } from "react-hook-form";
 import { LoadingButton, RHFInput, RHFTextarea } from "@geckoui/geckoui";
 import { Send } from "lucide-react";
 import { enquirySchema, type EnquiryFormValues } from "@/validation/enquirySchema";
+import { useWrite } from "@/lib/spoosh";
 import { classNames } from "@/utils/classNames";
 
 const fieldClassName = classNames(
@@ -15,9 +16,12 @@ const fieldClassName = classNames(
 
 interface PropertyEnquiryFormProps {
   dismiss: () => void;
+  propertyId?: string;
 }
 
-export function PropertyEnquiryForm({ dismiss }: PropertyEnquiryFormProps) {
+export function PropertyEnquiryForm({ dismiss, propertyId }: PropertyEnquiryFormProps) {
+  const { trigger: submitEnquiry } = useWrite((api) => api("enquiries").POST());
+
   const methods = useForm<EnquiryFormValues>({
     resolver: zodResolver(enquirySchema),
     values: {
@@ -28,7 +32,8 @@ export function PropertyEnquiryForm({ dismiss }: PropertyEnquiryFormProps) {
     },
   });
 
-  const handleSubmit = methods.handleSubmit(() => {
+  const handleSubmit = methods.handleSubmit(async (values) => {
+    await submitEnquiry({ body: { ...values, propertyId } });
     methods.reset();
     dismiss();
   });
@@ -74,6 +79,7 @@ export function PropertyEnquiryForm({ dismiss }: PropertyEnquiryFormProps) {
 
             <LoadingButton
               type="submit"
+              loading={methods.formState.isSubmitting}
               className="h-11 flex-1 rounded-lg bg-primary-500 text-sm font-semibold !text-white transition-colors hover:bg-primary-600"
             >
               <Send className="h-4 w-4" />

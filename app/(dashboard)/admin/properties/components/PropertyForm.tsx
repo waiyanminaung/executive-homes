@@ -13,6 +13,8 @@ import PropertyFormPricingSection from "./PropertyFormPricingSection";
 import PropertyFormLocationSection from "./PropertyFormLocationSection";
 import PropertyFormMediaSection from "./PropertyFormMediaSection";
 import PropertyFormFlagsSection from "./PropertyFormFlagsSection";
+import PropertyFormFeaturesSection from "./PropertyFormFeaturesSection";
+import PropertyFormTransitSection from "./PropertyFormTransitSection";
 
 const DEFAULT_VALUES: PropertyCreateInput = {
   title: "",
@@ -33,6 +35,8 @@ const DEFAULT_VALUES: PropertyCreateInput = {
   isFeatured: false,
   isPublished: false,
   imageUrls: [],
+  featureIds: [],
+  transitStations: [],
 };
 
 interface PropertyFormProps {
@@ -65,6 +69,8 @@ export default function PropertyForm({
             <PropertyFormBasicSection />
             <PropertyFormPricingSection />
             <PropertyFormLocationSection provinces={provinces} />
+            <PropertyFormFeaturesSection />
+            <PropertyFormTransitSection />
             <PropertyFormMediaSection />
           </div>
           <div className="space-y-5">

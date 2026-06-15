@@ -8,6 +8,8 @@ import {
   MessageSquare,
   LogOut,
   X,
+  Tag,
+  MapPin,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { classNames } from "@/utils/classNames";
@@ -16,6 +18,8 @@ const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/properties", label: "Properties", icon: Building2, exact: false },
   { href: "/admin/enquiries", label: "Enquiries", icon: MessageSquare, exact: false },
+  { href: "/admin/features", label: "Features", icon: Tag, exact: false },
+  { href: "/admin/locations", label: "Locations", icon: MapPin, exact: false },
 ];
 
 const getInitials = (name?: string | null) => {
