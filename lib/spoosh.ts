@@ -8,10 +8,10 @@ import type { Feature } from "@/types/feature";
 import type { TransitStation } from "@/types/transitStation";
 import type { PropertyTypeItem } from "@/types/propertyType";
 import type { PropertyTypeCreateInput, PropertyTypeUpdateInput } from "@/validation/propertyTypeSchema";
-import type { District } from "@/types/location";
+import type { District, SubDistrict } from "@/types/location";
 import type { PropertyCreateInput, PropertyUpdateInput } from "@/validation/propertySchema";
 import type { FeatureCreateInput, FeatureUpdateInput } from "@/validation/featureSchema";
-import type { ProvinceCreateInput, ProvinceUpdateInput, DistrictCreateInput, DistrictUpdateInput } from "@/validation/locationSchema";
+import type { ProvinceCreateInput, ProvinceUpdateInput, DistrictCreateInput, DistrictUpdateInput, SubDistrictCreateInput, SubDistrictUpdateInput } from "@/validation/locationSchema";
 import type { PublicEnquiryInput } from "@/validation/publicEnquirySchema";
 
 interface EnquiryListItem {
@@ -77,6 +77,14 @@ export type ApiSchema = {
   };
   "admin/locations/districts/:id": {
     PATCH: { data: { district: District & { province: { id: string; name: string } } }; params: { id: string }; body: DistrictUpdateInput };
+    DELETE: { data: { ok: true }; params: { id: string } };
+  };
+  "admin/locations/subdistricts": {
+    GET: { data: { subDistricts: (SubDistrict & { district: { id: string; name: string } })[] }; query?: { districtId?: string } };
+    POST: { data: { subDistrict: SubDistrict & { district: { id: string; name: string } } }; body: SubDistrictCreateInput };
+  };
+  "admin/locations/subdistricts/:id": {
+    PATCH: { data: { subDistrict: SubDistrict & { district: { id: string; name: string } } }; params: { id: string }; body: SubDistrictUpdateInput };
     DELETE: { data: { ok: true }; params: { id: string } };
   };
   "admin/enquiries": {
