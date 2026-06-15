@@ -17,30 +17,21 @@ enum ListingStatus {
   OFF_MARKET
 }
 
-enum PropertyType {
-  CONDO
-  APARTMENT
-  HOUSE
-  VILLA
-  TOWNHOUSE
-  PENTHOUSE
-  OFFICE_SPACE
-  RETAIL_SPACE
-  COMMERCIAL_SPACE
-  WAREHOUSE
-}
-
 enum FeatureCategory {
   UNIT_FEATURE
-  COMMON_FACILITY
+  AMENITY
 }
 
 enum TransitLine {
   BTS_SUKHUMVIT
   BTS_SILOM
+  BTS_GOLD
   MRT_BLUE
   MRT_PURPLE
+  MRT_YELLOW
+  MRT_PINK
   ARL
+  SRT_RED
   BRT
 }
 
@@ -79,13 +70,23 @@ model SubDistrict {
   @@map("sub_districts")
 }
 
+model PropertyType {
+  id         String     @id @default(cuid())
+  name       String
+  slug       String     @unique
+  properties Property[]
+
+  @@map("property_types")
+}
+
 model Property {
-  id            String        @id @default(cuid())
-  slug          String        @unique
-  title         String
-  description   String
-  propertyType  PropertyType
-  status        ListingStatus
+  id             String       @id @default(cuid())
+  slug           String       @unique
+  title          String
+  description    String
+  propertyTypeId String
+  propertyType   PropertyType @relation(fields: [propertyTypeId], references: [id])
+  status         ListingStatus
   salePrice     Float?
   rentPrice     Float?
   beds          Int?
@@ -99,6 +100,9 @@ model Property {
   province      Province      @relation(fields: [provinceId], references: [id])
   district      District?     @relation(fields: [districtId], references: [id])
   subDistrict   SubDistrict?  @relation(fields: [subDistrictId], references: [id])
+
+  lat           Float?
+  lng           Float?
 
   mapImageUrl   String?
   isFeatured    Boolean       @default(false)
@@ -147,9 +151,12 @@ model PropertyFeature {
 
 model TransitStation {
   id         String            @id @default(cuid())
+  code       String?           @unique
   name       String
   slug       String            @unique
   line       TransitLine
+  lat        Float?
+  lng        Float?
   properties PropertyTransit[]
 
   @@map("transit_stations")

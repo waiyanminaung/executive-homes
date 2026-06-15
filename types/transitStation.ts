@@ -1,5 +1,6 @@
 export interface TransitStation {
   id: string;
+  code: string | null;
   name: string;
   slug: string;
   line: string;

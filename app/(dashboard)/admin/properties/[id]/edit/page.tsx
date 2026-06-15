@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { ChevronRight, ArrowLeft } from "lucide-react";
 import { Spinner } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
-import AdminPageHeader from "../../../components/AdminPageHeader";
 import PropertyForm from "../../components/PropertyForm";
 
 export default function AdminPropertyEditPage() {
@@ -50,7 +51,7 @@ export default function AdminPropertyEditPage() {
     title: property.title,
     slug: property.slug,
     description: property.description,
-    propertyType: property.propertyType as PropertyCreateInput["propertyType"],
+    propertyTypeId: property.propertyType.id,
     status: property.status as PropertyCreateInput["status"],
     salePrice: property.salePrice,
     rentPrice: property.rentPrice,
@@ -61,15 +62,42 @@ export default function AdminPropertyEditPage() {
     provinceId: property.provinceId,
     districtId: property.districtId,
     subDistrictId: property.subDistrictId,
+    lat: property.lat,
+    lng: property.lng,
     mapImageUrl: property.mapImageUrl,
     isFeatured: property.isFeatured,
     isPublished: property.isPublished,
     imageUrls: property.images.map((img: { url: string }) => img.url),
+    featureIds: property.features.map((f: { id: string }) => f.id),
+    transitStations: property.transitStations.map((pt) => ({
+      stationId: pt.stationId,
+      distanceMeters: pt.distanceMeters,
+    })),
   };
 
   return (
-    <div>
-      <AdminPageHeader title="Edit Property" description={property.title} />
+    <div className="space-y-5">
+      <div className="space-y-3">
+        <nav className="flex items-center gap-1.5 text-xs text-gray-500">
+          <Link href="/admin/properties" className="hover:text-gray-700 transition-colors">Properties</Link>
+          <ChevronRight className="w-3 h-3" />
+          <span className="text-gray-600 truncate max-w-xs">{property.title}</span>
+        </nav>
+
+        <div className="flex items-center gap-3">
+          <Link
+            href="/admin/properties"
+            className="flex items-center justify-center w-8 h-8 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Edit Property</h1>
+            <p className="text-sm text-gray-500 mt-0.5 truncate max-w-md">{property.title}</p>
+          </div>
+        </div>
+      </div>
+
       <PropertyForm
         defaultValues={defaultValues}
         provinces={provincesData?.provinces ?? []}

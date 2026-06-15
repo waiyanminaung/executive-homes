@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -8,19 +9,14 @@ import {
   MessageSquare,
   LogOut,
   X,
-  Tag,
   MapPin,
+  Train,
+  ChevronDown,
+  Tag,
+  Layers,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { classNames } from "@/utils/classNames";
-
-const navItems = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/properties", label: "Properties", icon: Building2, exact: false },
-  { href: "/admin/enquiries", label: "Enquiries", icon: MessageSquare, exact: false },
-  { href: "/admin/features", label: "Features", icon: Tag, exact: false },
-  { href: "/admin/locations", label: "Locations", icon: MapPin, exact: false },
-];
 
 const getInitials = (name?: string | null) => {
   if (!name?.trim()) return "AD";
@@ -44,12 +40,20 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   const session = authClient.useSession();
   const user = session.data?.user;
 
+  const propertiesSubPaths = [
+    "/admin/properties",
+    "/admin/property-types",
+    "/admin/features",
+  ];
+  const propertiesExpanded = propertiesSubPaths.some((p) => pathname.startsWith(p));
+  const [propertiesOpen, setPropertiesOpen] = useState(propertiesExpanded);
+
   const handleLogout = async () => {
     await authClient.signOut();
     router.replace("/admin/login");
   };
 
-  const isActive = (href: string, exact: boolean) =>
+  const isActive = (href: string, exact = false) =>
     exact ? pathname === href : pathname.startsWith(href);
 
   return (
@@ -90,31 +94,125 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-          {navItems.map((item) => {
-            const active = isActive(item.href, item.exact);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
+          <Link
+            href="/admin"
+            onClick={onClose}
+            className={classNames(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              isActive("/admin", true) ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white",
+            )}
+          >
+            <LayoutDashboard className="w-4 h-4 shrink-0" />
+            Dashboard
+          </Link>
+
+          <div>
+            <button
+              onClick={() => setPropertiesOpen((prev) => !prev)}
+              className={classNames(
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors w-full",
+                propertiesSubPaths.some((p) => pathname.startsWith(p))
+                  ? "bg-white/10 text-white"
+                  : "text-gray-400 hover:bg-white/5 hover:text-white",
+              )}
+            >
+              <Building2 className="w-4 h-4 shrink-0" />
+              <span className="flex-1 text-left">Properties</span>
+              <ChevronDown
                 className={classNames(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-                  active
-                    ? "bg-white/10 text-white"
-                    : "text-gray-400 hover:bg-white/5 hover:text-white",
+                  "w-3.5 h-3.5 transition-transform duration-200",
+                  propertiesOpen ? "rotate-180" : "",
                 )}
-              >
-                <Icon className="w-4 h-4 flex-shrink-0" />
-                {item.label}
-              </Link>
-            );
-          })}
+              />
+            </button>
+
+            {propertiesOpen && (
+              <div className="mt-0.5 ml-3 pl-4 border-l border-white/10 space-y-0.5">
+                <Link
+                  href="/admin/properties"
+                  onClick={onClose}
+                  className={classNames(
+                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    pathname.startsWith("/admin/properties") && !pathname.startsWith("/admin/property-types")
+                      ? "text-white bg-white/10"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white",
+                  )}
+                >
+                  <Building2 className="w-3.5 h-3.5 shrink-0" />
+                  All Properties
+                </Link>
+
+                <Link
+                  href="/admin/property-types"
+                  onClick={onClose}
+                  className={classNames(
+                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    isActive("/admin/property-types")
+                      ? "text-white bg-white/10"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white",
+                  )}
+                >
+                  <Layers className="w-3.5 h-3.5 shrink-0" />
+                  Property Types
+                </Link>
+
+                <Link
+                  href="/admin/features"
+                  onClick={onClose}
+                  className={classNames(
+                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    isActive("/admin/features")
+                      ? "text-white bg-white/10"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white",
+                  )}
+                >
+                  <Tag className="w-3.5 h-3.5 shrink-0" />
+                  Features
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <Link
+            href="/admin/enquiries"
+            onClick={onClose}
+            className={classNames(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              isActive("/admin/enquiries") ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white",
+            )}
+          >
+            <MessageSquare className="w-4 h-4 shrink-0" />
+            Enquiries
+          </Link>
+
+          <Link
+            href="/admin/locations"
+            onClick={onClose}
+            className={classNames(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              isActive("/admin/locations") ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white",
+            )}
+          >
+            <MapPin className="w-4 h-4 shrink-0" />
+            Locations
+          </Link>
+
+          <Link
+            href="/admin/transit-stations"
+            onClick={onClose}
+            className={classNames(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              isActive("/admin/transit-stations") ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white",
+            )}
+          >
+            <Train className="w-4 h-4 shrink-0" />
+            Transit Stations
+          </Link>
         </nav>
 
         <div className="px-3 py-4 border-t border-white/10 space-y-1">
           <div className="flex items-center gap-3 px-3 py-2.5">
-            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-700 text-white text-xs font-bold flex-shrink-0">
+            <div className="flex items-center justify-center w-8 h-8 rounded-full bg-primary-700 text-white text-xs font-bold shrink-0">
               {getInitials(user?.name)}
             </div>
             <div className="min-w-0">
@@ -126,7 +224,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/5 hover:text-red-400 transition-colors w-full"
           >
-            <LogOut className="w-4 h-4 flex-shrink-0" />
+            <LogOut className="w-4 h-4 shrink-0" />
             Sign out
           </button>
         </div>

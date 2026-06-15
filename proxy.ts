@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const PUBLIC_AUTH_PATHS = ["/admin/login", "/admin/register"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isAuthPath = PUBLIC_AUTH_PATHS.some((p) => pathname.startsWith(p));

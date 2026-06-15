@@ -24,7 +24,7 @@ publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
   const where: Record<string, unknown> = { isPublished: true };
 
   if (status) where.status = status;
-  if (type) where.propertyType = type;
+  if (type) where.propertyType = { slug: type };
   if (provinceId) where.provinceId = provinceId;
   if (districtId) where.districtId = districtId;
   if (beds !== undefined) where.beds = beds;
@@ -44,7 +44,8 @@ publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
       take: limit,
       orderBy,
       select: {
-        id: true, slug: true, title: true, propertyType: true, status: true,
+        id: true, slug: true, title: true, status: true,
+        propertyType: { select: { id: true, name: true, slug: true } },
         salePrice: true, rentPrice: true, beds: true, baths: true, areaSqm: true,
         address: true, isFeatured: true, isPublished: true, createdAt: true,
         images: { take: 1, orderBy: { order: "asc" }, select: { url: true } },

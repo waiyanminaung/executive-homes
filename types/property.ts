@@ -1,11 +1,12 @@
 import type { Feature } from "./feature";
 import type { PropertyTransitItem } from "./transitStation";
+import type { PropertyTypeItem } from "./propertyType";
 
 export interface PropertyListItem {
   id: string;
   slug: string;
   title: string;
-  propertyType: string;
+  propertyType: PropertyTypeItem;
   status: string;
   salePrice: number | null;
   rentPrice: number | null;
@@ -28,7 +29,7 @@ export interface PropertyDetail {
   slug: string;
   title: string;
   description: string;
-  propertyType: string;
+  propertyType: PropertyTypeItem;
   status: string;
   salePrice: number | null;
   rentPrice: number | null;
@@ -39,6 +40,8 @@ export interface PropertyDetail {
   provinceId: string;
   districtId: string | null;
   subDistrictId: string | null;
+  lat: number | null;
+  lng: number | null;
   mapImageUrl: string | null;
   isFeatured: boolean;
   isPublished: boolean;

@@ -6,6 +6,8 @@ import { invalidationPlugin } from "@spoosh/plugin-invalidation";
 import type { PropertyListItem, PropertyDetail, Province } from "@/types/property";
 import type { Feature } from "@/types/feature";
 import type { TransitStation } from "@/types/transitStation";
+import type { PropertyTypeItem } from "@/types/propertyType";
+import type { PropertyTypeCreateInput, PropertyTypeUpdateInput } from "@/validation/propertyTypeSchema";
 import type { District } from "@/types/location";
 import type { PropertyCreateInput, PropertyUpdateInput } from "@/validation/propertySchema";
 import type { FeatureCreateInput, FeatureUpdateInput } from "@/validation/featureSchema";
@@ -48,6 +50,14 @@ export type ApiSchema = {
   };
   "admin/features/:id": {
     PATCH: { data: { feature: Feature }; params: { id: string }; body: FeatureUpdateInput };
+    DELETE: { data: { ok: true }; params: { id: string } };
+  };
+  "admin/property-types": {
+    GET: { data: { propertyTypes: PropertyTypeItem[] } };
+    POST: { data: { propertyType: PropertyTypeItem }; body: PropertyTypeCreateInput };
+  };
+  "admin/property-types/:id": {
+    PATCH: { data: { propertyType: PropertyTypeItem }; params: { id: string }; body: PropertyTypeUpdateInput };
     DELETE: { data: { ok: true }; params: { id: string } };
   };
   "admin/transit-stations": {

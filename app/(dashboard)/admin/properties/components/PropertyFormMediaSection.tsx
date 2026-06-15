@@ -53,21 +53,31 @@ export default function PropertyFormMediaSection() {
       </div>
 
       {imageUrls.length > 0 ? (
-        <ul className="space-y-2">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
           {imageUrls.map((url, index) => (
-            <li key={index} className="flex items-center gap-3 p-2.5 bg-gray-50 rounded-lg text-sm">
-              <Image src={url} alt="" width={48} height={40} className="w-12 h-10 object-cover rounded flex-shrink-0 bg-gray-200" unoptimized />
-              <span className="flex-1 text-gray-600 truncate text-xs">{url}</span>
-              <button
-                type="button"
-                onClick={() => removeUrl(index)}
-                className="text-gray-400 hover:text-red-600 flex-shrink-0"
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </li>
+            <div key={index} className="relative group rounded-lg overflow-hidden border border-gray-200 aspect-video bg-gray-100">
+              <Image
+                src={url}
+                alt=""
+                fill
+                className="object-cover"
+                unoptimized
+              />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                <button
+                  type="button"
+                  onClick={() => removeUrl(index)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 bg-white rounded-full text-red-600 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+              <span className="absolute bottom-0 left-0 right-0 px-2 py-1 bg-black/50 text-white text-[10px] truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                {url}
+              </span>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <p className="text-xs text-gray-400">No images added yet.</p>
       )}

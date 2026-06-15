@@ -1,22 +1,10 @@
 "use client";
 
-import { RHFInput, RHFTextarea, RHFSelect, RHFError, SelectOption } from "@geckoui/geckoui";
-import { PROPERTY_TYPES, LISTING_STATUSES } from "@/validation/propertySchema";
+import { RHFInput, RHFTextarea, RHFSelect, RHFError, SelectOption, Spinner } from "@geckoui/geckoui";
+import { LISTING_STATUSES } from "@/validation/propertySchema";
 import { useSlugAutoFill } from "@/utils/useSlugAutoFill";
 import { SlugInput } from "@/components/SlugInput";
-
-const PROPERTY_TYPE_LABELS: Record<string, string> = {
-  CONDO: "Condo",
-  APARTMENT: "Apartment",
-  HOUSE: "House",
-  VILLA: "Villa",
-  TOWNHOUSE: "Townhouse",
-  PENTHOUSE: "Penthouse",
-  OFFICE_SPACE: "Office Space",
-  RETAIL_SPACE: "Retail Space",
-  COMMERCIAL_SPACE: "Commercial Space",
-  WAREHOUSE: "Warehouse",
-};
+import { useRead } from "@/lib/spoosh";
 
 const LISTING_STATUS_LABELS: Record<string, string> = {
   FOR_SALE: "For Sale",
@@ -29,6 +17,8 @@ const LISTING_STATUS_LABELS: Record<string, string> = {
 
 export default function PropertyFormBasicSection() {
   const { onBlur: handleTitleBlur } = useSlugAutoFill("title");
+  const { data, loading } = useRead((api) => api("admin/property-types").GET());
+  const propertyTypes = data?.propertyTypes ?? [];
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
@@ -45,12 +35,18 @@ export default function PropertyFormBasicSection() {
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-gray-700">Property Type</label>
-          <RHFSelect<string> name="propertyType">
-            {PROPERTY_TYPES.map((type) => (
-              <SelectOption key={type} value={type} label={PROPERTY_TYPE_LABELS[type] ?? type} />
-            ))}
-          </RHFSelect>
-          <RHFError name="propertyType" />
+          {loading ? (
+            <div className="flex items-center h-10">
+              <Spinner className="w-4 h-4 text-primary-600" />
+            </div>
+          ) : (
+            <RHFSelect<string> name="propertyTypeId" placeholder="Select type...">
+              {propertyTypes.map((pt) => (
+                <SelectOption key={pt.id} value={pt.id} label={pt.name} />
+              ))}
+            </RHFSelect>
+          )}
+          <RHFError name="propertyTypeId" />
         </div>
 
         <div className="space-y-1.5">

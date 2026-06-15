@@ -13,18 +13,6 @@ import {
 } from "./components";
 import type { PropertyDetail } from "./types";
 
-const TYPE_LABELS: Record<string, string> = {
-  CONDO: "Condo",
-  APARTMENT: "Apartment",
-  HOUSE: "House",
-  VILLA: "Villa",
-  TOWNHOUSE: "Townhouse",
-  PENTHOUSE: "Penthouse",
-  OFFICE_SPACE: "Office Space",
-  RETAIL_SPACE: "Retail Space",
-  COMMERCIAL_SPACE: "Commercial",
-  WAREHOUSE: "Warehouse",
-};
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -39,6 +27,7 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
   const raw = await prisma.property.findUnique({
     where: { slug, isPublished: true },
     include: {
+      propertyType: true,
       images: { orderBy: { order: "asc" } },
       features: { include: { feature: true } },
       transitStations: { include: { station: true } },
@@ -58,7 +47,7 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
     .map((pf) => ({ label: pf.feature.label, icon: Check }));
 
   const commonFacilities = raw.features
-    .filter((pf) => pf.feature.category === "COMMON_FACILITY")
+    .filter((pf) => pf.feature.category === "AMENITY")
     .map((pf) => ({ label: pf.feature.label, icon: Check }));
 
   const property: PropertyDetail = {
@@ -78,7 +67,7 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
     mapImageUrl: raw.mapImageUrl ?? "",
     detailStats: [
       { label: "Location", value: locationLabel, icon: MapPin },
-      { label: "Property Type", value: TYPE_LABELS[raw.propertyType] ?? raw.propertyType, icon: Building2 },
+      { label: "Property Type", value: raw.propertyType.name, icon: Building2 },
       { label: "Property Size", value: `${raw.areaSqm} sqm`, icon: Maximize2 },
       { label: "Bedrooms", value: `${raw.beds ?? 0} bedrooms`, icon: BedDouble },
       { label: "Bathrooms", value: `${raw.baths ?? 0} bathrooms`, icon: Bath },

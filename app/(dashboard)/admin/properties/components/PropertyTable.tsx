@@ -7,19 +7,6 @@ import { useWrite } from "@/lib/spoosh";
 import type { PropertyListItem } from "@/types/property";
 import PropertyStatusBadge from "./PropertyStatusBadge";
 
-const TYPE_LABELS: Record<string, string> = {
-  CONDO: "Condo",
-  APARTMENT: "Apartment",
-  HOUSE: "House",
-  VILLA: "Villa",
-  TOWNHOUSE: "Townhouse",
-  PENTHOUSE: "Penthouse",
-  OFFICE_SPACE: "Office",
-  RETAIL_SPACE: "Retail",
-  COMMERCIAL_SPACE: "Commercial",
-  WAREHOUSE: "Warehouse",
-};
-
 const formatPrice = (price: number | null) => {
   if (!price) return "—";
   return new Intl.NumberFormat("en-US", {
@@ -62,12 +49,12 @@ export default function PropertyTable({ properties, onDeleted }: PropertyTablePr
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Property</th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Type</th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Price</th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Published</th>
-            <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Property</th>
+            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
+            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
+            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Published</th>
+            <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-gray-100">
@@ -76,16 +63,16 @@ export default function PropertyTable({ properties, onDeleted }: PropertyTablePr
               <td className="px-6 py-4">
                 <div>
                   <p className="text-sm font-medium text-gray-900">{property.title}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{property.slug}</p>
+                  <p className="text-xs text-gray-600 mt-0.5">{property.slug}</p>
                 </div>
               </td>
-              <td className="px-6 py-4 text-sm text-gray-600">
-                {TYPE_LABELS[property.propertyType] ?? property.propertyType}
+              <td className="px-6 py-4 text-sm text-gray-700">
+                {property.propertyType.name}
               </td>
               <td className="px-6 py-4">
                 <PropertyStatusBadge status={property.status} />
               </td>
-              <td className="px-6 py-4 text-sm text-gray-600">
+              <td className="px-6 py-4 text-sm text-gray-700">
                 {property.salePrice ? formatPrice(property.salePrice) : null}
                 {property.salePrice && property.rentPrice ? " / " : null}
                 {property.rentPrice ? `${formatPrice(property.rentPrice)}/mo` : null}
@@ -102,13 +89,13 @@ export default function PropertyTable({ properties, onDeleted }: PropertyTablePr
                 <div className="flex items-center justify-end gap-2">
                   <Link
                     href={`/admin/properties/${property.id}/edit`}
-                    className="p-1.5 text-gray-400 hover:text-primary-700 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="p-1.5 text-gray-500 hover:text-primary-700 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <Pencil className="w-4 h-4" />
                   </Link>
                   <button
                     onClick={() => handleDelete(property.id, property.title)}
-                    className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
+                    className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>

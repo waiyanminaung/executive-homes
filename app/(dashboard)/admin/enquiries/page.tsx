@@ -80,11 +80,11 @@ export default function AdminEnquiriesPage() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">From</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Property</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Message</th>
-                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">From</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Property</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Message</th>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
@@ -95,8 +95,8 @@ export default function AdminEnquiriesPage() {
                         {!enquiry.isRead && <span className="w-2 h-2 rounded-full bg-primary-600 flex-shrink-0" />}
                         <div>
                           <p className="text-sm font-medium text-gray-900">{enquiry.name}</p>
-                          <p className="text-xs text-gray-400">{enquiry.email}</p>
-                          {enquiry.phone && <p className="text-xs text-gray-400">{enquiry.phone}</p>}
+                          <p className="text-xs text-gray-600">{enquiry.email}</p>
+                          {enquiry.phone && <p className="text-xs text-gray-600">{enquiry.phone}</p>}
                         </div>
                       </div>
                     </td>
@@ -104,13 +104,13 @@ export default function AdminEnquiriesPage() {
                       {enquiry.property ? (
                         <span className="text-sm text-gray-700">{enquiry.property.title}</span>
                       ) : (
-                        <span className="text-xs text-gray-400">General</span>
+                        <span className="text-xs text-gray-600">General</span>
                       )}
                     </td>
                     <td className="px-6 py-4 max-w-xs">
                       <p className="text-sm text-gray-600 truncate">{enquiry.message}</p>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 whitespace-nowrap">
+                    <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
                       {new Date(enquiry.createdAt).toLocaleDateString("en-GB", {
                         day: "numeric",
                         month: "short",
@@ -122,7 +122,7 @@ export default function AdminEnquiriesPage() {
                         {!enquiry.isRead && (
                           <button
                             onClick={() => handleMarkRead(enquiry.id)}
-                            className="p-1.5 text-gray-400 hover:text-primary-700 rounded-lg hover:bg-gray-100 transition-colors"
+                            className="p-1.5 text-gray-500 hover:text-primary-700 rounded-lg hover:bg-gray-100 transition-colors"
                             title="Mark as read"
                           >
                             <MailOpen className="w-4 h-4" />
@@ -135,7 +135,7 @@ export default function AdminEnquiriesPage() {
                         )}
                         <button
                           onClick={() => handleDelete(enquiry.id, enquiry.name)}
-                          className="p-1.5 text-gray-400 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
+                          className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>

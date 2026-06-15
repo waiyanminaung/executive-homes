@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const FEATURE_CATEGORIES = ["UNIT_FEATURE", "COMMON_FACILITY"] as const;
+export const FEATURE_CATEGORIES = ["UNIT_FEATURE", "AMENITY"] as const;
 
 export const featureCreateSchema = z.object({
   label: z.string().min(1, "Label is required"),

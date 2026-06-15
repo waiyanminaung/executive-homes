@@ -1,6 +1,8 @@
 "use client";
 
-import { RHFNumberInput, RHFError } from "@geckoui/geckoui";
+import { RHFCurrencyInput, RHFNumberInput, RHFError } from "@geckoui/geckoui";
+
+const THB = { symbol: "฿", code: "THB" };
 
 export default function PropertyFormPricingSection() {
   return (
@@ -9,14 +11,14 @@ export default function PropertyFormPricingSection() {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-gray-700">Sale Price (THB)</label>
-          <RHFNumberInput name="salePrice" placeholder="e.g. 5000000" />
+          <label className="block text-sm font-medium text-gray-700">Sale Price</label>
+          <RHFCurrencyInput name="salePrice" placeholder="0" currency={THB} />
           <RHFError name="salePrice" />
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-gray-700">Rent Price / month (THB)</label>
-          <RHFNumberInput name="rentPrice" placeholder="e.g. 35000" />
+          <label className="block text-sm font-medium text-gray-700">Rent Price / month</label>
+          <RHFCurrencyInput name="rentPrice" placeholder="0" currency={THB} />
           <RHFError name="rentPrice" />
         </div>
       </div>
@@ -24,19 +26,19 @@ export default function PropertyFormPricingSection() {
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-gray-700">Bedrooms</label>
-          <RHFNumberInput name="beds" placeholder="0" />
+          <RHFNumberInput name="beds" placeholder="0" min={0} />
           <RHFError name="beds" />
         </div>
 
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-gray-700">Bathrooms</label>
-          <RHFNumberInput name="baths" placeholder="0" />
+          <RHFNumberInput name="baths" placeholder="0" min={0} />
           <RHFError name="baths" />
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-gray-700">Area (sqm)</label>
-          <RHFNumberInput name="areaSqm" placeholder="e.g. 65" />
+          <label className="block text-sm font-medium text-gray-700">Area</label>
+          <RHFNumberInput name="areaSqm" placeholder="0" suffix="sqm" min={0} />
           <RHFError name="areaSqm" />
         </div>
       </div>

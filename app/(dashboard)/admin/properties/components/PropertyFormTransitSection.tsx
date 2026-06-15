@@ -2,21 +2,13 @@
 
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { Plus, Trash2 } from "lucide-react";
-import { Spinner, RHFError, SelectOption, RHFSelect } from "@geckoui/geckoui";
+import { Spinner, RHFError, SelectOption, RHFSelect, RHFNumberInput } from "@geckoui/geckoui";
 import { useRead } from "@/lib/spoosh";
+import { TRANSIT_LINE_LABELS } from "@/constants/transitStations";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
 
-const LINE_LABELS: Record<string, string> = {
-  BTS_SUKHUMVIT: "BTS Sukhumvit",
-  BTS_SILOM: "BTS Silom",
-  MRT_BLUE: "MRT Blue",
-  MRT_PURPLE: "MRT Purple",
-  ARL: "Airport Rail Link",
-  BRT: "BRT",
-};
-
 export default function PropertyFormTransitSection() {
-  const { control, register } = useFormContext<PropertyCreateInput>();
+  const { control } = useFormContext<PropertyCreateInput>();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -55,12 +47,15 @@ export default function PropertyFormTransitSection() {
           {fields.map((field, index) => (
             <div key={field.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
               <div className="flex-1 space-y-1.5">
-                <RHFSelect<string> name={`transitStations.${index}.stationId`}>
-                  <SelectOption value="" label="Select station..." />
+                <RHFSelect<string>
+                  name={`transitStations.${index}.stationId`}
+                  filterable="dropdown"
+                  placeholder="Search station..."
+                >
                   {Object.entries(grouped).map(([line, lineStations]) => (
-                    <optgroup key={line} label={LINE_LABELS[line] ?? line}>
+                    <optgroup key={line} label={TRANSIT_LINE_LABELS[line as keyof typeof TRANSIT_LINE_LABELS] ?? line}>
                       {lineStations.map((s) => (
-                        <SelectOption key={s.id} value={s.id} label={s.name} />
+                        <SelectOption key={s.id} value={s.id} label={s.code ? `${s.code} – ${s.name}` : s.name} />
                       ))}
                     </optgroup>
                   ))}
@@ -68,18 +63,14 @@ export default function PropertyFormTransitSection() {
                 <RHFError name={`transitStations.${index}.stationId`} />
               </div>
 
-              <div className="w-32 space-y-1.5">
-                <div className="flex items-center gap-1">
-                  <input
-                    {...register(`transitStations.${index}.distanceMeters`)}
-                    type="number"
-                    min={1}
-                    max={9999}
-                    placeholder="500"
-                    className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  />
-                  <span className="text-xs text-gray-500 whitespace-nowrap">m</span>
-                </div>
+              <div className="w-36 space-y-1.5">
+                <RHFNumberInput
+                  name={`transitStations.${index}.distanceMeters`}
+                  placeholder="500"
+                  suffix="m"
+                  min={1}
+                  max={9999}
+                />
                 <RHFError name={`transitStations.${index}.distanceMeters`} />
               </div>
 

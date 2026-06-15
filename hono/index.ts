@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { auth } from "@/lib/auth";
 import {
   propertyRoutes,
+  propertyTypesRoutes,
   provincesRoutes,
   featuresRoutes,
   transitStationsRoutes,
@@ -18,6 +19,7 @@ router.on(["POST", "GET"], "/auth/*", (c) => {
 });
 
 router.route("/admin/properties", propertyRoutes);
+router.route("/admin/property-types", propertyTypesRoutes);
 router.route("/admin/provinces", provincesRoutes);
 router.route("/admin/features", featuresRoutes);
 router.route("/admin/transit-stations", transitStationsRoutes);

@@ -1,18 +1,5 @@
 import { z } from "zod";
 
-export const PROPERTY_TYPES = [
-  "CONDO",
-  "APARTMENT",
-  "HOUSE",
-  "VILLA",
-  "TOWNHOUSE",
-  "PENTHOUSE",
-  "OFFICE_SPACE",
-  "RETAIL_SPACE",
-  "COMMERCIAL_SPACE",
-  "WAREHOUSE",
-] as const;
-
 export const LISTING_STATUSES = [
   "FOR_SALE",
   "FOR_RENT",
@@ -29,7 +16,7 @@ export const propertyCreateSchema = z.object({
     .min(1, "Slug is required")
     .regex(/^[a-z0-9-]+$/, "Slug must be lowercase letters, numbers, and hyphens only"),
   description: z.string().min(1, "Description is required"),
-  propertyType: z.enum(PROPERTY_TYPES),
+  propertyTypeId: z.string().min(1, "Property type is required"),
   status: z.enum(LISTING_STATUSES),
   salePrice: z.coerce.number().positive().nullable().optional(),
   rentPrice: z.coerce.number().positive().nullable().optional(),
@@ -40,6 +27,8 @@ export const propertyCreateSchema = z.object({
   provinceId: z.string().min(1, "Province is required"),
   districtId: z.string().nullable().optional(),
   subDistrictId: z.string().nullable().optional(),
+  lat: z.coerce.number().nullable().optional(),
+  lng: z.coerce.number().nullable().optional(),
   mapImageUrl: z.string().nullable().optional(),
   isFeatured: z.boolean(),
   isPublished: z.boolean(),

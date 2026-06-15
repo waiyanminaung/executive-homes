@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { LoadingButton } from "@geckoui/geckoui";
 import {
   propertyCreateSchema,
   type PropertyCreateInput,
@@ -20,7 +19,7 @@ const DEFAULT_VALUES: PropertyCreateInput = {
   title: "",
   slug: "",
   description: "",
-  propertyType: "CONDO",
+  propertyTypeId: "",
   status: "FOR_SALE",
   salePrice: null,
   rentPrice: null,
@@ -31,6 +30,8 @@ const DEFAULT_VALUES: PropertyCreateInput = {
   provinceId: "",
   districtId: null,
   subDistrictId: null,
+  lat: null,
+  lng: null,
   mapImageUrl: null,
   isFeatured: false,
   isPublished: false,
@@ -73,8 +74,8 @@ export default function PropertyForm({
             <PropertyFormTransitSection />
             <PropertyFormMediaSection />
           </div>
-          <div className="space-y-5">
-            <PropertyFormFlagsSection />
+          <div className="space-y-5 lg:sticky lg:top-5 lg:self-start">
+            <PropertyFormFlagsSection submitLabel={submitLabel} />
           </div>
         </div>
 
@@ -83,17 +84,6 @@ export default function PropertyForm({
             {methods.formState.errors.root.message}
           </p>
         ) : null}
-
-        <div className="flex justify-end pt-2">
-          <LoadingButton
-            type="submit"
-            loading={methods.formState.isSubmitting}
-            loadingText="Saving..."
-            className="bg-primary-700 hover:bg-primary-800 text-white font-semibold px-6 py-2.5 rounded-lg transition-colors"
-          >
-            {submitLabel}
-          </LoadingButton>
-        </div>
       </form>
     </FormProvider>
   );
