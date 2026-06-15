@@ -7,6 +7,8 @@ import {
   provinceUpdateSchema,
   districtCreateSchema,
   districtUpdateSchema,
+  subDistrictCreateSchema,
+  subDistrictUpdateSchema,
 } from "@/validation/locationSchema";
 import type { AppEnv } from "@/hono/types";
 
@@ -79,6 +81,46 @@ locationsRoutes.delete("/districts/:id", async (c) => {
   const existing = await prisma.district.findUnique({ where: { id } });
   if (!existing) return c.json({ error: "District not found" }, 404);
   await prisma.district.delete({ where: { id } });
+  return c.json({ ok: true });
+});
+
+locationsRoutes.get("/subdistricts", async (c) => {
+  const districtId = c.req.query("districtId");
+  const subDistricts = await prisma.subDistrict.findMany({
+    where: districtId ? { districtId } : undefined,
+    orderBy: { name: "asc" },
+    include: { district: { select: { id: true, name: true } } },
+  });
+  return c.json({ subDistricts });
+});
+
+locationsRoutes.post("/subdistricts", zv("json", subDistrictCreateSchema), async (c) => {
+  const data = c.req.valid("json");
+  const subDistrict = await prisma.subDistrict.create({
+    data,
+    include: { district: { select: { id: true, name: true } } },
+  });
+  return c.json({ subDistrict }, 201);
+});
+
+locationsRoutes.patch("/subdistricts/:id", zv("json", subDistrictUpdateSchema), async (c) => {
+  const id = c.req.param("id");
+  const data = c.req.valid("json");
+  const existing = await prisma.subDistrict.findUnique({ where: { id } });
+  if (!existing) return c.json({ error: "SubDistrict not found" }, 404);
+  const subDistrict = await prisma.subDistrict.update({
+    where: { id },
+    data,
+    include: { district: { select: { id: true, name: true } } },
+  });
+  return c.json({ subDistrict });
+});
+
+locationsRoutes.delete("/subdistricts/:id", async (c) => {
+  const id = c.req.param("id");
+  const existing = await prisma.subDistrict.findUnique({ where: { id } });
+  if (!existing) return c.json({ error: "SubDistrict not found" }, 404);
+  await prisma.subDistrict.delete({ where: { id } });
   return c.json({ ok: true });
 });
 
