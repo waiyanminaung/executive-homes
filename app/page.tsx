@@ -1,9 +1,5 @@
-import {
-  HOME_AREA_CARDS,
-  HOME_FOOTER_COLUMNS,
-  HOME_NAV_ITEMS,
-  HOME_PROPERTY_SECTIONS,
-} from "./constants";
+import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "./constants";
+import { HOME_AREA_CARDS, HOME_PROPERTY_SECTIONS } from "./components/home/mock";
 import {
   AreaGrid,
   HomeFooter,

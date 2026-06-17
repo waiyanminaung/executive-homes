@@ -2,7 +2,8 @@ import { Hono } from "hono";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import sharp from "sharp";
 import { prisma } from "@/lib/prisma";
-import { r2, R2_BUCKET, R2_PUBLIC_URL } from "@/lib/r2";
+import { r2, R2_BUCKET } from "@/lib/r2";
+import { getMediaUrl } from "@/utils/getMediaUrl";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
 import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE } from "@/validation/mediaSchema";
 import type { AppEnv } from "@/hono/types";
@@ -16,7 +17,7 @@ mediaRoutes.get("/", async (c) => {
     orderBy: { createdAt: "desc" },
   });
 
-  return c.json({ images });
+  return c.json({ images: images.map((img) => ({ ...img, url: getMediaUrl(img.key) })) });
 });
 
 mediaRoutes.post("/", async (c) => {
@@ -54,7 +55,6 @@ mediaRoutes.post("/", async (c) => {
   const image = await prisma.mediaImage.create({
     data: {
       key,
-      url: `${R2_PUBLIC_URL}/${key}`,
       filename,
       size: webpBuffer.length,
       mimeType: "image/webp",
@@ -62,7 +62,7 @@ mediaRoutes.post("/", async (c) => {
     },
   });
 
-  return c.json(image, 201);
+  return c.json({ ...image, url: getMediaUrl(image.key) }, 201);
 });
 
 mediaRoutes.delete("/:id", async (c) => {

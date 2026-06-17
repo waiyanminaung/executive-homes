@@ -5,7 +5,8 @@ import Image from "next/image";
 import { Search } from "lucide-react";
 import { Button, Input, Select, SelectOption } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
-import { HOME_HERO_FILTER_OPTIONS, MOCK_PROPERTIES } from "@/app/constants";
+import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
+import { MOCK_PROPERTIES } from "@/app/components/home/mock";
 import { HomePetToggle } from "./HomePetToggle";
 import { HomeSearchResults } from "./HomeSearchResults";
 

@@ -42,7 +42,7 @@ export default function MediaPickerDialog({
 }: MediaPickerDialogProps) {
   const [tab, setTab] = useState<Tab>("library");
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [isUploading, setIsUploading] = useState(false);
+  const [uploadingCount, setUploadingCount] = useState(0);
 
   const toggle = (url: string) => {
     setSelected((prev) => {
@@ -64,13 +64,18 @@ export default function MediaPickerDialog({
     });
   };
 
+  const handleUploadStart = (count: number) => {
+    setUploadingCount(count);
+    setTab("library");
+  };
+
   const handleUploaded = (image: ClientMediaImage) => {
+    setUploadingCount((n) => n - 1);
     setSelected((prev) => {
       const next = new Set(prev);
       next.add(image.url);
       return next;
     });
-    setTab("library");
   };
 
   return (
@@ -103,9 +108,9 @@ export default function MediaPickerDialog({
 
       <div className="flex-1 overflow-y-auto p-5">
         {tab === "library" ? (
-          <MediaLibraryTab selected={selected} onToggle={toggle} isUploading={isUploading} />
+          <MediaLibraryTab selected={selected} onToggle={toggle} uploadingCount={uploadingCount} />
         ) : (
-          <MediaUploadTab onUploaded={handleUploaded} onUploadingChange={setIsUploading} />
+          <MediaUploadTab onUploaded={handleUploaded} onUploadStart={handleUploadStart} />
         )}
       </div>
 

@@ -107,6 +107,18 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
             Dashboard
           </Link>
 
+          <Link
+            href="/admin/library"
+            onClick={onClose}
+            className={classNames(
+              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+              isActive("/admin/library") ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white",
+            )}
+          >
+            <Images className="w-4 h-4 shrink-0" />
+            Library
+          </Link>
+
           <div>
             <button
               onClick={() => setPropertiesOpen((prev) => !prev)}
@@ -210,17 +222,6 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
             Transit Stations
           </Link>
 
-          <Link
-            href="/admin/library"
-            onClick={onClose}
-            className={classNames(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-              isActive("/admin/library") ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white",
-            )}
-          >
-            <Images className="w-4 h-4 shrink-0" />
-            Library
-          </Link>
         </nav>
 
         <div className="px-3 py-4 border-t border-white/10 space-y-1">

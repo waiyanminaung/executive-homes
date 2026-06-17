@@ -94,7 +94,7 @@ export type ApiSchema = {
   };
   "admin/media": {
     GET: { data: { images: ClientMediaImage[] } };
-    POST: { data: ClientMediaImage };
+    POST: { data: ClientMediaImage; body: { file: File } };
   };
   "admin/media/:id": {
     DELETE: { data: { ok: true }; params: { id: string } };

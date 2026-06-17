@@ -243,7 +243,6 @@ model Account {
 model MediaImage {
   id           String   @id @default(cuid())
   key          String   @unique
-  url          String
   filename     String
   size         Int
   mimeType     String

@@ -1,11 +1,13 @@
 "use client";
 
 import { useFormContext, useFieldArray } from "react-hook-form";
-import { Plus, Trash2 } from "lucide-react";
-import { Spinner, RHFError, SelectOption, RHFSelect, RHFNumberInput } from "@geckoui/geckoui";
+import { Train, Trash2 } from "lucide-react";
+import { RHFError, RHFNumberInput } from "@geckoui/geckoui";
 import { useRead } from "@/lib/spoosh";
-import { TRANSIT_LINE_LABELS } from "@/constants/transitStations";
+import { TRANSIT_LINE_COLORS } from "@/constants/transitStations";
+import { openTransitStationPicker } from "@/components/@shared/TransitStationPickerModal";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
+import type { TransitStation } from "@/types/transitStation";
 
 export default function PropertyFormTransitSection() {
   const { control } = useFormContext<PropertyCreateInput>();
@@ -15,14 +17,32 @@ export default function PropertyFormTransitSection() {
     name: "transitStations",
   });
 
-  const { data, loading } = useRead((api) => api("admin/transit-stations").GET());
+  const { data } = useRead((api) => api("admin/transit-stations").GET());
   const stations = data?.stations ?? [];
 
-  const grouped = stations.reduce<Record<string, typeof stations>>((acc, s) => {
-    if (!acc[s.line]) acc[s.line] = [];
-    acc[s.line].push(s);
+  const stationMap = stations.reduce<Record<string, TransitStation>>((acc, s) => {
+    acc[s.id] = s;
     return acc;
   }, {});
+
+  const currentIds = fields.map((f) => f.stationId);
+
+  const handlePickerConfirm = (selectedIds: string[]) => {
+    const currentSet = new Set(currentIds);
+    const selectedSet = new Set(selectedIds);
+
+    fields.forEach((field, index) => {
+      if (!selectedSet.has(field.stationId)) {
+        remove(index);
+      }
+    });
+
+    selectedIds.forEach((id) => {
+      if (!currentSet.has(id)) {
+        append({ stationId: id, distanceMeters: 500 });
+      }
+    });
+  };
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
@@ -30,36 +50,38 @@ export default function PropertyFormTransitSection() {
         <h2 className="text-sm font-semibold text-gray-900">Transit Proximity</h2>
         <button
           type="button"
-          onClick={() => append({ stationId: "", distanceMeters: 500 })}
+          onClick={() =>
+            openTransitStationPicker({
+              selectedIds: currentIds,
+              onConfirm: handlePickerConfirm,
+            })
+          }
           className="flex items-center gap-1.5 text-xs font-medium text-primary-700 hover:text-primary-800"
         >
-          <Plus className="w-3.5 h-3.5" />
-          Add Station
+          <Train className="w-3.5 h-3.5" />
+          Choose Stations
         </button>
       </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-6">
-          <Spinner className="w-5 h-5 text-primary-600" />
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {fields.map((field, index) => (
+      <div className="space-y-3">
+        {fields.map((field, index) => {
+          const station = stationMap[field.stationId];
+          const color = station ? TRANSIT_LINE_COLORS[station.line as keyof typeof TRANSIT_LINE_COLORS] : undefined;
+
+          return (
             <div key={field.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-              <div className="flex-1 space-y-1.5">
-                <RHFSelect<string>
-                  name={`transitStations.${index}.stationId`}
-                  filterable="dropdown"
-                  placeholder="Search station..."
-                >
-                  {Object.entries(grouped).map(([line, lineStations]) => (
-                    <optgroup key={line} label={TRANSIT_LINE_LABELS[line as keyof typeof TRANSIT_LINE_LABELS] ?? line}>
-                      {lineStations.map((s) => (
-                        <SelectOption key={s.id} value={s.id} label={s.code ? `${s.code} – ${s.name}` : s.name} />
-                      ))}
-                    </optgroup>
-                  ))}
-                </RHFSelect>
+              <div className="flex-1 flex items-center gap-2 min-h-[36px]">
+                {station?.code && color && (
+                  <span
+                    className="text-[10px] font-bold px-1.5 py-0.5 rounded text-white shrink-0"
+                    style={{ backgroundColor: color }}
+                  >
+                    {station.code}
+                  </span>
+                )}
+                <span className="text-sm text-gray-800 truncate">
+                  {station?.name ?? field.stationId}
+                </span>
                 <RHFError name={`transitStations.${index}.stationId`} />
               </div>
 
@@ -82,13 +104,15 @@ export default function PropertyFormTransitSection() {
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>
-          ))}
+          );
+        })}
 
-          {fields.length === 0 && (
-            <p className="text-sm text-gray-400">No transit stations added.</p>
-          )}
-        </div>
-      )}
+        {fields.length === 0 && (
+          <p className="text-sm text-gray-400">
+            No transit stations added. Click &ldquo;Choose Stations&rdquo; to add.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
