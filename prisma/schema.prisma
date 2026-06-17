@@ -200,6 +200,7 @@ model User {
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
   accounts      Account[]
+  mediaImages   MediaImage[]
 
   @@map("user")
 }
@@ -237,6 +238,20 @@ model Account {
 
   @@index([userId])
   @@map("account")
+}
+
+model MediaImage {
+  id           String   @id @default(cuid())
+  key          String   @unique
+  url          String
+  filename     String
+  size         Int
+  mimeType     String
+  uploadedById String
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
+  createdAt    DateTime @default(now())
+
+  @@map("media_images")
 }
 
 model Verification {
