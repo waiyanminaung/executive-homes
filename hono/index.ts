@@ -10,6 +10,7 @@ import {
   adminEnquiriesRoutes,
   publicPropertiesRoutes,
   publicEnquiriesRoutes,
+  mediaRoutes,
 } from "@/hono/routes";
 
 const router = new Hono().basePath("/api");
@@ -25,6 +26,7 @@ router.route("/admin/features", featuresRoutes);
 router.route("/admin/transit-stations", transitStationsRoutes);
 router.route("/admin/locations", locationsRoutes);
 router.route("/admin/enquiries", adminEnquiriesRoutes);
+router.route("/admin/media", mediaRoutes);
 
 router.route("/properties", publicPropertiesRoutes);
 router.route("/enquiries", publicEnquiriesRoutes);

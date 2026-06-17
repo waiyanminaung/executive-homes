@@ -7,3 +7,4 @@ export { default as locationsRoutes } from "./locations.routes";
 export { default as adminEnquiriesRoutes } from "./adminEnquiries.routes";
 export { default as publicPropertiesRoutes } from "./publicProperties.routes";
 export { default as publicEnquiriesRoutes } from "./publicEnquiries.routes";
+export { default as mediaRoutes } from "./media.routes";
