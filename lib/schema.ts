@@ -8,6 +8,7 @@ import type { PropertyCreateInput, PropertyUpdateInput } from "@/validation/prop
 import type { FeatureCreateInput, FeatureUpdateInput } from "@/validation/featureSchema";
 import type { ProvinceCreateInput, ProvinceUpdateInput, DistrictCreateInput, DistrictUpdateInput, SubDistrictCreateInput, SubDistrictUpdateInput } from "@/validation/locationSchema";
 import type { PublicEnquiryInput } from "@/validation/publicEnquirySchema";
+import type { ClientMediaImage } from "@/types/media";
 
 interface EnquiryListItem {
   id: string;
@@ -89,6 +90,13 @@ export type ApiSchema = {
     PATCH: { data: { enquiry: EnquiryListItem }; params: { id: string } };
   };
   "admin/enquiries/:id": {
+    DELETE: { data: { ok: true }; params: { id: string } };
+  };
+  "admin/media": {
+    GET: { data: { images: ClientMediaImage[] } };
+    POST: { data: ClientMediaImage };
+  };
+  "admin/media/:id": {
     DELETE: { data: { ok: true }; params: { id: string } };
   };
   "properties": {
