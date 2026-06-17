@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import sharp from "sharp";
 import { prisma } from "@/lib/prisma";
 import { r2, R2_BUCKET, R2_PUBLIC_URL } from "@/lib/r2";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
@@ -35,16 +36,18 @@ mediaRoutes.post("/", async (c) => {
     return c.json({ error: "File too large (max 10MB)" }, 400);
   }
 
-  const ext = file.name.split(".").pop() ?? "jpg";
-  const key = `media/${crypto.randomUUID().replace(/-/g, "")}.${ext}`;
   const buffer = Buffer.from(await file.arrayBuffer());
+  const webpBuffer = await sharp(buffer).webp({ quality: 80 }).toBuffer();
+
+  const key = `media/${crypto.randomUUID().replace(/-/g, "")}.webp`;
+  const filename = file.name.replace(/\.[^.]+$/, ".webp");
 
   await r2.send(
     new PutObjectCommand({
       Bucket: R2_BUCKET,
       Key: key,
-      Body: buffer,
-      ContentType: file.type,
+      Body: webpBuffer,
+      ContentType: "image/webp",
     }),
   );
 
@@ -52,9 +55,9 @@ mediaRoutes.post("/", async (c) => {
     data: {
       key,
       url: `${R2_PUBLIC_URL}/${key}`,
-      filename: file.name,
-      size: file.size,
-      mimeType: file.type,
+      filename,
+      size: webpBuffer.length,
+      mimeType: "image/webp",
       uploadedById: user.id,
     },
   });
