@@ -17,6 +17,14 @@ export interface PropertyContactItem {
   iconUrl: string;
 }
 
+export interface PropertyTransitItem {
+  stationId: string;
+  code: string | null;
+  name: string;
+  line: string;
+  calculatedMeters: number | null;
+}
+
 export interface PropertyDetail extends PropertyItem {
   salePrice: number;
   rentPrice: number;
@@ -26,4 +34,5 @@ export interface PropertyDetail extends PropertyItem {
   unitFeatures: PropertyAmenity[];
   commonFacilities: PropertyAmenity[];
   mapImageUrl: string;
+  transitStations: PropertyTransitItem[];
 }

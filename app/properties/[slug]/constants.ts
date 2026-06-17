@@ -111,6 +111,7 @@ export const PROPERTY_DETAIL: PropertyDetail = {
     { label: "Shop on premises", icon: ShoppingBag },
     { label: "Concierge desk", icon: BellRing },
   ],
+  transitStations: [],
 };
 
 export const PROPERTY_CONTACT_ITEMS: PropertyContactItem[] = [

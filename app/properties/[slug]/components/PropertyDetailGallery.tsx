@@ -11,73 +11,192 @@ interface PropertyDetailGalleryProps {
   title: string;
 }
 
+interface GalleryImageProps {
+  src: string;
+  alt: string;
+  sizes: string;
+  onClick: () => void;
+  overlay?: React.ReactNode;
+}
+
+function GalleryImage({ src, alt, sizes, onClick, overlay }: GalleryImageProps) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="relative h-full w-full overflow-hidden bg-neutral-200"
+    >
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes={sizes}
+        className="object-cover transition-transform duration-300 hover:scale-105"
+      />
+      {overlay}
+    </button>
+  );
+}
+
 export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryProps) {
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
+
   const [primaryImage, ...secondaryImages] = images;
-  const visibleSecondaryImages = secondaryImages.slice(0, 4);
-  const extraImageCount = Math.max(images.length - 4, 0);
 
   function openAt(index: number) {
     setInitialIndex(index);
     setGalleryOpen(true);
   }
 
+  const extraImageCount = Math.max(images.length - 5, 0);
+
   return (
-    <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-[1fr_1.06fr]">
-      <button
-        type="button"
-        onClick={() => openAt(0)}
-        className="relative min-h-[300px] overflow-hidden bg-neutral-200 md:min-h-[440px]"
-      >
-        <Image
-          src={primaryImage}
-          alt={title}
-          fill
-          priority
-          sizes="(min-width: 1024px) 624px, 100vw"
-          className="object-cover transition-transform duration-300 hover:scale-105"
-        />
-      </button>
+    <>
+      {images.length === 1 && (
+        <section className="relative min-h-[400px] overflow-hidden rounded-[10px] md:min-h-[500px]">
+          <GalleryImage
+            src={primaryImage}
+            alt={title}
+            sizes="100vw"
+            onClick={() => openAt(0)}
+          />
+        </section>
+      )}
 
-      <div className="relative grid min-h-[260px] grid-cols-2 gap-1.5 md:min-h-[440px]">
-        {visibleSecondaryImages.map((image, index) => {
-          const showOverlay = index === visibleSecondaryImages.length - 1;
+      {images.length === 2 && (
+        <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-2">
+          <div className="relative min-h-[300px] md:min-h-[440px]">
+            <GalleryImage
+              src={primaryImage}
+              alt={title}
+              sizes="(min-width: 768px) 50vw, 100vw"
+              onClick={() => openAt(0)}
+            />
+          </div>
+          <div className="relative min-h-[300px] md:min-h-[440px]">
+            <GalleryImage
+              src={secondaryImages[0]}
+              alt={`${title} gallery 2`}
+              sizes="(min-width: 768px) 50vw, 100vw"
+              onClick={() => openAt(1)}
+            />
+          </div>
+        </section>
+      )}
 
-          return (
-            <button
-              key={image}
-              type="button"
-              onClick={() => openAt(index + 1)}
-              className="relative min-h-[128px] overflow-hidden bg-neutral-200"
-            >
-              <Image
-                src={image}
-                alt={`${title} gallery ${index + 2}`}
-                fill
-                sizes="(min-width: 1024px) 328px, 50vw"
-                className="object-cover transition-transform duration-300 hover:scale-105"
+      {images.length === 3 && (
+        <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-2">
+          <div className="relative min-h-[300px] md:min-h-[440px]">
+            <GalleryImage
+              src={primaryImage}
+              alt={title}
+              sizes="(min-width: 768px) 50vw, 100vw"
+              onClick={() => openAt(0)}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            {secondaryImages.map((image, index) => (
+              <div key={image} className="relative min-h-[214px]">
+                <GalleryImage
+                  src={image}
+                  alt={`${title} gallery ${index + 2}`}
+                  sizes="(min-width: 768px) 50vw, 100vw"
+                  onClick={() => openAt(index + 1)}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {images.length === 4 && (
+        <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-2">
+          <div className="relative min-h-[300px] md:min-h-[440px]">
+            <GalleryImage
+              src={primaryImage}
+              alt={title}
+              sizes="(min-width: 768px) 50vw, 100vw"
+              onClick={() => openAt(0)}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <div className="relative min-h-[214px]">
+              <GalleryImage
+                src={secondaryImages[0]}
+                alt={`${title} gallery 2`}
+                sizes="(min-width: 768px) 50vw, 100vw"
+                onClick={() => openAt(1)}
               />
-
-              {showOverlay ? (
-                <div className="absolute inset-0 flex items-center justify-center bg-secondary-900/55 text-4xl font-bold text-white">
-                  {extraImageCount}+
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              {secondaryImages.slice(1).map((image, index) => (
+                <div key={image} className="relative min-h-[100px]">
+                  <GalleryImage
+                    src={image}
+                    alt={`${title} gallery ${index + 3}`}
+                    sizes="(min-width: 768px) 25vw, 50vw"
+                    onClick={() => openAt(index + 2)}
+                  />
                 </div>
-              ) : null}
-            </button>
-          );
-        })}
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={() => openAt(0)}
-          className="absolute bottom-4 right-4 hidden h-10 rounded-md bg-neutral-950/80 px-3.5 text-sm font-semibold !text-white shadow-[0_8px_30px_rgb(0_0_0/0.16)] hover:bg-neutral-950/90 md:inline-flex"
-        >
-          <Images className="h-5 w-5" />
-          <span>View All</span>
-        </Button>
-      </div>
+      {images.length >= 5 && (
+        <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-[1fr_1.06fr]">
+          <button
+            type="button"
+            onClick={() => openAt(0)}
+            className="relative min-h-[300px] overflow-hidden bg-neutral-200 md:min-h-[440px]"
+          >
+            <Image
+              src={primaryImage}
+              alt={title}
+              fill
+              priority
+              sizes="(min-width: 1024px) 624px, 100vw"
+              className="object-cover transition-transform duration-300 hover:scale-105"
+            />
+          </button>
+
+          <div className="relative grid min-h-[260px] grid-cols-2 gap-1.5 md:min-h-[440px]">
+            {secondaryImages.slice(0, 4).map((image, index) => {
+              const isLast = index === 3;
+
+              return (
+                <div key={image} className="relative min-h-[128px] overflow-hidden bg-neutral-200">
+                  <GalleryImage
+                    src={image}
+                    alt={`${title} gallery ${index + 2}`}
+                    sizes="(min-width: 1024px) 328px, 50vw"
+                    onClick={() => openAt(index + 1)}
+                    overlay={
+                      isLast && extraImageCount > 0 ? (
+                        <div className="absolute inset-0 flex items-center justify-center bg-secondary-900/55 text-4xl font-bold text-white">
+                          {extraImageCount}+
+                        </div>
+                      ) : undefined
+                    }
+                  />
+                </div>
+              );
+            })}
+
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => openAt(0)}
+              className="absolute bottom-4 right-4 hidden h-10 rounded-md bg-neutral-950/80 px-3.5 text-sm font-semibold !text-white shadow-[0_8px_30px_rgb(0_0_0/0.16)] hover:bg-neutral-950/90 md:inline-flex"
+            >
+              <Images className="h-5 w-5" />
+              <span>View All</span>
+            </Button>
+          </div>
+        </section>
+      )}
 
       <PropertyGalleryModal
         images={images}
@@ -86,6 +205,6 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
         initialIndex={initialIndex}
         onClose={() => setGalleryOpen(false)}
       />
-    </section>
+    </>
   );
 }

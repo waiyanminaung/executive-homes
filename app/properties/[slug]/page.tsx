@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { Bath, BedDouble, Building2, MapPin, Maximize2, Check } from "lucide-react";
+import { haversineMeters } from "@/utils/haversine";
 import { prisma } from "@/lib/prisma";
 import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
@@ -51,6 +52,26 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
     .filter((pf) => pf.feature.category === "AMENITY")
     .map((pf) => ({ label: pf.feature.label, icon: Check }));
 
+  const transitStations = raw.transitStations.map((pt) => {
+    const hasCoords =
+      raw.lat != null &&
+      raw.lng != null &&
+      pt.station.lat != null &&
+      pt.station.lng != null;
+
+    const calculatedMeters = hasCoords
+      ? haversineMeters(raw.lat!, raw.lng!, pt.station.lat!, pt.station.lng!)
+      : null;
+
+    return {
+      stationId: pt.stationId,
+      code: pt.station.code ?? null,
+      name: pt.station.name,
+      line: pt.station.line,
+      calculatedMeters,
+    };
+  });
+
   const property: PropertyDetail = {
     id: raw.slug,
     title: raw.title,
@@ -75,6 +96,7 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
     ],
     unitFeatures,
     commonFacilities,
+    transitStations,
   };
 
   return (

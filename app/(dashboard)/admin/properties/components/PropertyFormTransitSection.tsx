@@ -2,7 +2,7 @@
 
 import { useFormContext, useFieldArray } from "react-hook-form";
 import { Train, Trash2 } from "lucide-react";
-import { RHFError, RHFNumberInput } from "@geckoui/geckoui";
+import { RHFError } from "@geckoui/geckoui";
 import { useRead } from "@/lib/spoosh";
 import { TRANSIT_LINE_COLORS } from "@/constants/transitStations";
 import { openTransitStationPicker } from "@/components/@shared/TransitStationPickerModal";
@@ -83,17 +83,6 @@ export default function PropertyFormTransitSection() {
                   {station?.name ?? field.stationId}
                 </span>
                 <RHFError name={`transitStations.${index}.stationId`} />
-              </div>
-
-              <div className="w-36 space-y-1.5">
-                <RHFNumberInput
-                  name={`transitStations.${index}.distanceMeters`}
-                  placeholder="500"
-                  suffix="m"
-                  min={1}
-                  max={9999}
-                />
-                <RHFError name={`transitStations.${index}.distanceMeters`} />
               </div>
 
               <button

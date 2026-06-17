@@ -1,6 +1,25 @@
-import type { PropertyDetail } from "../types";
+import type { PropertyDetail, PropertyTransitItem } from "../types";
 import { PropertyShareButton } from "./PropertyShareButton";
 import { formatPrice } from "@/utils/formatPrice";
+import { TRANSIT_LINE_COLORS } from "@/constants/transitStations";
+import type { TransitLine } from "@/constants/transitStations";
+
+function TransitRow({ station }: { station: PropertyTransitItem }) {
+  const color = TRANSIT_LINE_COLORS[station.line as TransitLine];
+  const stationLabel = station.code ? `${station.code} ${station.name}` : station.name;
+
+  const distanceText =
+    station.calculatedMeters !== null
+      ? `${station.calculatedMeters} m (${Math.round(station.calculatedMeters / 80)} mins) from ${stationLabel}`
+      : `Near ${stationLabel}`;
+
+  return (
+    <div className="flex items-center gap-2.5">
+      <span className="h-3.5 w-3.5 shrink-0 rounded-sm" style={{ backgroundColor: color }} />
+      <span className="text-sm text-neutral-700">{distanceText}</span>
+    </div>
+  );
+}
 
 interface PropertyDetailSummaryProps {
   property: PropertyDetail;
@@ -63,6 +82,16 @@ export function PropertyDetailSummary({ property, listingType }: PropertyDetailS
         ))}
       </dl>
 
+      {property.transitStations.length > 0 && (
+        <>
+          <div className="my-5 h-px bg-gray-300" />
+          <div className="space-y-2.5">
+            {property.transitStations.map((station) => (
+              <TransitRow key={station.stationId} station={station} />
+            ))}
+          </div>
+        </>
+      )}
     </section>
   );
 }
