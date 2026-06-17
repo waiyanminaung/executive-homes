@@ -9,7 +9,6 @@ import MediaLibraryTab from "./MediaLibraryTab";
 import MediaUploadTab from "./MediaUploadTab";
 
 interface MediaPickerDialogProps {
-  open: boolean;
   onClose: () => void;
   onSelect: (urls: string[]) => void;
   multiple?: boolean;
@@ -25,7 +24,6 @@ export function openMediaPicker(opts: {
     className: "w-full max-w-3xl",
     content: ({ dismiss }) => (
       <MediaPickerDialog
-        open
         onClose={dismiss}
         onSelect={(urls) => {
           opts.onSelect(urls);
