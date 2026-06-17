@@ -9,9 +9,10 @@ import { classNames } from "@/utils/classNames";
 interface MediaLibraryTabProps {
   selected: Set<string>;
   onToggle: (url: string) => void;
+  isUploading?: boolean;
 }
 
-export default function MediaLibraryTab({ selected, onToggle }: MediaLibraryTabProps) {
+export default function MediaLibraryTab({ selected, onToggle, isUploading = false }: MediaLibraryTabProps) {
   const { data, loading } = useRead((api) => api("admin/media").GET());
   const images = data?.images ?? [];
 
@@ -23,7 +24,7 @@ export default function MediaLibraryTab({ selected, onToggle }: MediaLibraryTabP
     );
   }
 
-  if (images.length === 0) {
+  if (images.length === 0 && !isUploading) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
         <ImageOff className="w-10 h-10" />
@@ -34,6 +35,11 @@ export default function MediaLibraryTab({ selected, onToggle }: MediaLibraryTabP
 
   return (
     <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
+      {isUploading && (
+        <div className="relative aspect-square rounded-lg overflow-hidden border-2 border-transparent bg-gray-100 animate-pulse flex items-center justify-center">
+          <Spinner className="w-5 h-5 text-gray-400" />
+        </div>
+      )}
       {images.map((img) => {
         const isSelected = selected.has(img.url);
         return (

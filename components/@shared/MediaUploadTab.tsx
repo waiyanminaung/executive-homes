@@ -7,15 +7,21 @@ import type { ClientMediaImage } from "@/types/media";
 
 interface MediaUploadTabProps {
   onUploaded: (image: ClientMediaImage) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 }
 
-export default function MediaUploadTab({ onUploaded }: MediaUploadTabProps) {
+export default function MediaUploadTab({ onUploaded, onUploadingChange }: MediaUploadTabProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const setUploadingState = (value: boolean) => {
+    setUploading(value);
+    onUploadingChange?.(value);
+  };
+
   const upload = async (file: File) => {
-    setUploading(true);
+    setUploadingState(true);
     setError(null);
     try {
       const formData = new FormData();
@@ -30,7 +36,7 @@ export default function MediaUploadTab({ onUploaded }: MediaUploadTabProps) {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");
     } finally {
-      setUploading(false);
+      setUploadingState(false);
     }
   };
 

@@ -42,6 +42,7 @@ export default function MediaPickerDialog({
 }: MediaPickerDialogProps) {
   const [tab, setTab] = useState<Tab>("library");
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [isUploading, setIsUploading] = useState(false);
 
   const toggle = (url: string) => {
     setSelected((prev) => {
@@ -102,9 +103,9 @@ export default function MediaPickerDialog({
 
       <div className="flex-1 overflow-y-auto p-5">
         {tab === "library" ? (
-          <MediaLibraryTab selected={selected} onToggle={toggle} />
+          <MediaLibraryTab selected={selected} onToggle={toggle} isUploading={isUploading} />
         ) : (
-          <MediaUploadTab onUploaded={handleUploaded} />
+          <MediaUploadTab onUploaded={handleUploaded} onUploadingChange={setIsUploading} />
         )}
       </div>
 
