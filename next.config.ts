@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "img.icons8.com" },
       { protocol: "https", hostname: "image.mux.com" },
       { protocol: "https", hostname: "cdn.flowplayer.com" },
+      { protocol: "https", hostname: "*.r2.dev" },
     ],
   },
 };

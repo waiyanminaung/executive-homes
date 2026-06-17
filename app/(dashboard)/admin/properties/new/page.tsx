@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronRight, ArrowLeft } from "lucide-react";
 import { Spinner } from "@geckoui/geckoui";
@@ -10,6 +11,7 @@ import PropertyForm from "../components/PropertyForm";
 
 export default function AdminPropertyNewPage() {
   const router = useRouter();
+  const [title, setTitle] = useState("");
   const { data: provincesData, loading } = useRead((api) => api("admin/provinces").GET());
   const { trigger: createProperty } = useWrite((api) => api("admin/properties").POST());
 
@@ -32,7 +34,7 @@ export default function AdminPropertyNewPage() {
         <nav className="flex items-center gap-1.5 text-xs text-gray-500">
           <Link href="/admin/properties" className="hover:text-gray-700 transition-colors">Properties</Link>
           <ChevronRight className="w-3 h-3" />
-          <span className="text-gray-600">New Property</span>
+          <span className="text-gray-600">{title || "New Property"}</span>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -43,7 +45,7 @@ export default function AdminPropertyNewPage() {
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">New Property</h1>
+            <h1 className="text-2xl font-bold text-gray-900">{title || "New Property"}</h1>
             <p className="text-sm text-gray-500 mt-0.5">Create a new property listing.</p>
           </div>
         </div>
@@ -53,6 +55,7 @@ export default function AdminPropertyNewPage() {
         provinces={provincesData?.provinces ?? []}
         onSubmit={handleSubmit}
         submitLabel="Create Property"
+        onTitleChange={setTitle}
       />
     </div>
   );

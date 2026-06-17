@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
-import { RHFInput, RHFSelect, RHFError, SelectOption } from "@geckoui/geckoui";
+import { RHFInput, RHFSelect, RHFError, SelectOption, SelectDropdownSearch, SelectEmpty } from "@geckoui/geckoui";
 import { useRead } from "@/lib/spoosh";
 import type { Province } from "@/types/property";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
@@ -62,9 +62,11 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-gray-700">District</label>
           <RHFSelect<string> name="districtId" placeholder="Select district...">
+            <SelectDropdownSearch />
             {districts.map((d) => (
               <SelectOption key={d.id} value={d.id} label={d.name} />
             ))}
+            <SelectEmpty />
           </RHFSelect>
           <RHFError name="districtId" />
         </div>
@@ -74,9 +76,11 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-gray-700">Subdistrict</label>
           <RHFSelect<string> name="subDistrictId" placeholder="Select subdistrict...">
+            <SelectDropdownSearch />
             {subDistricts.map((s) => (
               <SelectOption key={s.id} value={s.id} label={s.name} />
             ))}
+            <SelectEmpty />
           </RHFSelect>
           <RHFError name="subDistrictId" />
         </div>
@@ -107,11 +111,6 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
         </div>
       )}
 
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-gray-700">Map Image URL (optional)</label>
-        <RHFInput name="mapImageUrl" placeholder="https://..." />
-        <RHFError name="mapImageUrl" />
-      </div>
     </div>
   );
 }

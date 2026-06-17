@@ -1,6 +1,7 @@
 "use client";
 
-import { RHFInput, RHFTextarea, RHFSelect, RHFError, SelectOption, Spinner } from "@geckoui/geckoui";
+import { RHFInput, RHFController, RHFSelect, RHFError, SelectOption, Spinner } from "@geckoui/geckoui";
+import TiptapEditor from "@/components/TiptapEditor";
 import { LISTING_STATUSES } from "@/validation/propertySchema";
 import { useSlugAutoFill } from "@/utils/useSlugAutoFill";
 import { SlugInput } from "@/components/SlugInput";
@@ -62,7 +63,17 @@ export default function PropertyFormBasicSection() {
 
       <div className="space-y-1.5">
         <label className="block text-sm font-medium text-gray-700">Description</label>
-        <RHFTextarea name="description" placeholder="Describe the property..." rows={4} />
+        <RHFController
+          name="description"
+          render={({ field, fieldState }) => (
+            <TiptapEditor
+              value={field.value}
+              onChange={field.onChange}
+              placeholder="Describe the property..."
+              hasError={!!fieldState.error}
+            />
+          )}
+        />
         <RHFError name="description" />
       </div>
     </div>

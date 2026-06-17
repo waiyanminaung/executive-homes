@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ChevronRight, ArrowLeft } from "lucide-react";
+import { ChevronRight, ArrowLeft, ExternalLink } from "lucide-react";
 import { Spinner } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
@@ -92,8 +92,16 @@ export default function AdminPropertyEditPage() {
             <ArrowLeft className="w-4 h-4" />
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Edit Property</h1>
-            <p className="text-sm text-gray-500 mt-0.5 truncate max-w-md">{property.title}</p>
+            <h1 className="text-2xl font-bold text-gray-900">{property.title}</h1>
+            <Link
+              href={`/properties/${property.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-sm text-primary-600 hover:text-primary-700 transition-colors mt-0.5"
+            >
+              View property page
+              <ExternalLink className="w-3 h-3" />
+            </Link>
           </div>
         </div>
       </div>

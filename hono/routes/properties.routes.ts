@@ -13,6 +13,7 @@ const PROPERTY_INCLUDE = {
   images: { orderBy: { order: "asc" as const } },
   features: { include: { feature: true } },
   transitStations: { include: { station: true } },
+  propertyType: { select: { id: true, name: true, slug: true } },
 };
 
 const propertyRoutes = new Hono<AppEnv>();

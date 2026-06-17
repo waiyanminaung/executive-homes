@@ -1,7 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
+import { useEffect } from "react";
 import {
   propertyCreateSchema,
   type PropertyCreateInput,
@@ -45,6 +46,17 @@ interface PropertyFormProps {
   provinces: Province[];
   onSubmit: (values: PropertyCreateInput) => Promise<void>;
   submitLabel: string;
+  onTitleChange?: (title: string) => void;
+}
+
+function TitleWatcher({ onTitleChange }: { onTitleChange: (title: string) => void }) {
+  const title = useWatch<PropertyCreateInput, "title">({ name: "title" });
+
+  useEffect(() => {
+    onTitleChange(title ?? "");
+  }, [title, onTitleChange]);
+
+  return null;
 }
 
 export default function PropertyForm({
@@ -52,6 +64,7 @@ export default function PropertyForm({
   provinces,
   onSubmit,
   submitLabel,
+  onTitleChange,
 }: PropertyFormProps) {
   const methods = useForm({
     values: { ...DEFAULT_VALUES, ...defaultValues } as PropertyCreateInput,
@@ -64,6 +77,7 @@ export default function PropertyForm({
 
   return (
     <FormProvider {...methods}>
+      {onTitleChange && <TitleWatcher onTitleChange={onTitleChange} />}
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2 space-y-5">
