@@ -1,0 +1,77 @@
+import { Hono } from "hono";
+import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { prisma } from "@/lib/prisma";
+import { r2, R2_BUCKET, R2_PUBLIC_URL } from "@/lib/r2";
+import { authMiddleware, adminMiddleware } from "@/hono/middleware";
+import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE } from "@/validation/mediaSchema";
+import type { AppEnv } from "@/hono/types";
+
+const mediaRoutes = new Hono<AppEnv>();
+
+mediaRoutes.use("*", authMiddleware, adminMiddleware);
+
+mediaRoutes.get("/", async (c) => {
+  const images = await prisma.mediaImage.findMany({
+    orderBy: { createdAt: "desc" },
+  });
+
+  return c.json({ images });
+});
+
+mediaRoutes.post("/", async (c) => {
+  const user = c.get("user");
+  const formData = await c.req.formData();
+  const file = formData.get("file");
+
+  if (!(file instanceof File)) {
+    return c.json({ error: "No file provided" }, 400);
+  }
+
+  if (!ALLOWED_MIME_TYPES.includes(file.type as (typeof ALLOWED_MIME_TYPES)[number])) {
+    return c.json({ error: "File type not allowed" }, 400);
+  }
+
+  if (file.size > MAX_UPLOAD_SIZE) {
+    return c.json({ error: "File too large (max 10MB)" }, 400);
+  }
+
+  const ext = file.name.split(".").pop() ?? "jpg";
+  const key = `media/${crypto.randomUUID().replace(/-/g, "")}.${ext}`;
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  await r2.send(
+    new PutObjectCommand({
+      Bucket: R2_BUCKET,
+      Key: key,
+      Body: buffer,
+      ContentType: file.type,
+    }),
+  );
+
+  const image = await prisma.mediaImage.create({
+    data: {
+      key,
+      url: `${R2_PUBLIC_URL}/${key}`,
+      filename: file.name,
+      size: file.size,
+      mimeType: file.type,
+      uploadedById: user.id,
+    },
+  });
+
+  return c.json(image, 201);
+});
+
+mediaRoutes.delete("/:id", async (c) => {
+  const id = c.req.param("id");
+
+  const image = await prisma.mediaImage.findUnique({ where: { id } });
+  if (!image) return c.json({ error: "Not found" }, 404);
+
+  await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: image.key }));
+  await prisma.mediaImage.delete({ where: { id } });
+
+  return c.json({ ok: true });
+});
+
+export default mediaRoutes;
