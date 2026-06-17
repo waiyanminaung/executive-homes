@@ -70,7 +70,11 @@ export default function PropertyTable({ properties, onDeleted }: PropertyTablePr
                 {property.propertyType.name}
               </td>
               <td className="px-6 py-4">
-                <PropertyStatusBadge status={property.status} />
+                <PropertyStatusBadge
+                  isForSale={property.isForSale}
+                  isForRent={property.isForRent}
+                  availabilityStatus={property.availabilityStatus}
+                />
               </td>
               <td className="px-6 py-4 text-sm text-gray-700">
                 {property.salePrice ? formatPrice(property.salePrice) : null}

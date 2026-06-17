@@ -8,13 +8,10 @@ datasource db {
   provider = "postgresql"
 }
 
-enum ListingStatus {
-  FOR_SALE
-  FOR_RENT
-  FOR_SALE_AND_RENT
+enum AvailabilityStatus {
+  AVAILABLE
   SOLD
   RENTED
-  OFF_MARKET
 }
 
 enum FeatureCategory {
@@ -86,7 +83,9 @@ model Property {
   description    String
   propertyTypeId String
   propertyType   PropertyType @relation(fields: [propertyTypeId], references: [id])
-  status         ListingStatus
+  isForSale          Boolean            @default(false)
+  isForRent          Boolean            @default(false)
+  availabilityStatus AvailabilityStatus @default(AVAILABLE)
   salePrice     Float?
   rentPrice     Float?
   beds          Int?

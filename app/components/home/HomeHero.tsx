@@ -27,7 +27,7 @@ export function HomeHero() {
 
   const searchResults = MOCK_PROPERTIES.filter((property) => {
     const keywordValue = keyword.trim().toLowerCase();
-    const matchesTab = tab === "rent" ? property.status === "Rent" : property.status === "Sale";
+    const matchesTab = tab === "rent" ? property.listingType !== "Sale" : property.listingType !== "Rent";
     const matchesKeyword = keywordValue.length === 0 || `${property.title} ${property.location}`.toLowerCase().includes(keywordValue);
     const matchesLocation = !location || property.location.toLowerCase().includes(location);
     const matchesBedrooms = !bedrooms || bedrooms === "5+" || property.beds === Number(bedrooms);

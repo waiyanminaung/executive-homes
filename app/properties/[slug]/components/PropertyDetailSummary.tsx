@@ -2,7 +2,13 @@ import type { PropertyDetail, PropertyTransitItem } from "../types";
 import { PropertyShareButton } from "./PropertyShareButton";
 import { formatPrice } from "@/utils/formatPrice";
 import { TRANSIT_LINE_COLORS } from "@/constants/transitStations";
+import { classNames } from "@/utils/classNames";
 import type { TransitLine } from "@/constants/transitStations";
+
+const AVAILABILITY_BADGE: Record<string, string> = {
+  SOLD: "bg-gray-100 text-gray-700",
+  RENTED: "bg-amber-50 text-amber-700",
+};
 
 function TransitRow({ station }: { station: PropertyTransitItem }) {
   const color = TRANSIT_LINE_COLORS[station.line as TransitLine];
@@ -23,19 +29,32 @@ function TransitRow({ station }: { station: PropertyTransitItem }) {
 
 interface PropertyDetailSummaryProps {
   property: PropertyDetail;
-  listingType?: "sale" | "rent";
 }
 
-export function PropertyDetailSummary({ property, listingType }: PropertyDetailSummaryProps) {
+export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) {
   const LocationIcon = property.detailStats[0].icon;
+  const availabilityBadgeClass = AVAILABILITY_BADGE[property.availabilityStatus];
 
   return (
     <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-detail-card md:p-[30px]">
       <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_45px] md:items-start">
         <div className="space-y-1.5">
-          <h1 className="text-xl font-bold leading-snug text-neutral-900">
-            {property.title}
-          </h1>
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-xl font-bold leading-snug text-neutral-900">
+              {property.title}
+            </h1>
+
+            {property.availabilityStatus !== "AVAILABLE" && (
+              <span
+                className={classNames(
+                  "inline-flex items-center rounded-md px-2 py-0.5 text-xs font-semibold uppercase tracking-wide",
+                  availabilityBadgeClass,
+                )}
+              >
+                {property.availabilityStatus}
+              </span>
+            )}
+          </div>
 
           <p className="flex items-center gap-2 text-sm font-semibold text-neutral-600">
             <LocationIcon className="h-5 w-5 shrink-0" />
@@ -43,7 +62,7 @@ export function PropertyDetailSummary({ property, listingType }: PropertyDetailS
           </p>
 
           <div className="mt-4 grid gap-2">
-            {listingType !== "rent" && (
+            {property.isForSale && (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm font-semibold text-neutral-600">For sale</span>
                 <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
@@ -52,7 +71,7 @@ export function PropertyDetailSummary({ property, listingType }: PropertyDetailS
               </div>
             )}
 
-            {listingType !== "sale" && (
+            {property.isForRent && (
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm font-semibold text-neutral-600">For rent</span>
                 <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">

@@ -8,7 +8,8 @@ const publicPropertiesRoutes = new Hono();
 const listQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(50).default(12),
-  status: z.string().optional(),
+  isForSale: z.coerce.boolean().optional(),
+  isForRent: z.coerce.boolean().optional(),
   type: z.string().optional(),
   provinceId: z.string().optional(),
   districtId: z.string().optional(),
@@ -18,12 +19,13 @@ const listQuerySchema = z.object({
 });
 
 publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
-  const { page, limit, status, type, provinceId, districtId, beds, q, sort } = c.req.valid("query");
+  const { page, limit, isForSale, isForRent, type, provinceId, districtId, beds, q, sort } = c.req.valid("query");
   const skip = (page - 1) * limit;
 
   const where: Record<string, unknown> = { isPublished: true };
 
-  if (status) where.status = status;
+  if (isForSale !== undefined) where.isForSale = isForSale;
+  if (isForRent !== undefined) where.isForRent = isForRent;
   if (type) where.propertyType = { slug: type };
   if (provinceId) where.provinceId = provinceId;
   if (districtId) where.districtId = districtId;
@@ -44,7 +46,8 @@ publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
       take: limit,
       orderBy,
       select: {
-        id: true, slug: true, title: true, status: true,
+        id: true, slug: true, title: true,
+        isForSale: true, isForRent: true, availabilityStatus: true,
         propertyType: { select: { id: true, name: true, slug: true } },
         salePrice: true, rentPrice: true, beds: true, baths: true, areaSqm: true,
         address: true, isFeatured: true, isPublished: true, createdAt: true,

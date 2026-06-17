@@ -28,6 +28,8 @@ export interface PropertyTransitItem {
 export interface PropertyDetail extends PropertyItem {
   salePrice: number;
   rentPrice: number;
+  isForSale: boolean;
+  isForRent: boolean;
   address: string;
   description: string;
   detailStats: PropertyDetailStat[];

@@ -73,7 +73,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
 
         <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded-2xl bg-black/70 px-2.5 py-1.5">
           <span className="h-2 w-2 rounded-full bg-green-500" />
-          <span className="text-[13px] font-semibold text-white">{property.status}</span>
+          <span className="text-[13px] font-semibold text-white">{property.listingType}</span>
         </span>
 
         {images.length > 1 && (
@@ -141,7 +141,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
 
         <p className="text-base font-bold text-primary-500 md:text-lg">
-          {formatPrice(property.price)}{property.status === "Rent" ? "/mo" : ""}
+          {formatPrice(property.price)}{property.listingType === "Rent" ? "/mo" : ""}
         </p>
       </div>
     </Link>

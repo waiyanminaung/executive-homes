@@ -30,7 +30,8 @@ propertyRoutes.get("/", zv("query", propertyListQuerySchema), async (c) => {
       take: limit,
       orderBy: { createdAt: "desc" },
       select: {
-        id: true, slug: true, title: true, status: true,
+        id: true, slug: true, title: true,
+        isForSale: true, isForRent: true, availabilityStatus: true,
         propertyType: { select: { id: true, name: true, slug: true } },
         salePrice: true, rentPrice: true, beds: true, baths: true, areaSqm: true,
         isFeatured: true, isPublished: true, createdAt: true,

@@ -25,7 +25,8 @@ export interface PropertyItem {
   location: string;
   price: number;
   imageUrls: string[];
-  status: "Sale" | "Rent";
+  listingType: "Sale" | "Rent" | "Sale & Rent";
+  availabilityStatus: "AVAILABLE" | "SOLD" | "RENTED";
   beds: number;
   baths: number;
   area: string;

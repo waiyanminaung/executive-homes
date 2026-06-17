@@ -42,11 +42,11 @@ export function HomeSearchResults({ properties }: HomeSearchResultsProps) {
               </div>
 
               <div className="min-w-0">
-                <span className="text-xs font-semibold text-primary-500">{property.status}</span>
+                <span className="text-xs font-semibold text-primary-500">{property.listingType}</span>
                 <p className="truncate text-sm font-bold text-neutral-950">{property.title}</p>
                 <p className="truncate text-xs text-neutral-500">{property.location}</p>
                 <p className="mt-1 text-sm font-bold text-secondary-900">
-                  {formatPrice(property.price)}{property.status === "Rent" ? "/mo" : ""}
+                  {formatPrice(property.price)}{property.listingType !== "Sale" ? "/mo" : ""}
                 </p>
               </div>
             </Link>

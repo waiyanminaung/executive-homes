@@ -17,13 +17,10 @@ import type { PropertyDetail } from "./types";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ listing?: string }>;
 }
 
-export default async function PropertyDetailPage({ params, searchParams }: PageProps) {
+export default async function PropertyDetailPage({ params }: PageProps) {
   const { slug } = await params;
-  const { listing } = await searchParams;
-  const listingType = listing === "sale" || listing === "rent" ? listing : undefined;
 
   const raw = await prisma.property.findUnique({
     where: { slug, isPublished: true },
@@ -40,8 +37,8 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
 
   if (!raw) notFound();
 
-  const isRent = raw.status === "FOR_RENT";
-  const price = isRent ? (raw.rentPrice ?? 0) : (raw.salePrice ?? raw.rentPrice ?? 0);
+  const price = raw.isForSale ? (raw.salePrice ?? 0) : (raw.rentPrice ?? 0);
+  const listingType = raw.isForSale && raw.isForRent ? "Sale & Rent" : raw.isForSale ? "Sale" : "Rent";
   const locationLabel = raw.subDistrict?.name ?? raw.district?.name ?? raw.province?.name ?? raw.address;
 
   const unitFeatures = raw.features
@@ -78,7 +75,10 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
     location: raw.address,
     price,
     imageUrls: raw.images.map((img) => img.url),
-    status: isRent ? "Rent" : "Sale",
+    listingType,
+    availabilityStatus: raw.availabilityStatus,
+    isForSale: raw.isForSale,
+    isForRent: raw.isForRent,
     beds: raw.beds ?? 0,
     baths: raw.baths ?? 0,
     area: `${raw.areaSqm} sqm`,
@@ -109,7 +109,7 @@ export default async function PropertyDetailPage({ params, searchParams }: PageP
 
           <div className="mt-[30px] grid gap-6 lg:grid-cols-[minmax(0,908px)_359px] lg:items-start">
             <div className="grid gap-5">
-              <PropertyDetailSummary property={property} listingType={listingType} />
+              <PropertyDetailSummary property={property} />
               <PropertyDetailContent property={property} />
             </div>
 

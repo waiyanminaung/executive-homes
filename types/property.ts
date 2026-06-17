@@ -7,7 +7,9 @@ export interface PropertyListItem {
   slug: string;
   title: string;
   propertyType: PropertyTypeItem;
-  status: string;
+  isForSale: boolean;
+  isForRent: boolean;
+  availabilityStatus: string;
   salePrice: number | null;
   rentPrice: number | null;
   beds: number | null;
@@ -30,7 +32,9 @@ export interface PropertyDetail {
   title: string;
   description: string;
   propertyType: PropertyTypeItem;
-  status: string;
+  isForSale: boolean;
+  isForRent: boolean;
+  availabilityStatus: string;
   salePrice: number | null;
   rentPrice: number | null;
   beds: number | null;

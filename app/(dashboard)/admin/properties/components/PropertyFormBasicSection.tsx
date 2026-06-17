@@ -1,19 +1,16 @@
 "use client";
 
-import { RHFInput, RHFController, RHFSelect, RHFError, SelectOption, Spinner } from "@geckoui/geckoui";
+import { RHFInput, RHFController, RHFSelect, RHFError, RHFSwitch, SelectOption, Spinner } from "@geckoui/geckoui";
 import TiptapEditor from "@/components/TiptapEditor";
-import { LISTING_STATUSES } from "@/validation/propertySchema";
+import { AVAILABILITY_STATUSES } from "@/validation/propertySchema";
 import { useSlugAutoFill } from "@/utils/useSlugAutoFill";
 import { SlugInput } from "@/components/SlugInput";
 import { useRead } from "@/lib/spoosh";
 
-const LISTING_STATUS_LABELS: Record<string, string> = {
-  FOR_SALE: "For Sale",
-  FOR_RENT: "For Rent",
-  FOR_SALE_AND_RENT: "For Sale & Rent",
+const AVAILABILITY_LABELS: Record<string, string> = {
+  AVAILABLE: "Available",
   SOLD: "Sold",
   RENTED: "Rented",
-  OFF_MARKET: "Off Market",
 };
 
 export default function PropertyFormBasicSection() {
@@ -51,14 +48,29 @@ export default function PropertyFormBasicSection() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-gray-700">Listing Status</label>
-          <RHFSelect<string> name="status">
-            {LISTING_STATUSES.map((status) => (
-              <SelectOption key={status} value={status} label={LISTING_STATUS_LABELS[status] ?? status} />
+          <label className="block text-sm font-medium text-gray-700">Availability</label>
+          <RHFSelect<string> name="availabilityStatus">
+            {AVAILABILITY_STATUSES.map((status) => (
+              <SelectOption key={status} value={status} label={AVAILABILITY_LABELS[status] ?? status} />
             ))}
           </RHFSelect>
-          <RHFError name="status" />
+          <RHFError name="availabilityStatus" />
         </div>
+      </div>
+
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-gray-700">Listed As</label>
+        <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
+          <label className="flex cursor-pointer items-center gap-2.5">
+            <RHFSwitch name="isForSale" />
+            <span className="text-sm text-gray-700">For Sale</span>
+          </label>
+          <label className="flex cursor-pointer items-center gap-2.5">
+            <RHFSwitch name="isForRent" />
+            <span className="text-sm text-gray-700">For Rent</span>
+          </label>
+        </div>
+        <RHFError name="isForSale" />
       </div>
 
       <div className="space-y-1.5">

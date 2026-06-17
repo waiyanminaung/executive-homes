@@ -17,21 +17,24 @@ function toPropertyItem(p: {
   address: string;
   salePrice: number | null;
   rentPrice: number | null;
-  status: string;
+  isForSale: boolean;
+  isForRent: boolean;
+  availabilityStatus: string;
   beds: number | null;
   baths: number | null;
   areaSqm: number;
   images: { url: string }[];
 }): PropertyItem {
-  const isRent = p.status === "FOR_RENT";
-  const price = isRent ? (p.rentPrice ?? 0) : (p.salePrice ?? p.rentPrice ?? 0);
+  const price = p.isForSale ? (p.salePrice ?? 0) : (p.rentPrice ?? 0);
+  const listingType = p.isForSale && p.isForRent ? "Sale & Rent" : p.isForSale ? "Sale" : "Rent";
   return {
     id: p.slug,
     title: p.title,
     location: p.address,
     price,
     imageUrls: p.images.map((img) => img.url),
-    status: isRent ? "Rent" : "Sale",
+    listingType,
+    availabilityStatus: p.availabilityStatus as "AVAILABLE" | "SOLD" | "RENTED",
     beds: p.beds ?? 0,
     baths: p.baths ?? 0,
     area: `${p.areaSqm.toFixed(2)} sqm`,
@@ -53,12 +56,14 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
   const [sort] = useQueryState("sort", parseAsString.withDefault("default"));
   const [page] = useQueryState("page", parseAsInteger.withDefault(1));
 
-  const status = tab === "rent" ? "FOR_RENT" : "FOR_SALE";
+  const isForRent = tab === "rent" ? "true" : undefined;
+  const isForSale = tab === "buy" ? "true" : undefined;
 
   const query = {
     page: String(page),
     limit: "12",
-    status,
+    ...(isForRent ? { isForRent } : {}),
+    ...(isForSale ? { isForSale } : {}),
     ...(q ? { q } : {}),
     ...(bedrooms ? { beds: bedrooms } : {}),
     ...(sort !== "default" ? { sort } : {}),

@@ -102,7 +102,7 @@ export type ApiSchema = {
   "properties": {
     GET: {
       data: { properties: PublicPropertyListItem[]; total: number; page: number; limit: number };
-      query?: { page?: string; limit?: string; status?: string; type?: string; provinceId?: string; beds?: string; q?: string; sort?: string };
+      query?: { page?: string; limit?: string; isForSale?: string; isForRent?: string; type?: string; provinceId?: string; beds?: string; q?: string; sort?: string };
     };
   };
   "properties/:slug": {
