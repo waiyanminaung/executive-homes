@@ -34,7 +34,7 @@ propertyRoutes.get("/", zv("query", propertyListQuerySchema), async (c) => {
         isForSale: true, isForRent: true, availabilityStatus: true,
         propertyType: { select: { id: true, name: true, slug: true } },
         salePrice: true, rentPrice: true, beds: true, baths: true, areaSqm: true,
-        isFeatured: true, isPublished: true, createdAt: true,
+        isFeatured: true, isPublished: true, isPetFriendly: true, createdAt: true,
       },
     }),
     prisma.property.count(),

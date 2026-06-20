@@ -51,7 +51,7 @@ publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
         isForSale: true, isForRent: true, availabilityStatus: true,
         propertyType: { select: { id: true, name: true, slug: true } },
         salePrice: true, rentPrice: true, beds: true, baths: true, areaSqm: true,
-        address: true, isFeatured: true, isPublished: true, createdAt: true,
+        address: true, isFeatured: true, isPublished: true, isPetFriendly: true, createdAt: true,
         images: { take: 1, orderBy: { order: "asc" }, select: { url: true } },
       },
     }),
