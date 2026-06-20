@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { r2, R2_BUCKET } from "@/lib/r2";
 import { getMediaUrl } from "@/utils/getMediaUrl";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
-import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE } from "@/validation/mediaSchema";
+import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE, SMALL_FILE_THRESHOLD_BYTES } from "@/validation/mediaSchema";
 import type { AppEnv } from "@/hono/types";
 
 const mediaRoutes = new Hono<AppEnv>();
@@ -38,17 +38,40 @@ mediaRoutes.post("/", async (c) => {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const webpBuffer = await sharp(buffer).webp({ quality: 80 }).toBuffer();
 
-  const key = `media/${crypto.randomUUID().replace(/-/g, "")}.webp`;
-  const filename = file.name.replace(/\.[^.]+$/, ".webp");
+  const isAlreadyWebP = file.type === "image/webp";
+  const isSmall = file.size <= SMALL_FILE_THRESHOLD_BYTES;
+
+  let finalBuffer: Buffer;
+  let finalMimeType: string;
+  let fileExtension: string;
+
+  if (isAlreadyWebP && isSmall) {
+    finalBuffer = buffer;
+    finalMimeType = "image/webp";
+    fileExtension = "webp";
+  } else {
+    const converted = await sharp(buffer).webp({ quality: 80 }).toBuffer();
+    if (converted.length < buffer.length) {
+      finalBuffer = converted;
+      finalMimeType = "image/webp";
+      fileExtension = "webp";
+    } else {
+      finalBuffer = buffer;
+      finalMimeType = file.type;
+      fileExtension = file.name.split(".").pop() ?? "webp";
+    }
+  }
+
+  const key = `media/${crypto.randomUUID().replace(/-/g, "")}.${fileExtension}`;
+  const filename = file.name.replace(/\.[^.]+$/, `.${fileExtension}`);
 
   await r2.send(
     new PutObjectCommand({
       Bucket: R2_BUCKET,
       Key: key,
-      Body: webpBuffer,
-      ContentType: "image/webp",
+      Body: finalBuffer,
+      ContentType: finalMimeType,
     }),
   );
 
@@ -56,8 +79,8 @@ mediaRoutes.post("/", async (c) => {
     data: {
       key,
       filename,
-      size: webpBuffer.length,
-      mimeType: "image/webp",
+      size: finalBuffer.length,
+      mimeType: finalMimeType,
       uploadedById: user.id,
     },
   });
