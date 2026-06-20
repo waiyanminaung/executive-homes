@@ -27,6 +27,7 @@
     "@spoosh/plugin-cache": "^0.7.0",
     "@spoosh/plugin-deduplication": "^0.4.0",
     "@spoosh/plugin-invalidation": "^0.11.0",
+    "@spoosh/plugin-optimistic": "^0.10.0",
     "@spoosh/react": "^0.15.4",
     "@tiptap/extension-placeholder": "^3.27.0",
     "@tiptap/pm": "^3.27.0",

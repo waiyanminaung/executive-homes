@@ -19,7 +19,6 @@ pnpm add @spoosh/plugin-transform
 pnpm add @spoosh/plugin-gc
 pnpm add @spoosh/plugin-qs
 pnpm add @spoosh/plugin-progress
-pnpm add @spoosh/plugin-debug
 pnpm add @spoosh/plugin-nextjs
 ```
 
@@ -149,6 +148,9 @@ useRead((api) => api("jobs/:id").GET({ params: { id } }), {
   }
 });
 ```
+
+**Read Result Properties:**
+- `meta.isPollingRequest: boolean` - `true` when a polling-triggered request is currently in progress (useful to suppress loading spinners during background refreshes)
 
 ## Debounce Plugin
 
@@ -340,6 +342,36 @@ await trigger({
 - `.confirmed()` - Apply after mutation succeeds (response available in set)
 - `.disableRollback()` - Disable automatic rollback on error
 - `.onError(fn)` - Callback when mutation fails
+
+**Standalone Usage (External Events):**
+
+Use the `optimistic` function from `create()` directly for external events like WebSocket messages — no mutation needed:
+
+```typescript
+const { optimistic } = create(spoosh);
+
+// Update cache from WebSocket events
+ws.on("message", (data) => {
+  if (data.type === "NEW_POST") {
+    optimistic((cache) => cache("posts").set((posts) => [...posts, data.post]));
+  }
+});
+
+// With filter
+optimistic((cache) =>
+  cache("posts/:id")
+    .filter((entry) => entry.params.id === targetId)
+    .set((post) => ({ ...post, title: "updated" }))
+);
+
+// Multiple targets
+optimistic((cache) => [
+  cache("posts").set((posts) => [...posts, newPost]),
+  cache("stats").set((stats) => ({ ...stats, count: stats.count + 1 }))
+]);
+```
+
+> **Note:** Standalone mode only supports immediate updates (`filter` and `set`). Methods `confirmed()`, `disableRollback()`, and `onError()` are not available since there is no mutation lifecycle.
 
 **Read Result Properties:**
 - `meta.isOptimistic: boolean` - True if data is from an optimistic update (not yet confirmed by server)
@@ -552,17 +584,6 @@ const uploadPercentage = writeMeta.progress?.total && writeMeta.progress.total >
 **Progress Options:**
 - `progress: true` - Enable progress tracking (forces XHR transport)
 - `progress: { totalHeader: "x-custom-header" }` - Use custom header for total size when Content-Length unavailable
-
-## Debug Plugin
-
-Debugging utilities.
-
-```typescript
-import { debugPlugin } from "@spoosh/plugin-debug";
-
-const spoosh = new Spoosh<ApiSchema>("/api")
-  .use([debugPlugin({ enabled: process.env.NODE_ENV === "development" })]);
-```
 
 ## Next.js Plugin
 

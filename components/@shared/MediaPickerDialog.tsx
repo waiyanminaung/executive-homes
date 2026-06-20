@@ -1,13 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Upload, Images, X } from "lucide-react";
 import { Button, Dialog } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
+import { useMediaLibrary } from "@/utils/useMediaLibrary";
 import type { ClientMediaImage } from "@/types/media";
-import type { UploadFileItem } from "./MediaUploadZone";
 import MediaLibraryTab from "./MediaLibraryTab";
-import MediaUploadTab from "./MediaUploadTab";
+import MediaUploadZone from "./MediaUploadZone";
 
 interface MediaPickerDialogProps {
   onClose: () => void;
@@ -47,9 +47,19 @@ export default function MediaPickerDialog({
 }: MediaPickerDialogProps) {
   const [tab, setTab] = useState<Tab>("library");
   const [selected, setSelected] = useState<Set<string>>(new Set(initialSelected ?? []));
-  const [uploadItems, setUploadItems] = useState<UploadFileItem[]>([]);
-  const retryRef = useRef<((id: string) => void) | null>(null);
-  const removeRef = useRef<((id: string) => void) | null>(null);
+
+  const handleUploaded = (image: ClientMediaImage) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.add(image.url);
+      return next;
+    });
+  };
+
+  const { images, loading, items: uploadItems, handleFiles, retry, remove } = useMediaLibrary({
+    onUploaded: handleUploaded,
+    onStart: () => setTab("library"),
+  });
 
   const toggle = (url: string) => {
     setSelected((prev) => {
@@ -69,22 +79,6 @@ export default function MediaPickerDialog({
 
       return next;
     });
-  };
-
-  const handleUploadStart = () => {
-    setTab("library");
-  };
-
-  const handleUploaded = (image: ClientMediaImage) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      next.add(image.url);
-      return next;
-    });
-  };
-
-  const handleItemsChange = (items: UploadFileItem[]) => {
-    setUploadItems(items);
   };
 
   return (
@@ -116,23 +110,21 @@ export default function MediaPickerDialog({
       </div>
 
       <div className="flex-1 overflow-y-auto p-5">
-        {tab === "library" ? (
+        <div className={tab === "library" ? "block" : "hidden"}>
           <MediaLibraryTab
+            images={images}
+            loading={loading}
             selected={selected}
             onToggle={toggle}
             uploadItems={uploadItems}
-            onRetry={(id) => retryRef.current?.(id)}
-            onDelete={(id) => removeRef.current?.(id)}
+            onRetry={retry}
+            onDelete={remove}
           />
-        ) : (
-          <MediaUploadTab
-            onUploaded={handleUploaded}
-            onUploadStart={handleUploadStart}
-            onItemsChange={handleItemsChange}
-            retryRef={retryRef}
-            removeRef={removeRef}
-          />
-        )}
+        </div>
+
+        <div className={tab === "upload" ? "block" : "hidden"}>
+          <MediaUploadZone onFiles={handleFiles} />
+        </div>
       </div>
 
       <div className="flex items-center justify-between px-5 py-4 border-t border-gray-200 bg-white">

@@ -3,13 +3,15 @@
 import Image from "next/image";
 import { Check, ImageOff, ExternalLink } from "lucide-react";
 import { Spinner } from "@geckoui/geckoui";
-import { useRead } from "@/lib/spoosh";
 import { classNames } from "@/utils/classNames";
 import { formatBytes } from "@/utils/formatBytes";
 import MediaUploadingCell from "./MediaUploadingCell";
-import type { UploadFileItem } from "./MediaUploadZone";
+import type { UploadFileItem } from "@/utils/useMediaLibrary";
+import type { ClientMediaImage } from "@/types/media";
 
 interface MediaLibraryTabProps {
+  images: ClientMediaImage[];
+  loading: boolean;
   selected: Set<string>;
   onToggle: (url: string) => void;
   uploadItems?: UploadFileItem[];
@@ -17,10 +19,7 @@ interface MediaLibraryTabProps {
   onDelete?: (id: string) => void;
 }
 
-export default function MediaLibraryTab({ selected, onToggle, uploadItems = [], onRetry, onDelete }: MediaLibraryTabProps) {
-  const { data, loading } = useRead((api) => api("admin/media").GET());
-  const images = data?.images ?? [];
-
+export default function MediaLibraryTab({ images, loading, selected, onToggle, uploadItems = [], onRetry, onDelete }: MediaLibraryTabProps) {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">

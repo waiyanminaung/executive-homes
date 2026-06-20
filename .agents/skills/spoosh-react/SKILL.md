@@ -1,6 +1,6 @@
 ---
 name: spoosh-react
-description: Use this skill when the user asks about "Spoosh", "useRead", "useWrite", "usePages", "useQueue", "useSSE", "createClient", "Spoosh React", "Spoosh hooks", "Spoosh plugins", "cache plugin", "retry plugin", "polling plugin", "optimistic updates", "invalidation", "devtool", "Next.js SSR", "initialData", "HonoToSpoosh", "ElysiaToSpoosh", "OpenAPI", "data fetching component", "mutation component", "infinite scroll", "Spoosh patterns", or needs to build React components with type-safe API calls. Provides comprehensive API knowledge and component patterns for @spoosh/react.
+description: Use this skill when the user asks about "Spoosh", "useRead", "useWrite", "usePages", "useQueue", "useSSE", "createClient", "Spoosh React", "Spoosh hooks", "Spoosh plugins", "cache plugin", "retry plugin", "polling plugin", "optimistic updates", "standalone optimistic", "WebSocket cache update", "invalidation", "devtool", "Spoosh DevTools", "Next.js SSR", "initialData", "HonoToSpoosh", "ElysiaToSpoosh", "OpenAPI", "data fetching component", "mutation component", "infinite scroll", "Spoosh patterns", or needs to build React components with type-safe API calls. Provides comprehensive API knowledge and component patterns for @spoosh/react.
 version: "1.0.1"
 ---
 
@@ -142,13 +142,15 @@ const { data, isConnected, trigger, disconnect } = useSSE(
 | `retryPlugin`        | Automatic retries      | `retry: { retries, delay }`         |
 | `pollingPlugin`      | Auto-refresh           | `pollingInterval`                   |
 | `invalidationPlugin` | Cache invalidation     | `invalidate`                        |
-| `optimisticPlugin`   | Instant UI updates     | `optimistic`                        |
+| `optimisticPlugin`   | Instant UI updates + standalone `optimistic` fn | `optimistic`             |
 | `debouncePlugin`     | Debounce requests      | `debounce`                          |
 | `refetchPlugin`      | Refetch on focus       | `refetch: { onFocus, onReconnect }` |
 | `initialDataPlugin`  | Preloaded data         | `initialData`                       |
 | `devtool`            | Visual debugging panel | `enabled`, `showFloatingIcon`       |
 
-## Devtool
+## DevTools
+
+Debugging requires **both** the `devtool` plugin and the Spoosh DevTools browser extension.
 
 ```typescript
 import { devtool } from "@spoosh/devtool";
@@ -158,6 +160,8 @@ const spoosh = new Spoosh<ApiSchema, Error>("/api").use([
   devtool({ enabled: process.env.NODE_ENV === "development" }),
 ]);
 ```
+
+Install the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/spoosh-devtools/mcjbgbkoieeebhflnehdbfkidlpkjdhi).
 
 Features: request tracing, plugin visualization, cache inspector, timeline view.
 

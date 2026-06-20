@@ -1,29 +1,25 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Trash2, ExternalLink } from "lucide-react";
 import { Button, ConfirmDialog, Spinner } from "@geckoui/geckoui";
-import { useRead, useWrite } from "@/lib/spoosh";
+import { useWrite } from "@/lib/spoosh";
 import { formatBytes } from "@/utils/formatBytes";
+import { useMediaLibrary } from "@/utils/useMediaLibrary";
 import type { ClientMediaImage } from "@/types/media";
-import MediaUploadZone, { type UploadFileItem } from "@/components/@shared/MediaUploadZone";
+import MediaUploadZone from "@/components/@shared/MediaUploadZone";
 import MediaUploadingCell from "@/components/@shared/MediaUploadingCell";
 
 export default function LibraryPage() {
-  const { data, loading, trigger: refetch } = useRead((api) => api("admin/media").GET());
   const { trigger: deleteImage } = useWrite((api) => api("admin/media/:id").DELETE());
-  const [uploadItems, setUploadItems] = useState<UploadFileItem[]>([]);
   const [showUploadZone, setShowUploadZone] = useState(false);
-  const retryRef = useRef<((id: string) => void) | null>(null);
-  const removeRef = useRef<((id: string) => void) | null>(null);
 
-  const images = data?.images ?? [];
+  const { images, loading, items: uploadItems, handleFiles, retry, remove } = useMediaLibrary({
+    onStart: () => setShowUploadZone(false),
+  });
+
   const hasImages = images.length > 0 || uploadItems.length > 0;
-
-  const handleUploaded = () => {
-    refetch();
-  };
 
   const handleDelete = (image: ClientMediaImage) => {
     ConfirmDialog.show({
@@ -52,7 +48,6 @@ export default function LibraryPage() {
       confirmButtonLabel: "Delete",
       onConfirm: async () => {
         await deleteImage({ params: { id: image.id } });
-        refetch();
       },
     });
   };
@@ -67,9 +62,9 @@ export default function LibraryPage() {
           </p>
         </div>
 
-        {hasImages && !showUploadZone && (
-          <Button type="button" variant="outlined" onClick={() => setShowUploadZone(true)}>
-            Upload Images
+        {hasImages && uploadItems.length === 0 && (
+          <Button type="button" variant="outlined" onClick={() => setShowUploadZone((prev) => !prev)}>
+            {showUploadZone ? "Close" : "Upload Images"}
           </Button>
         )}
       </div>
@@ -80,14 +75,8 @@ export default function LibraryPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {(!hasImages || showUploadZone) && (
-            <MediaUploadZone
-              onUploaded={handleUploaded}
-              onUploadStart={() => setShowUploadZone(false)}
-              onItemsChange={setUploadItems}
-              retryRef={retryRef}
-              removeRef={removeRef}
-            />
+          {(images.length === 0 || showUploadZone) && (
+            <MediaUploadZone onFiles={handleFiles} />
           )}
 
           {hasImages && (
@@ -100,8 +89,8 @@ export default function LibraryPage() {
                   progress={item.progress}
                   status={item.status}
                   errorMessage={item.errorMessage}
-                  onRetry={() => retryRef.current?.(item.id)}
-                  onDelete={() => removeRef.current?.(item.id)}
+                  onRetry={() => retry(item.id)}
+                  onDelete={() => remove(item.id)}
                 />
               ))}
 

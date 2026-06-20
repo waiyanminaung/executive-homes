@@ -4,7 +4,8 @@
     "spoosh-react": {
       "source": "spooshdev/skills",
       "sourceType": "github",
-      "computedHash": "90e0e2da605033c51270bcac9ed0fa9ddade32540e94523400002761d8d4af52"
+      "skillPath": "skills/spoosh-react/SKILL.md",
+      "computedHash": "ddbe061bb85ad166c21fd58dce81e686c303d5d30e94ce2853b717e235cee51c"
     }
   }
 }
