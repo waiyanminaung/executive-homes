@@ -1,44 +1,22 @@
 "use client";
 
+import { createElement } from "react";
 import { Plus, Pencil, Trash2 } from "lucide-react";
-import { ConfirmDialog, Dialog, Spinner, RHFInput, RHFError, RHFSelect, SelectOption } from "@geckoui/geckoui";
+import { ConfirmDialog, Dialog, Spinner } from "@geckoui/geckoui";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRead, useWrite } from "@/lib/spoosh";
-import { featureCreateSchema, FEATURE_CATEGORIES, type FeatureCreateInput } from "@/validation/featureSchema";
-import { useSlugAutoFill } from "@/utils/useSlugAutoFill";
-import { SlugInput } from "@/components/SlugInput";
+import { featureCreateSchema, type FeatureCreateInput } from "@/validation/featureSchema";
+import { getLucideIcon } from "@/utils/getLucideIcon";
 import type { Feature } from "@/types/feature";
 import AdminPageHeader from "../components/AdminPageHeader";
+import { FeatureFormFields } from "./components/FeatureFormFields";
 
-const CATEGORY_LABELS: Record<string, string> = {
-  UNIT_FEATURE: "Unit Feature",
-  AMENITY: "Amenity",
-};
+const DEFAULT_VALUES: FeatureCreateInput = { label: "", slug: "", category: "UNIT_FEATURE", icon: null };
 
-const DEFAULT_VALUES: FeatureCreateInput = { label: "", slug: "", category: "UNIT_FEATURE" };
-
-function FeatureFormFields() {
-  const { onBlur: handleLabelBlur } = useSlugAutoFill("label");
-  return (
-    <div className="space-y-4">
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-gray-700">Label</label>
-        <RHFInput name="label" placeholder="Swimming Pool" onBlur={handleLabelBlur} />
-        <RHFError name="label" />
-      </div>
-      <SlugInput placeholder="swimming-pool" />
-      <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-gray-700">Category</label>
-        <RHFSelect<string> name="category">
-          {FEATURE_CATEGORIES.map((cat) => (
-            <SelectOption key={cat} value={cat} label={CATEGORY_LABELS[cat] ?? cat} />
-          ))}
-        </RHFSelect>
-        <RHFError name="category" />
-      </div>
-    </div>
-  );
+function FeatureIconCell({ icon }: { icon: string | null | undefined }) {
+  if (!icon) return <span className="text-gray-300 text-xs">—</span>;
+  return createElement(getLucideIcon(icon), { className: "w-4 h-4 text-gray-600" });
 }
 
 function FeatureForm({
@@ -55,7 +33,7 @@ function FeatureForm({
 
   const methods = useForm({
     values: editing
-      ? { label: editing.label, slug: editing.slug, category: editing.category as FeatureCreateInput["category"] }
+      ? { label: editing.label, slug: editing.slug, category: editing.category as FeatureCreateInput["category"], icon: editing.icon ?? null }
       : DEFAULT_VALUES,
     resolver: zodResolver(featureCreateSchema),
   });
@@ -170,6 +148,7 @@ export default function AdminFeaturesPage() {
                   <thead className="bg-white">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Label</th>
+                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Icon</th>
                       <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Slug</th>
                       <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                     </tr>
@@ -178,6 +157,9 @@ export default function AdminFeaturesPage() {
                     {group.features.map((feature) => (
                       <tr key={feature.id} className="hover:bg-gray-50 transition-colors">
                         <td className="px-6 py-4 text-sm font-medium text-gray-900">{feature.label}</td>
+                        <td className="px-6 py-4">
+                          <FeatureIconCell icon={feature.icon} />
+                        </td>
                         <td className="px-6 py-4 text-sm text-gray-600 font-mono">{feature.slug}</td>
                         <td className="px-6 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">

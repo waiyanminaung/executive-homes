@@ -134,6 +134,7 @@ model Feature {
   category   FeatureCategory
   label      String
   slug       String            @unique
+  icon       String?
   properties PropertyFeature[]
 
   @@map("features")

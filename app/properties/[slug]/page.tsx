@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { Bath, BedDouble, Building2, MapPin, Maximize2, Check } from "lucide-react";
+import { Bath, BedDouble, Building2, MapPin, Maximize2 } from "lucide-react";
+import { getLucideIcon } from "@/utils/getLucideIcon";
 import { haversineMeters } from "@/utils/haversine";
 import { prisma } from "@/lib/prisma";
 import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
@@ -43,11 +44,11 @@ export default async function PropertyDetailPage({ params }: PageProps) {
 
   const unitFeatures = raw.features
     .filter((pf) => pf.feature.category === "UNIT_FEATURE")
-    .map((pf) => ({ label: pf.feature.label, icon: Check }));
+    .map((pf) => ({ label: pf.feature.label, icon: getLucideIcon(pf.feature.icon) }));
 
   const commonFacilities = raw.features
     .filter((pf) => pf.feature.category === "AMENITY")
-    .map((pf) => ({ label: pf.feature.label, icon: Check }));
+    .map((pf) => ({ label: pf.feature.label, icon: getLucideIcon(pf.feature.icon) }));
 
   const transitStations = raw.transitStations.map((pt) => {
     const hasCoords =

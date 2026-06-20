@@ -6,6 +6,7 @@ export const featureCreateSchema = z.object({
   label: z.string().min(1, "Label is required"),
   slug: z.string().min(1, "Slug is required").regex(/^[a-z0-9-]+$/, "Slug must be lowercase with hyphens only"),
   category: z.enum(FEATURE_CATEGORIES),
+  icon: z.string().nullable().optional(),
 });
 
 export type FeatureCreateInput = z.infer<typeof featureCreateSchema>;

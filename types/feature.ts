@@ -3,4 +3,5 @@ export interface Feature {
   label: string;
   slug: string;
   category: string;
+  icon?: string | null;
 }
