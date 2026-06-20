@@ -5,7 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { r2, R2_BUCKET } from "@/lib/r2";
 import { getMediaUrl } from "@/utils/getMediaUrl";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
-import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE, SMALL_FILE_THRESHOLD_BYTES } from "@/validation/mediaSchema";
+import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE, QUALITY_REDUCTION_THRESHOLD } from "@/validation/mediaSchema";
 import type { AppEnv } from "@/hono/types";
 
 const mediaRoutes = new Hono<AppEnv>();
@@ -40,28 +40,18 @@ mediaRoutes.post("/", async (c) => {
   const buffer = Buffer.from(await file.arrayBuffer());
 
   const isAlreadyWebP = file.type === "image/webp";
-  const isSmall = file.size <= SMALL_FILE_THRESHOLD_BYTES;
 
   let finalBuffer: Buffer;
-  let finalMimeType: string;
-  let fileExtension: string;
 
-  if (isAlreadyWebP && isSmall) {
+  if (isAlreadyWebP) {
     finalBuffer = buffer;
-    finalMimeType = "image/webp";
-    fileExtension = "webp";
   } else {
-    const converted = await sharp(buffer).webp({ quality: 80 }).toBuffer();
-    if (converted.length < buffer.length) {
-      finalBuffer = converted;
-      finalMimeType = "image/webp";
-      fileExtension = "webp";
-    } else {
-      finalBuffer = buffer;
-      finalMimeType = file.type;
-      fileExtension = file.name.split(".").pop() ?? "webp";
-    }
+    const quality = file.size < QUALITY_REDUCTION_THRESHOLD ? 100 : 80;
+    finalBuffer = await sharp(buffer).webp({ quality }).toBuffer();
   }
+
+  const finalMimeType = "image/webp";
+  const fileExtension = "webp";
 
   const key = `media/${crypto.randomUUID().replace(/-/g, "")}.${fileExtension}`;
   const filename = file.name.replace(/\.[^.]+$/, `.${fileExtension}`);

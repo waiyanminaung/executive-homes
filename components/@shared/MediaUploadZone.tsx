@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Upload } from "lucide-react";
+import { Upload, AlertCircle } from "lucide-react";
 import { classNames } from "@/utils/classNames";
+import { MAX_UPLOAD_SIZE } from "@/validation/mediaSchema";
 
 interface MediaUploadZoneProps {
   onFiles: (files: FileList | null) => void;
@@ -10,7 +11,24 @@ interface MediaUploadZoneProps {
 
 export default function MediaUploadZone({ onFiles }: MediaUploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [oversizedFiles, setOversizedFiles] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleFiles = (fileList: FileList | null) => {
+    if (!fileList?.length) return;
+
+    const files = Array.from(fileList);
+    const oversized = files.filter((f) => f.size > MAX_UPLOAD_SIZE).map((f) => f.name);
+    const valid = files.filter((f) => f.size <= MAX_UPLOAD_SIZE);
+
+    setOversizedFiles(oversized);
+
+    if (valid.length === 0) return;
+
+    const dt = new DataTransfer();
+    valid.forEach((f) => dt.items.add(f));
+    onFiles(dt.files);
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -28,7 +46,7 @@ export default function MediaUploadZone({ onFiles }: MediaUploadZoneProps) {
         onDrop={(e) => {
           e.preventDefault();
           setIsDragging(false);
-          onFiles(e.dataTransfer.files);
+          handleFiles(e.dataTransfer.files);
         }}
       >
         <input
@@ -37,15 +55,25 @@ export default function MediaUploadZone({ onFiles }: MediaUploadZoneProps) {
           accept="image/jpeg,image/png,image/webp,image/gif"
           className="hidden"
           multiple
-          onChange={(e) => onFiles(e.target.files)}
+          onChange={(e) => handleFiles(e.target.files)}
         />
 
         <Upload className="w-8 h-8 text-gray-400" />
         <div className="text-center">
           <p className="text-sm font-medium text-gray-700">Drop images here or click to browse</p>
-          <p className="text-xs text-gray-400 mt-1">JPEG, PNG, WebP, GIF · Max 10MB · Converted to WebP</p>
+          <p className="text-xs text-gray-400 mt-1">JPEG, PNG, WebP, GIF · Max 10MB per file · Converted to WebP</p>
         </div>
       </div>
+
+      {oversizedFiles.length > 0 && (
+        <div className="flex items-start gap-2 px-3 py-2.5 rounded-lg bg-red-50 border border-red-200">
+          <AlertCircle className="w-4 h-4 text-red-500 shrink-0 mt-0.5" />
+          <div className="text-xs text-red-700">
+            <span className="font-medium">Files too large (max 10MB):</span>{" "}
+            {oversizedFiles.join(", ")}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

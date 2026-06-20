@@ -32,6 +32,7 @@ export interface PropertyDetail extends PropertyItem {
   isForRent: boolean;
   address: string;
   description: string;
+  isPetFriendly: boolean;
   detailStats: PropertyDetailStat[];
   unitFeatures: PropertyAmenity[];
   commonFacilities: PropertyAmenity[];

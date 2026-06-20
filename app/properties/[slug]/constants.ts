@@ -74,6 +74,7 @@ export const PROPERTY_DETAIL: PropertyDetail = {
   availabilityStatus: "AVAILABLE",
   isForSale: true,
   isForRent: false,
+  isPetFriendly: false,
   beds: 3,
   baths: 3,
   area: "338 sqm",

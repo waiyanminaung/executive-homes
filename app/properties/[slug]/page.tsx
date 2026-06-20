@@ -88,6 +88,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
     address: raw.address,
     description: raw.description,
     mapImageUrl: raw.mapImageUrl ?? "",
+    isPetFriendly: raw.isPetFriendly,
     detailStats: [
       { label: "Location", value: locationLabel, icon: MapPin },
       { label: "Property Type", value: raw.propertyType.name, icon: Building2 },
