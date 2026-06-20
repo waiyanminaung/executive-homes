@@ -106,6 +106,7 @@ model Property {
   mapImageUrl   String?
   isFeatured    Boolean       @default(false)
   isPublished   Boolean       @default(false)
+  isPetFriendly Boolean       @default(false)
 
   images          PropertyImage[]
   features        PropertyFeature[]

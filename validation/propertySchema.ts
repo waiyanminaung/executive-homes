@@ -27,6 +27,7 @@ const propertyBaseSchema = z.object({
   mapImageUrl: z.string().nullable().optional(),
   isFeatured: z.boolean(),
   isPublished: z.boolean(),
+  isPetFriendly: z.boolean(),
   imageUrls: z.array(z.string()),
   featureIds: z.array(z.string()),
   transitStations: z.array(

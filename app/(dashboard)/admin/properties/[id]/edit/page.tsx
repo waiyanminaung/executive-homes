@@ -67,6 +67,7 @@ export default function AdminPropertyEditPage() {
     mapImageUrl: property.mapImageUrl,
     isFeatured: property.isFeatured,
     isPublished: property.isPublished,
+    isPetFriendly: property.isPetFriendly,
     imageUrls: property.images.map((img: { url: string }) => img.url),
     featureIds: property.features.map((f: { id: string }) => f.id),
     transitStations: property.transitStations.map((pt) => ({

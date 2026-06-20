@@ -17,6 +17,7 @@ export interface PropertyListItem {
   areaSqm: number;
   isFeatured: boolean;
   isPublished: boolean;
+  isPetFriendly: boolean;
   createdAt: string;
 }
 
@@ -49,6 +50,7 @@ export interface PropertyDetail {
   mapImageUrl: string | null;
   isFeatured: boolean;
   isPublished: boolean;
+  isPetFriendly: boolean;
   createdAt: string;
   updatedAt: string;
   images: PropertyImage[];

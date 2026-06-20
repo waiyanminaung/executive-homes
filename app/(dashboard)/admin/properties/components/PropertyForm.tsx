@@ -38,6 +38,7 @@ const DEFAULT_VALUES: PropertyCreateInput = {
   mapImageUrl: null,
   isFeatured: false,
   isPublished: false,
+  isPetFriendly: false,
   imageUrls: [],
   featureIds: [],
   transitStations: [],

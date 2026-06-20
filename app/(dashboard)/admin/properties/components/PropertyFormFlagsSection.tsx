@@ -30,6 +30,14 @@ export default function PropertyFormFlagsSection({ submitLabel }: PropertyFormFl
           </div>
           <RHFSwitch name="isFeatured" />
         </div>
+
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-sm font-medium text-gray-700">Pet Friendly</p>
+            <p className="text-xs text-gray-500">Allow pets in this property</p>
+          </div>
+          <RHFSwitch name="isPetFriendly" />
+        </div>
       </div>
 
       <div className="pt-2">
