@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { ChevronRight, ArrowLeft, ExternalLink } from "lucide-react";
 import { Spinner } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
@@ -10,7 +10,6 @@ import PropertyForm from "../../components/PropertyForm";
 
 export default function AdminPropertyEditPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
 
   const { data: propertyData, loading: propertyLoading } = useRead((api) =>
     api("admin/properties/:id").GET({ params: { id } }),
@@ -26,7 +25,6 @@ export default function AdminPropertyEditPage() {
 
   const handleSubmit = async (values: PropertyCreateInput) => {
     await updateProperty({ params: { id }, body: values });
-    router.push("/admin/properties");
   };
 
   if (propertyLoading || provincesLoading) {

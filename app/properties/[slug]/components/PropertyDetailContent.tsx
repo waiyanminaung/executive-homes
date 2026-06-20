@@ -40,9 +40,10 @@ export function PropertyDetailContent({ property }: PropertyDetailContentProps) 
     <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-detail-card md:p-[30px]">
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-neutral-900">About this property</h2>
-        <p className="whitespace-pre-line text-sm leading-[1.5] text-neutral-950">
-          {property.description}
-        </p>
+        <div
+          className="text-sm leading-relaxed text-neutral-950 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:mb-2 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mb-1 [&_strong]:font-semibold [&_em]:italic"
+          dangerouslySetInnerHTML={{ __html: property.description }}
+        />
       </div>
 
       <div className="my-6 h-px bg-gray-300" />

@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { z } from "zod";
+import { Prisma } from "@/prisma/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { zv } from "@/validation/zv";
 
@@ -22,7 +23,7 @@ publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
   const { page, limit, isForSale, isForRent, type, provinceId, districtId, beds, q, sort } = c.req.valid("query");
   const skip = (page - 1) * limit;
 
-  const where: Record<string, unknown> = { isPublished: true };
+  const where: Prisma.PropertyWhereInput = { isPublished: true };
 
   if (isForSale !== undefined) where.isForSale = isForSale;
   if (isForRent !== undefined) where.isForRent = isForRent;

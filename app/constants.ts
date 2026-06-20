@@ -1,4 +1,6 @@
 import { BadgeDollarSign, Handshake, ShieldCheck } from "lucide-react";
+
+export const WALKING_SPEED_METERS_PER_MIN = 80;
 import type {
   FooterColumn,
   HomeNavItem,

@@ -12,6 +12,7 @@ interface MediaPickerDialogProps {
   onClose: () => void;
   onSelect: (urls: string[]) => void;
   multiple?: boolean;
+  initialSelected?: string[];
 }
 
 type Tab = "library" | "upload";
@@ -19,6 +20,7 @@ type Tab = "library" | "upload";
 export function openMediaPicker(opts: {
   onSelect: (urls: string[]) => void;
   multiple?: boolean;
+  initialSelected?: string[];
 }) {
   Dialog.show({
     className: "w-full max-w-3xl",
@@ -30,6 +32,7 @@ export function openMediaPicker(opts: {
           dismiss();
         }}
         multiple={opts.multiple}
+        initialSelected={opts.initialSelected}
       />
     ),
   });
@@ -39,9 +42,10 @@ export default function MediaPickerDialog({
   onClose,
   onSelect,
   multiple = true,
+  initialSelected,
 }: MediaPickerDialogProps) {
   const [tab, setTab] = useState<Tab>("library");
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<Set<string>>(new Set(initialSelected ?? []));
   const [uploadingCount, setUploadingCount] = useState(0);
 
   const toggle = (url: string) => {

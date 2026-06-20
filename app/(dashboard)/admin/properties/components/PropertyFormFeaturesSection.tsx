@@ -2,6 +2,8 @@
 
 import { useFormContext } from "react-hook-form";
 import { RHFCheckbox, Spinner } from "@geckoui/geckoui";
+import { Check } from "lucide-react";
+import { classNames } from "@/utils/classNames";
 import { useRead } from "@/lib/spoosh";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
 import type { Feature } from "@/types/feature";
@@ -28,17 +30,26 @@ function FeatureGroup({ label, features }: FeatureGroupProps) {
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-medium text-gray-600 uppercase tracking-wider">{label}</p>
+      <p className="text-xs font-medium text-gray-600 uppercase tracking-wider">{label}</p>
+      <div className="grid grid-cols-2 gap-2">
         <button
           type="button"
           onClick={toggleAll}
-          className="text-xs text-primary-600 hover:text-primary-700 font-medium transition-colors"
+          className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer"
         >
-          {allSelected ? "Deselect all" : "Select all"}
+          <span
+            className={classNames(
+              "flex h-4 w-4 shrink-0 items-center justify-center rounded border transition-colors",
+              allSelected
+                ? "border-primary-600 bg-primary-600"
+                : "border-gray-300 bg-white",
+            )}
+          >
+            {allSelected && <Check className="h-3 w-3 text-white" strokeWidth={3} />}
+          </span>
+          <span>Select all</span>
         </button>
-      </div>
-      <div className="grid grid-cols-2 gap-2">
+
         {features.map((f) => (
           <RHFCheckbox key={f.id} name="featureIds" value={f.id} label={f.label} />
         ))}

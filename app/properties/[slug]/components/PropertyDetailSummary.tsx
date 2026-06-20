@@ -2,6 +2,7 @@ import type { PropertyDetail, PropertyTransitItem } from "../types";
 import { PropertyShareButton } from "./PropertyShareButton";
 import { formatPrice } from "@/utils/formatPrice";
 import { TRANSIT_LINE_COLORS } from "@/constants/transitStations";
+import { WALKING_SPEED_METERS_PER_MIN } from "@/app/constants";
 import { classNames } from "@/utils/classNames";
 import type { TransitLine } from "@/constants/transitStations";
 
@@ -16,7 +17,7 @@ function TransitRow({ station }: { station: PropertyTransitItem }) {
 
   const distanceText =
     station.calculatedMeters !== null
-      ? `${station.calculatedMeters} m (${Math.round(station.calculatedMeters / 80)} mins) from ${stationLabel}`
+      ? `${station.calculatedMeters} m (${Math.round(station.calculatedMeters / WALKING_SPEED_METERS_PER_MIN)} mins) from ${stationLabel}`
       : `Near ${stationLabel}`;
 
   return (

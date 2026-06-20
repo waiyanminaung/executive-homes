@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { ChevronRight, ArrowLeft } from "lucide-react";
 import { Spinner } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
@@ -10,14 +9,12 @@ import type { PropertyCreateInput } from "@/validation/propertySchema";
 import PropertyForm from "../components/PropertyForm";
 
 export default function AdminPropertyNewPage() {
-  const router = useRouter();
   const [title, setTitle] = useState("");
   const { data: provincesData, loading } = useRead((api) => api("admin/provinces").GET());
   const { trigger: createProperty } = useWrite((api) => api("admin/properties").POST());
 
   const handleSubmit = async (values: PropertyCreateInput) => {
     await createProperty({ body: values });
-    router.push("/admin/properties");
   };
 
   if (loading) {
@@ -46,7 +43,6 @@ export default function AdminPropertyNewPage() {
           </Link>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">{title || "New Property"}</h1>
-            <p className="text-sm text-gray-500 mt-0.5">Create a new property listing.</p>
           </div>
         </div>
       </div>

@@ -62,7 +62,12 @@ export default function PropertyTable({ properties, onDeleted }: PropertyTablePr
             <tr key={property.id} className="hover:bg-gray-50 transition-colors">
               <td className="px-6 py-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{property.title}</p>
+                  <Link
+                    href={`/admin/properties/${property.id}/edit`}
+                    className="text-sm font-medium text-gray-900 hover:text-primary-700 transition-colors"
+                  >
+                    {property.title}
+                  </Link>
                   <p className="text-xs text-gray-600 mt-0.5">{property.slug}</p>
                 </div>
               </td>
