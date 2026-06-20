@@ -16,6 +16,7 @@ const DEFAULT_VALUES: FeatureCreateInput = { label: "", slug: "", category: "UNI
 
 function FeatureIconCell({ icon }: { icon: string | null | undefined }) {
   if (!icon) return <span className="text-gray-300 text-xs">—</span>;
+
   return createElement(getLucideIcon(icon), { className: "w-4 h-4 text-gray-600" });
 }
 
