@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Upload, Images, X } from "lucide-react";
 import { Button, Dialog } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import type { ClientMediaImage } from "@/types/media";
+import type { UploadFileItem } from "./MediaUploadZone";
 import MediaLibraryTab from "./MediaLibraryTab";
 import MediaUploadTab from "./MediaUploadTab";
 
@@ -46,7 +47,8 @@ export default function MediaPickerDialog({
 }: MediaPickerDialogProps) {
   const [tab, setTab] = useState<Tab>("library");
   const [selected, setSelected] = useState<Set<string>>(new Set(initialSelected ?? []));
-  const [uploadingCount, setUploadingCount] = useState(0);
+  const [uploadItems, setUploadItems] = useState<UploadFileItem[]>([]);
+  const retryRef = useRef<((id: string) => void) | null>(null);
 
   const toggle = (url: string) => {
     setSelected((prev) => {
@@ -68,18 +70,20 @@ export default function MediaPickerDialog({
     });
   };
 
-  const handleUploadStart = (count: number) => {
-    setUploadingCount(count);
+  const handleUploadStart = () => {
     setTab("library");
   };
 
   const handleUploaded = (image: ClientMediaImage) => {
-    setUploadingCount((n) => n - 1);
     setSelected((prev) => {
       const next = new Set(prev);
       next.add(image.url);
       return next;
     });
+  };
+
+  const handleItemsChange = (items: UploadFileItem[]) => {
+    setUploadItems(items);
   };
 
   return (
@@ -112,9 +116,19 @@ export default function MediaPickerDialog({
 
       <div className="flex-1 overflow-y-auto p-5">
         {tab === "library" ? (
-          <MediaLibraryTab selected={selected} onToggle={toggle} uploadingCount={uploadingCount} />
+          <MediaLibraryTab
+            selected={selected}
+            onToggle={toggle}
+            uploadItems={uploadItems}
+            onRetry={(id) => retryRef.current?.(id)}
+          />
         ) : (
-          <MediaUploadTab onUploaded={handleUploaded} onUploadStart={handleUploadStart} />
+          <MediaUploadTab
+            onUploaded={handleUploaded}
+            onUploadStart={handleUploadStart}
+            onItemsChange={handleItemsChange}
+            retryRef={retryRef}
+          />
         )}
       </div>
 

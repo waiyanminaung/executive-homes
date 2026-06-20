@@ -7,14 +7,16 @@ import { useRead } from "@/lib/spoosh";
 import { classNames } from "@/utils/classNames";
 import { formatBytes } from "@/utils/formatBytes";
 import MediaUploadingCell from "./MediaUploadingCell";
+import type { UploadFileItem } from "./MediaUploadZone";
 
 interface MediaLibraryTabProps {
   selected: Set<string>;
   onToggle: (url: string) => void;
-  uploadingCount?: number;
+  uploadItems?: UploadFileItem[];
+  onRetry?: (id: string) => void;
 }
 
-export default function MediaLibraryTab({ selected, onToggle, uploadingCount = 0 }: MediaLibraryTabProps) {
+export default function MediaLibraryTab({ selected, onToggle, uploadItems = [], onRetry }: MediaLibraryTabProps) {
   const { data, loading } = useRead((api) => api("admin/media").GET());
   const images = data?.images ?? [];
 
@@ -26,7 +28,7 @@ export default function MediaLibraryTab({ selected, onToggle, uploadingCount = 0
     );
   }
 
-  if (images.length === 0 && uploadingCount === 0) {
+  if (images.length === 0 && uploadItems.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3 text-gray-400">
         <ImageOff className="w-10 h-10" />
@@ -37,8 +39,14 @@ export default function MediaLibraryTab({ selected, onToggle, uploadingCount = 0
 
   return (
     <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-      {Array.from({ length: uploadingCount }).map((_, i) => (
-        <MediaUploadingCell key={i} />
+      {uploadItems.map((item) => (
+        <MediaUploadingCell
+          key={item.id}
+          filename={item.filename}
+          progress={item.progress}
+          status={item.status}
+          onRetry={onRetry ? () => onRetry(item.id) : undefined}
+        />
       ))}
 
       {images.map((img) => {

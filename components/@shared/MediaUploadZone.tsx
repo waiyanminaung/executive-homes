@@ -1,28 +1,72 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Upload } from "lucide-react";
 import { form, type SpooshBody } from "@spoosh/core";
 import { classNames } from "@/utils/classNames";
 import { useQueue } from "@/lib/spoosh";
 import type { ClientMediaImage } from "@/types/media";
 
+export type UploadFileItem = {
+  id: string;
+  filename: string;
+  progress: number;
+  status: "uploading" | "error";
+  file: File;
+};
+
 interface MediaUploadZoneProps {
   onUploadStart?: (count: number) => void;
   onUploaded: (image: ClientMediaImage) => void;
+  onItemsChange?: (items: UploadFileItem[]) => void;
+  retryRef?: React.MutableRefObject<((id: string) => void) | null>;
 }
 
 type UploadInput = { id?: string; body: SpooshBody<{ file: File }> };
 
-export default function MediaUploadZone({ onUploadStart, onUploaded }: MediaUploadZoneProps) {
+export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChange, retryRef }: MediaUploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
+  const [uploadItems, setUploadItems] = useState<UploadFileItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { trigger: queueTrigger, stats } = useQueue((api) => api("admin/media").POST());
-
+  const { trigger: queueTrigger } = useQueue((api) => api("admin/media").POST());
   const trigger = queueTrigger as (input: UploadInput) => ReturnType<typeof queueTrigger>;
 
-  const uploading = stats.running > 0 || stats.pending > 0;
+  const updateItem = (id: string, patch: Partial<UploadFileItem>) => {
+    setUploadItems((prev) => {
+      const next = prev.map((item) => (item.id === id ? { ...item, ...patch } : item));
+      onItemsChange?.(next);
+      return next;
+    });
+  };
+
+  const retryItem = (id: string) => {
+    const item = uploadItems.find((i) => i.id === id);
+    if (!item) return;
+
+    updateItem(id, { status: "uploading", progress: 0 });
+
+    trigger({ id, body: form({ file: item.file }) })
+      .then((result) => {
+        if (result.data) {
+          setUploadItems((prev) => {
+            const next = prev.filter((i) => i.id !== id);
+            onItemsChange?.(next);
+            return next;
+          });
+          onUploaded(result.data);
+        } else {
+          updateItem(id, { status: "error" });
+        }
+      })
+      .catch(() => {
+        updateItem(id, { status: "error" });
+      });
+  };
+
+  useEffect(() => {
+    if (retryRef) retryRef.current = retryItem;
+  });
 
   const handleFiles = (files: FileList | null) => {
     if (!files?.length) return;
@@ -30,10 +74,37 @@ export default function MediaUploadZone({ onUploadStart, onUploaded }: MediaUplo
     const fileArray = Array.from(files);
     onUploadStart?.(fileArray.length);
 
-    for (const file of fileArray) {
-      trigger({ body: form({ file }) }).then((result) => {
-        if (result.data) onUploaded(result.data);
-      });
+    const newItems: UploadFileItem[] = fileArray.map((file) => ({
+      id: `upload-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      filename: file.name,
+      progress: 0,
+      status: "uploading",
+      file,
+    }));
+
+    setUploadItems((prev) => {
+      const next = [...prev, ...newItems];
+      onItemsChange?.(next);
+      return next;
+    });
+
+    for (const item of newItems) {
+      trigger({ id: item.id, body: form({ file: item.file }) })
+        .then((result) => {
+          if (result.data) {
+            setUploadItems((prev) => {
+              const next = prev.filter((i) => i.id !== item.id);
+              onItemsChange?.(next);
+              return next;
+            });
+            onUploaded(result.data);
+          } else {
+            updateItem(item.id, { status: "error" });
+          }
+        })
+        .catch(() => {
+          updateItem(item.id, { status: "error" });
+        });
     }
   };
 
@@ -71,27 +142,6 @@ export default function MediaUploadZone({ onUploadStart, onUploaded }: MediaUplo
           <p className="text-xs text-gray-400 mt-1">JPEG, PNG, WebP, GIF · Max 10MB · Converted to WebP</p>
         </div>
       </div>
-
-      {uploading && (
-        <div className="flex flex-col gap-1.5">
-          <div className="flex justify-between text-xs text-gray-500">
-            <span>Uploading {stats.settled} of {stats.total}...</span>
-            <span>{stats.percentage}%</span>
-          </div>
-          <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary-500 rounded-full transition-all duration-300"
-              style={{ width: `${stats.percentage}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      {stats.failed > 0 && (
-        <p className="text-sm text-red-600 text-center">
-          {stats.failed} file{stats.failed > 1 ? "s" : ""} failed to upload.
-        </p>
-      )}
     </div>
   );
 }
