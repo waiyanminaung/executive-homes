@@ -35,30 +35,28 @@ function extractErrorMessage(error: unknown): string | undefined {
 
 export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChange, retryRef, removeRef }: MediaUploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const [uploadItems, setUploadItems] = useState<UploadFileItem[]>([]);
+  const uploadItemsRef = useRef<UploadFileItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { trigger: queueTrigger } = useQueue((api) => api("admin/media").POST());
   const trigger = queueTrigger as (input: UploadInput) => ReturnType<typeof queueTrigger>;
 
+  const applyUpdate = (updater: (prev: UploadFileItem[]) => UploadFileItem[]) => {
+    const next = updater(uploadItemsRef.current);
+    uploadItemsRef.current = next;
+    onItemsChange?.(next);
+  };
+
   const updateItem = (id: string, patch: Partial<UploadFileItem>) => {
-    setUploadItems((prev) => {
-      const next = prev.map((item) => (item.id === id ? { ...item, ...patch } : item));
-      onItemsChange?.(next);
-      return next;
-    });
+    applyUpdate((prev) => prev.map((item) => (item.id === id ? { ...item, ...patch } : item)));
   };
 
   const removeItem = (id: string) => {
-    setUploadItems((prev) => {
-      const next = prev.filter((i) => i.id !== id);
-      onItemsChange?.(next);
-      return next;
-    });
+    applyUpdate((prev) => prev.filter((i) => i.id !== id));
   };
 
   const retryItem = (id: string) => {
-    const item = uploadItems.find((i) => i.id === id);
+    const item = uploadItemsRef.current.find((i) => i.id === id);
     if (!item) return;
 
     updateItem(id, { status: "uploading", progress: 0, errorMessage: undefined });
@@ -66,11 +64,7 @@ export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChan
     trigger({ id, body: form({ file: item.file }) })
       .then((result) => {
         if (result.data) {
-          setUploadItems((prev) => {
-            const next = prev.filter((i) => i.id !== id);
-            onItemsChange?.(next);
-            return next;
-          });
+          applyUpdate((prev) => prev.filter((i) => i.id !== id));
           onUploaded(result.data);
         } else {
           updateItem(id, { status: "error", errorMessage: extractErrorMessage(result.error) });
@@ -100,21 +94,13 @@ export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChan
       file,
     }));
 
-    setUploadItems((prev) => {
-      const next = [...prev, ...newItems];
-      onItemsChange?.(next);
-      return next;
-    });
+    applyUpdate((prev) => [...prev, ...newItems]);
 
     for (const item of newItems) {
       trigger({ id: item.id, body: form({ file: item.file }) })
         .then((result) => {
           if (result.data) {
-            setUploadItems((prev) => {
-              const next = prev.filter((i) => i.id !== item.id);
-              onItemsChange?.(next);
-              return next;
-            });
+            applyUpdate((prev) => prev.filter((i) => i.id !== item.id));
             onUploaded(result.data);
           } else {
             updateItem(item.id, { status: "error", errorMessage: extractErrorMessage(result.error) });
