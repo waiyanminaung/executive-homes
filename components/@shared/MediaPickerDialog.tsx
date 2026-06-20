@@ -49,6 +49,7 @@ export default function MediaPickerDialog({
   const [selected, setSelected] = useState<Set<string>>(new Set(initialSelected ?? []));
   const [uploadItems, setUploadItems] = useState<UploadFileItem[]>([]);
   const retryRef = useRef<((id: string) => void) | null>(null);
+  const removeRef = useRef<((id: string) => void) | null>(null);
 
   const toggle = (url: string) => {
     setSelected((prev) => {
@@ -121,6 +122,7 @@ export default function MediaPickerDialog({
             onToggle={toggle}
             uploadItems={uploadItems}
             onRetry={(id) => retryRef.current?.(id)}
+            onDelete={(id) => removeRef.current?.(id)}
           />
         ) : (
           <MediaUploadTab
@@ -128,6 +130,7 @@ export default function MediaPickerDialog({
             onUploadStart={handleUploadStart}
             onItemsChange={handleItemsChange}
             retryRef={retryRef}
+            removeRef={removeRef}
           />
         )}
       </div>

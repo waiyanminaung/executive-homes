@@ -1,4 +1,4 @@
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Trash2 } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 
 interface MediaUploadingCellProps {
@@ -6,7 +6,9 @@ interface MediaUploadingCellProps {
   filename?: string;
   progress?: number;
   status?: "uploading" | "error";
+  errorMessage?: string;
   onRetry?: () => void;
+  onDelete?: () => void;
 }
 
 export default function MediaUploadingCell({
@@ -14,7 +16,9 @@ export default function MediaUploadingCell({
   filename,
   progress,
   status = "uploading",
+  errorMessage,
   onRetry,
+  onDelete,
 }: MediaUploadingCellProps) {
   return (
     <div
@@ -25,20 +29,37 @@ export default function MediaUploadingCell({
       )}
     >
       {status === "error" ? (
-        <>
-          <button
-            type="button"
-            onClick={onRetry}
-            className="flex flex-col items-center gap-1 text-red-500 hover:text-red-700 transition-colors"
-          >
-            <RotateCcw className="w-5 h-5" />
-            <span className="text-[10px] font-medium">Retry</span>
-          </button>
+        <div className="flex flex-col items-center gap-1.5 w-full px-1">
+          {errorMessage ? (
+            <>
+              <p className="text-[9px] text-red-500 text-center line-clamp-3 leading-tight">{errorMessage}</p>
 
-          {filename && (
-            <p className="text-[9px] text-red-400 text-center line-clamp-2 leading-tight">{filename}</p>
+              <button
+                type="button"
+                onClick={onDelete}
+                className="flex flex-col items-center gap-0.5 text-red-400 hover:text-red-600 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="text-[9px] font-medium">Remove</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                type="button"
+                onClick={onRetry}
+                className="flex flex-col items-center gap-1 text-red-500 hover:text-red-700 transition-colors"
+              >
+                <RotateCcw className="w-5 h-5" />
+                <span className="text-[10px] font-medium">Retry</span>
+              </button>
+
+              {filename && (
+                <p className="text-[9px] text-red-400 text-center line-clamp-2 leading-tight">{filename}</p>
+              )}
+            </>
           )}
-        </>
+        </div>
       ) : (
         <>
           <div className="w-full px-1.5">

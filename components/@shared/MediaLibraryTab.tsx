@@ -14,9 +14,10 @@ interface MediaLibraryTabProps {
   onToggle: (url: string) => void;
   uploadItems?: UploadFileItem[];
   onRetry?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
-export default function MediaLibraryTab({ selected, onToggle, uploadItems = [], onRetry }: MediaLibraryTabProps) {
+export default function MediaLibraryTab({ selected, onToggle, uploadItems = [], onRetry, onDelete }: MediaLibraryTabProps) {
   const { data, loading } = useRead((api) => api("admin/media").GET());
   const images = data?.images ?? [];
 
@@ -45,7 +46,9 @@ export default function MediaLibraryTab({ selected, onToggle, uploadItems = [], 
           filename={item.filename}
           progress={item.progress}
           status={item.status}
+          errorMessage={item.errorMessage}
           onRetry={onRetry ? () => onRetry(item.id) : undefined}
+          onDelete={onDelete ? () => onDelete(item.id) : undefined}
         />
       ))}
 

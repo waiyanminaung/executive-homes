@@ -1,31 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { Trash2, ExternalLink } from "lucide-react";
 import { Button, ConfirmDialog, Spinner } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
 import { formatBytes } from "@/utils/formatBytes";
 import type { ClientMediaImage } from "@/types/media";
-import MediaUploadZone from "@/components/@shared/MediaUploadZone";
+import MediaUploadZone, { type UploadFileItem } from "@/components/@shared/MediaUploadZone";
 import MediaUploadingCell from "@/components/@shared/MediaUploadingCell";
 
 export default function LibraryPage() {
   const { data, loading, trigger: refetch } = useRead((api) => api("admin/media").GET());
   const { trigger: deleteImage } = useWrite((api) => api("admin/media/:id").DELETE());
-  const [uploadingCount, setUploadingCount] = useState(0);
+  const [uploadItems, setUploadItems] = useState<UploadFileItem[]>([]);
   const [showUploadZone, setShowUploadZone] = useState(false);
+  const retryRef = useRef<((id: string) => void) | null>(null);
+  const removeRef = useRef<((id: string) => void) | null>(null);
 
   const images = data?.images ?? [];
-  const hasImages = images.length > 0 || uploadingCount > 0;
-
-  const handleUploadStart = (count: number) => {
-    setUploadingCount(count);
-    setShowUploadZone(false);
-  };
+  const hasImages = images.length > 0 || uploadItems.length > 0;
 
   const handleUploaded = () => {
-    setUploadingCount((n) => n - 1);
     refetch();
   };
 
@@ -85,13 +81,28 @@ export default function LibraryPage() {
       ) : (
         <div className="space-y-6">
           {(!hasImages || showUploadZone) && (
-            <MediaUploadZone onUploadStart={handleUploadStart} onUploaded={handleUploaded} />
+            <MediaUploadZone
+              onUploaded={handleUploaded}
+              onUploadStart={() => setShowUploadZone(false)}
+              onItemsChange={setUploadItems}
+              retryRef={retryRef}
+              removeRef={removeRef}
+            />
           )}
 
           {hasImages && (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-              {Array.from({ length: uploadingCount }).map((_, i) => (
-                <MediaUploadingCell key={i} className="rounded-xl border border-gray-200" />
+              {uploadItems.map((item) => (
+                <MediaUploadingCell
+                  key={item.id}
+                  className="rounded-xl border border-gray-200"
+                  filename={item.filename}
+                  progress={item.progress}
+                  status={item.status}
+                  errorMessage={item.errorMessage}
+                  onRetry={() => retryRef.current?.(item.id)}
+                  onDelete={() => removeRef.current?.(item.id)}
+                />
               ))}
 
               {images.map((img) => (

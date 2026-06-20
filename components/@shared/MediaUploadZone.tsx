@@ -12,6 +12,7 @@ export type UploadFileItem = {
   filename: string;
   progress: number;
   status: "uploading" | "error";
+  errorMessage?: string;
   file: File;
 };
 
@@ -20,11 +21,19 @@ interface MediaUploadZoneProps {
   onUploaded: (image: ClientMediaImage) => void;
   onItemsChange?: (items: UploadFileItem[]) => void;
   retryRef?: React.MutableRefObject<((id: string) => void) | null>;
+  removeRef?: React.MutableRefObject<((id: string) => void) | null>;
 }
 
 type UploadInput = { id?: string; body: SpooshBody<{ file: File }> };
 
-export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChange, retryRef }: MediaUploadZoneProps) {
+function extractErrorMessage(error: unknown): string | undefined {
+  if (error && typeof error === "object" && "error" in error) {
+    return String((error as { error: unknown }).error);
+  }
+  return undefined;
+}
+
+export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChange, retryRef, removeRef }: MediaUploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [uploadItems, setUploadItems] = useState<UploadFileItem[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -40,11 +49,19 @@ export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChan
     });
   };
 
+  const removeItem = (id: string) => {
+    setUploadItems((prev) => {
+      const next = prev.filter((i) => i.id !== id);
+      onItemsChange?.(next);
+      return next;
+    });
+  };
+
   const retryItem = (id: string) => {
     const item = uploadItems.find((i) => i.id === id);
     if (!item) return;
 
-    updateItem(id, { status: "uploading", progress: 0 });
+    updateItem(id, { status: "uploading", progress: 0, errorMessage: undefined });
 
     trigger({ id, body: form({ file: item.file }) })
       .then((result) => {
@@ -56,7 +73,7 @@ export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChan
           });
           onUploaded(result.data);
         } else {
-          updateItem(id, { status: "error" });
+          updateItem(id, { status: "error", errorMessage: extractErrorMessage(result.error) });
         }
       })
       .catch(() => {
@@ -66,6 +83,7 @@ export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChan
 
   useEffect(() => {
     if (retryRef) retryRef.current = retryItem;
+    if (removeRef) removeRef.current = removeItem;
   });
 
   const handleFiles = (files: FileList | null) => {
@@ -99,7 +117,7 @@ export default function MediaUploadZone({ onUploadStart, onUploaded, onItemsChan
             });
             onUploaded(result.data);
           } else {
-            updateItem(item.id, { status: "error" });
+            updateItem(item.id, { status: "error", errorMessage: extractErrorMessage(result.error) });
           }
         })
         .catch(() => {

@@ -9,15 +9,17 @@ interface MediaUploadTabProps {
   onUploadStart?: (count: number) => void;
   onItemsChange?: (items: UploadFileItem[]) => void;
   retryRef?: React.MutableRefObject<((id: string) => void) | null>;
+  removeRef?: React.MutableRefObject<((id: string) => void) | null>;
 }
 
-export default function MediaUploadTab({ onUploaded, onUploadStart, onItemsChange, retryRef }: MediaUploadTabProps) {
+export default function MediaUploadTab({ onUploaded, onUploadStart, onItemsChange, retryRef, removeRef }: MediaUploadTabProps) {
   return (
     <MediaUploadZone
       onUploaded={onUploaded}
       onUploadStart={onUploadStart}
       onItemsChange={onItemsChange}
       retryRef={retryRef}
+      removeRef={removeRef}
     />
   );
 }
