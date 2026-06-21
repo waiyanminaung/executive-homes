@@ -15,6 +15,7 @@ import {
   Tag,
   Layers,
   Images,
+  FileText,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { classNames } from "@/utils/classNames";
@@ -48,6 +49,10 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   ];
   const propertiesExpanded = propertiesSubPaths.some((p) => pathname.startsWith(p));
   const [propertiesOpen, setPropertiesOpen] = useState(propertiesExpanded);
+
+  const pagesSubPaths = ["/admin/pages"];
+  const pagesExpanded = pagesSubPaths.some((p) => pathname.startsWith(p));
+  const [pagesOpen, setPagesOpen] = useState(pagesExpanded);
 
   const handleLogout = async () => {
     await authClient.signOut();
@@ -181,6 +186,45 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
                 >
                   <Tag className="w-3.5 h-3.5 shrink-0" />
                   Features
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <button
+              onClick={() => setPagesOpen((prev) => !prev)}
+              className={classNames(
+                "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors w-full",
+                pagesSubPaths.some((p) => pathname.startsWith(p))
+                  ? "bg-white/10 text-white"
+                  : "text-gray-400 hover:bg-white/5 hover:text-white",
+              )}
+            >
+              <FileText className="w-4 h-4 shrink-0" />
+              <span className="flex-1 text-left">Pages</span>
+              <ChevronDown
+                className={classNames(
+                  "w-3.5 h-3.5 transition-transform duration-200",
+                  pagesOpen ? "rotate-180" : "",
+                )}
+              />
+            </button>
+
+            {pagesOpen && (
+              <div className="mt-0.5 ml-3 pl-4 border-l border-white/10 space-y-0.5">
+                <Link
+                  href="/admin/pages/home"
+                  onClick={onClose}
+                  className={classNames(
+                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    isActive("/admin/pages/home")
+                      ? "text-white bg-white/10"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white",
+                  )}
+                >
+                  <FileText className="w-3.5 h-3.5 shrink-0" />
+                  Home
                 </Link>
               </div>
             )}
