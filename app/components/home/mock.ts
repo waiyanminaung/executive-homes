@@ -1,4 +1,4 @@
-import type { AreaCard, PropertyItem, PropertySection } from "@/app/types";
+import type { PropertyItem, PropertySection } from "@/app/types";
 
 const rentProperties: PropertyItem[] = [
   {
@@ -307,56 +307,4 @@ export const HOME_PROPERTY_SECTIONS: PropertySection[] = [
   { title: "Featured Properties", properties: saleProperties },
   { title: "Apartment for rent in Bangkok", properties: rentProperties },
   { title: "Condos for sale in Bangkok", properties: condoProperties },
-];
-
-export const HOME_AREA_CARDS: AreaCard[] = [
-  {
-    name: "Bangkok",
-    listings: 12,
-    imageUrl:
-      "https://images.unsplash.com/photo-1508009603885-50cf7c579365?auto=format&fit=crop&w=900&q=85",
-    featured: true,
-  },
-  {
-    name: "Sathorn",
-    listings: 10,
-    imageUrl:
-      "https://images.unsplash.com/photo-1563492065599-3520f775eeed?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Nana",
-    listings: 10,
-    imageUrl:
-      "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Riverside",
-    listings: 10,
-    imageUrl:
-      "https://images.unsplash.com/photo-1544984243-ec57ea16fe25?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Ekkamai",
-    listings: 10,
-    imageUrl:
-      "https://images.unsplash.com/photo-1582407947304-fd86f028f716?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Ratchadamri",
-    listings: 10,
-    imageUrl:
-      "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Chidlom",
-    listings: 10,
-    imageUrl:
-      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=900&q=85",
-  },
-  {
-    name: "Bangna",
-    listings: 8,
-    imageUrl:
-      "https://images.unsplash.com/photo-1555217851-6141535bd771?auto=format&fit=crop&w=900&q=85",
-  },
 ];
