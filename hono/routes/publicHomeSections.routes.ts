@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { Prisma } from "@/prisma/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import type { PropertyItem } from "@/app/types";
+import { toListingType, toPrice } from "@/utils/homeSectionUtils";
 
 const publicHomeSectionsRoutes = new Hono();
 
@@ -12,22 +13,6 @@ const PROPERTY_SELECT = {
   address: true,
   images: { take: 5, orderBy: { order: "asc" as const }, select: { url: true } },
 } as const;
-
-function toListingType(isForRent: boolean, isForSale: boolean): PropertyItem["listingType"] {
-  if (isForRent && isForSale) return "Sale & Rent";
-  if (isForRent) return "Rent";
-  return "Sale";
-}
-
-function toPrice(
-  listingType: "RENT" | "SALE" | "BOTH",
-  rentPrice: number | null,
-  salePrice: number | null,
-): number {
-  if (listingType === "RENT") return rentPrice ?? 0;
-  if (listingType === "SALE") return salePrice ?? 0;
-  return rentPrice ?? salePrice ?? 0;
-}
 
 publicHomeSectionsRoutes.get("/", async (c) => {
   const sections = await prisma.homeSection.findMany({
