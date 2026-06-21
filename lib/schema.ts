@@ -11,6 +11,8 @@ import type { PublicEnquiryInput } from "@/validation/publicEnquirySchema";
 import type { ClientMediaImage } from "@/types/media";
 import type { HomeSection, HomeSectionWithProperties } from "@/types/homeSection";
 import type { HomeSectionCreateInput, HomeSectionUpdateInput } from "@/validation/homeSectionSchema";
+import type { HomeAreaCard, ClientHomeAreaCard } from "@/types/homeAreaCard";
+import type { HomeAreaCardCreateInput, HomeAreaCardUpdateInput } from "@/validation/homeAreaCardSchema";
 
 interface EnquiryListItem {
   id: string;
@@ -123,5 +125,16 @@ export type ApiSchema = {
   };
   "home-sections": {
     GET: { data: { sections: HomeSectionWithProperties[] } };
+  };
+  "admin/home-area-cards": {
+    GET: { data: { areaCards: HomeAreaCard[] } };
+    POST: { data: { areaCard: HomeAreaCard }; body: HomeAreaCardCreateInput };
+  };
+  "admin/home-area-cards/:id": {
+    PATCH: { data: { areaCard: HomeAreaCard }; params: { id: string }; body: HomeAreaCardUpdateInput };
+    DELETE: { data: { ok: true }; params: { id: string } };
+  };
+  "home-area-cards": {
+    GET: { data: { areaCards: ClientHomeAreaCard[] } };
   };
 };

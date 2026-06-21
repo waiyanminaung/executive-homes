@@ -10,3 +10,5 @@ export { default as publicEnquiriesRoutes } from "./publicEnquiries.routes";
 export { default as mediaRoutes } from "./media.routes";
 export { default as homeSectionsRoutes } from "./homeSections.routes";
 export { default as publicHomeSectionsRoutes } from "./publicHomeSections.routes";
+export { default as homeAreaCardsRoutes } from "./homeAreaCards.routes";
+export { default as publicHomeAreaCardsRoutes } from "./publicHomeAreaCards.routes";
