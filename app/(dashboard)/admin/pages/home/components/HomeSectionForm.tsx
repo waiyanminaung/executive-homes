@@ -92,7 +92,7 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit} className="p-5 border-t border-gray-100 bg-gray-50 space-y-4">
+      <form onSubmit={handleSubmit} className="p-5 border-t border-gray-100 bg-white space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">Title</label>
