@@ -32,12 +32,19 @@ enum TransitLine {
   BRT
 }
 
+enum HomeSectionListingType {
+  RENT
+  SALE
+  BOTH
+}
+
 model Province {
   id         String     @id @default(cuid())
   name       String
   slug       String     @unique
   districts  District[]
   properties Property[]
+  homeSections HomeSection[]
 
   @@map("provinces")
 }
@@ -50,6 +57,7 @@ model District {
   province     Province      @relation(fields: [provinceId], references: [id], onDelete: Cascade)
   subDistricts SubDistrict[]
   properties   Property[]
+  homeSections HomeSection[]
 
   @@unique([slug, provinceId])
   @@map("districts")
@@ -72,6 +80,7 @@ model PropertyType {
   name       String
   slug       String     @unique
   properties Property[]
+  homeSections HomeSection[]
 
   @@map("property_types")
 }
@@ -264,4 +273,22 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model HomeSection {
+  id             String                 @id @default(cuid())
+  title          String
+  propertyTypeId String?
+  propertyType   PropertyType?          @relation(fields: [propertyTypeId], references: [id])
+  listingType    HomeSectionListingType @default(BOTH)
+  provinceId     String?
+  province       Province?              @relation(fields: [provinceId], references: [id])
+  districtId     String?
+  district       District?              @relation(fields: [districtId], references: [id])
+  limit          Int                    @default(8)
+  order          Int                    @default(0)
+  createdAt      DateTime               @default(now())
+  updatedAt      DateTime               @updatedAt
+
+  @@map("home_sections")
 }
