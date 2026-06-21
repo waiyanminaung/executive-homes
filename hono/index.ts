@@ -12,6 +12,7 @@ import {
   publicEnquiriesRoutes,
   mediaRoutes,
   homeSectionsRoutes,
+  publicHomeSectionsRoutes,
 } from "@/hono/routes";
 
 const router = new Hono().basePath("/api");
@@ -31,6 +32,7 @@ router.route("/admin/media", mediaRoutes);
 router.route("/admin/home-sections", homeSectionsRoutes);
 
 router.route("/properties", publicPropertiesRoutes);
+router.route("/home-sections", publicHomeSectionsRoutes);
 router.route("/enquiries", publicEnquiriesRoutes);
 
 export type AppType = typeof router;

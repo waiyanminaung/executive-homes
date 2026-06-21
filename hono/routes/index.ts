@@ -9,3 +9,4 @@ export { default as publicPropertiesRoutes } from "./publicProperties.routes";
 export { default as publicEnquiriesRoutes } from "./publicEnquiries.routes";
 export { default as mediaRoutes } from "./media.routes";
 export { default as homeSectionsRoutes } from "./homeSections.routes";
+export { default as publicHomeSectionsRoutes } from "./publicHomeSections.routes";

@@ -9,7 +9,7 @@ import type { FeatureCreateInput, FeatureUpdateInput } from "@/validation/featur
 import type { ProvinceCreateInput, ProvinceUpdateInput, DistrictCreateInput, DistrictUpdateInput, SubDistrictCreateInput, SubDistrictUpdateInput } from "@/validation/locationSchema";
 import type { PublicEnquiryInput } from "@/validation/publicEnquirySchema";
 import type { ClientMediaImage } from "@/types/media";
-import type { HomeSection } from "@/types/homeSection";
+import type { HomeSection, HomeSectionWithProperties } from "@/types/homeSection";
 import type { HomeSectionCreateInput, HomeSectionUpdateInput } from "@/validation/homeSectionSchema";
 
 interface EnquiryListItem {
@@ -120,5 +120,8 @@ export type ApiSchema = {
   };
   "enquiries": {
     POST: { data: { ok: true }; body: PublicEnquiryInput };
+  };
+  "home-sections": {
+    GET: { data: { sections: HomeSectionWithProperties[] } };
   };
 };

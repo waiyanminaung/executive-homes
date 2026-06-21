@@ -13,3 +13,9 @@ export interface HomeSection {
   createdAt: string;
   updatedAt: string;
 }
+
+import type { PropertyItem } from "@/app/types";
+
+export interface HomeSectionWithProperties extends HomeSection {
+  properties: PropertyItem[];
+}
