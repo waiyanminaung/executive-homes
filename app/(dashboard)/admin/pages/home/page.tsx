@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
-import { Spinner } from "@geckoui/geckoui";
-import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
-import { SortableContext, arrayMove, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { type DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import { useRead, useWrite } from "@/lib/spoosh";
 import type { HomeSection } from "@/types/homeSection";
 import type { HomeAreaCard } from "@/types/homeAreaCard";
@@ -13,6 +11,7 @@ import HomeSectionRow from "./components/HomeSectionRow";
 import HomeSectionForm from "./components/HomeSectionForm";
 import HomeAreaCardRow from "./components/HomeAreaCardRow";
 import HomeAreaCardForm from "./components/HomeAreaCardForm";
+import HomePageSection from "./components/HomePageSection";
 
 export default function AdminHomePage() {
   const { data: sectionsData, loading: sectionsLoading, trigger: refetchSections } = useRead(
@@ -38,10 +37,6 @@ export default function AdminHomePage() {
   const orderedCards: HomeAreaCard[] = cardOrderIds
     ? cardOrderIds.map((id) => serverCards.find((c) => c.id === id)).filter((c): c is HomeAreaCard => !!c)
     : serverCards;
-
-  const handleSectionToggle = (id: string) => {
-    setExpandedSectionId((prev) => (prev === id ? null : id));
-  };
 
   const handleSectionSaved = () => {
     setExpandedSectionId(null);
@@ -75,10 +70,6 @@ export default function AdminHomePage() {
         )
         .filter(Boolean),
     );
-  };
-
-  const handleCardToggle = (id: string) => {
-    setExpandedCardId((prev) => (prev === id ? null : id));
   };
 
   const handleCardSaved = () => {
@@ -122,125 +113,63 @@ export default function AdminHomePage() {
         description="Configure the property listing sections and area cards shown on the home page."
       />
 
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-900">Property Sections</h2>
-          <button
-            onClick={() => setExpandedSectionId("new")}
-            className="flex items-center gap-2 bg-primary-700 hover:bg-primary-800 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add Section
-          </button>
-        </div>
-
-        {sectionsLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Spinner className="w-6 h-6 text-primary-600" />
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-            {orderedSections.length === 0 && expandedSectionId !== "new" && (
-              <div className="text-center py-16">
-                <p className="text-gray-400 text-sm">No sections yet. Add your first one.</p>
-              </div>
-            )}
-
-            <DndContext collisionDetection={closestCenter} onDragEnd={handleSectionDragEnd}>
-              <SortableContext
-                items={orderedSections.map((s) => s.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <div className="space-y-3">
-                  {orderedSections.map((section) => (
-                    <HomeSectionRow
-                      key={section.id}
-                      section={section}
-                      isExpanded={expandedSectionId === section.id}
-                      onToggle={() => handleSectionToggle(section.id)}
-                      onSaved={handleSectionSaved}
-                      onDeleted={handleSectionDeleted}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-
-            {expandedSectionId === "new" && (
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100">
-                  <p className="text-sm font-semibold text-gray-900">New Section</p>
-                </div>
-                <HomeSectionForm
-                  section={null}
-                  onSaved={handleSectionSaved}
-                  onCancel={() => setExpandedSectionId(null)}
-                />
-              </div>
-            )}
-          </div>
+      <HomePageSection
+        title="Property Sections"
+        addLabel="Add Section"
+        newFormLabel="New Section"
+        loading={sectionsLoading}
+        items={orderedSections}
+        expandedId={expandedSectionId}
+        emptyMessage="No sections yet. Add your first one."
+        onAdd={() => setExpandedSectionId("new")}
+        onDragEnd={handleSectionDragEnd}
+        renderRow={(section) => (
+          <HomeSectionRow
+            key={section.id}
+            section={section}
+            isExpanded={expandedSectionId === section.id}
+            onToggle={() => setExpandedSectionId((prev) => (prev === section.id ? null : section.id))}
+            onSaved={handleSectionSaved}
+            onDeleted={handleSectionDeleted}
+          />
         )}
-      </section>
-
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold text-gray-900">Locations</h2>
-          <button
-            onClick={() => setExpandedCardId("new")}
-            className="flex items-center gap-2 bg-primary-700 hover:bg-primary-800 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add Location
-          </button>
-        </div>
-
-        {cardsLoading ? (
-          <div className="flex items-center justify-center py-16">
-            <Spinner className="w-6 h-6 text-primary-600" />
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
-            {orderedCards.length === 0 && expandedCardId !== "new" && (
-              <div className="text-center py-16">
-                <p className="text-gray-400 text-sm">No locations yet. Add your first one.</p>
-              </div>
-            )}
-
-            <DndContext collisionDetection={closestCenter} onDragEnd={handleCardDragEnd}>
-              <SortableContext
-                items={orderedCards.map((c) => c.id)}
-                strategy={verticalListSortingStrategy}
-              >
-                <div className="space-y-3">
-                  {orderedCards.map((card) => (
-                    <HomeAreaCardRow
-                      key={card.id}
-                      card={card}
-                      isExpanded={expandedCardId === card.id}
-                      onToggle={() => handleCardToggle(card.id)}
-                      onSaved={handleCardSaved}
-                      onDeleted={handleCardDeleted}
-                    />
-                  ))}
-                </div>
-              </SortableContext>
-            </DndContext>
-
-            {expandedCardId === "new" && (
-              <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-4 border-b border-gray-100">
-                  <p className="text-sm font-semibold text-gray-900">New Location</p>
-                </div>
-                <HomeAreaCardForm
-                  card={null}
-                  onSaved={handleCardSaved}
-                  onCancel={() => setExpandedCardId(null)}
-                />
-              </div>
-            )}
-          </div>
+        renderNewForm={() => (
+          <HomeSectionForm
+            section={null}
+            onSaved={handleSectionSaved}
+            onCancel={() => setExpandedSectionId(null)}
+          />
         )}
-      </section>
+      />
+
+      <HomePageSection
+        title="Locations"
+        addLabel="Add Location"
+        newFormLabel="New Location"
+        loading={cardsLoading}
+        items={orderedCards}
+        expandedId={expandedCardId}
+        emptyMessage="No locations yet. Add your first one."
+        onAdd={() => setExpandedCardId("new")}
+        onDragEnd={handleCardDragEnd}
+        renderRow={(card) => (
+          <HomeAreaCardRow
+            key={card.id}
+            card={card}
+            isExpanded={expandedCardId === card.id}
+            onToggle={() => setExpandedCardId((prev) => (prev === card.id ? null : card.id))}
+            onSaved={handleCardSaved}
+            onDeleted={handleCardDeleted}
+          />
+        )}
+        renderNewForm={() => (
+          <HomeAreaCardForm
+            card={null}
+            onSaved={handleCardSaved}
+            onCancel={() => setExpandedCardId(null)}
+          />
+        )}
+      />
     </div>
   );
 }
