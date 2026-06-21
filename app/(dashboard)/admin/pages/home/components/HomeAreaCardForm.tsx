@@ -1,7 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
-import Image from "next/image";
+import { useEffect, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { form } from "@spoosh/core";
@@ -17,6 +16,7 @@ import { useRead, useWrite } from "@/lib/spoosh";
 import { getMediaUrl } from "@/utils/getMediaUrl";
 import { homeAreaCardFormSchema, type HomeAreaCardFormValues } from "@/validation/homeAreaCardSchema";
 import type { HomeAreaCard } from "@/types/homeAreaCard";
+import HomeAreaCardImagePicker from "./HomeAreaCardImagePicker";
 
 const DEFAULT_VALUES: HomeAreaCardFormValues = {
   name: "",
@@ -43,7 +43,20 @@ export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }:
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(
+    card?.imageKey ? getMediaUrl(card.imageKey) : null,
+  );
+
+  useEffect(() => {
+    if (!imageFile) return;
+
+    const url = URL.createObjectURL(imageFile);
+    setPreviewUrl(url);
+
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [imageFile]);
 
   const methods = useForm<HomeAreaCardFormValues>({
     values: card
@@ -64,11 +77,10 @@ export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }:
   );
   const districts = districtsData?.districts ?? [];
 
-  const previewUrl = imageFile
-    ? URL.createObjectURL(imageFile)
-    : card?.imageKey
-      ? getMediaUrl(card.imageKey)
-      : null;
+  const handleFileChange = (file: File) => {
+    setImageFile(file);
+    setImageError(null);
+  };
 
   const handleSubmit = methods.handleSubmit(async (values) => {
     setImageError(null);
@@ -156,50 +168,13 @@ export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }:
             </div>
           )}
 
-          <div className="space-y-1.5 sm:col-span-2">
-            <label className="block text-sm font-medium text-gray-700">Area Image</label>
-
-            <div className="flex items-start gap-4">
-              {previewUrl && (
-                <div className="w-24 h-16 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
-                  <Image
-                    src={previewUrl}
-                    alt="Preview"
-                    width={96}
-                    height={64}
-                    className="w-full h-full object-cover"
-                    unoptimized
-                  />
-                </div>
-              )}
-
-              <div className="flex-1">
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp"
-                  className="hidden"
-                  onChange={(e) => {
-                    setImageFile(e.target.files?.[0] ?? null);
-                    setImageError(null);
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-sm font-medium text-primary-700 hover:text-primary-800 px-3 py-2 rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors"
-                >
-                  {card ? "Change Image" : "Select Image"}
-                </button>
-
-                {imageFile && (
-                  <p className="text-xs text-gray-500 mt-1">{imageFile.name}</p>
-                )}
-              </div>
-            </div>
-
-            {imageError && <p className="text-sm text-red-600">{imageError}</p>}
-          </div>
+          <HomeAreaCardImagePicker
+            previewUrl={previewUrl}
+            filename={imageFile?.name ?? null}
+            error={imageError}
+            isEditing={!!card}
+            onFileChange={handleFileChange}
+          />
         </div>
 
         <div className="flex items-center justify-between pt-1">
