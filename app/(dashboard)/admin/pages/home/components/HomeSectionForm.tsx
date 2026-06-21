@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConfirmDialog, RHFInput, RHFSelect, RHFError, SelectOption, RHFNumberInput } from "@geckoui/geckoui";
@@ -58,20 +57,11 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
   });
 
   const provinceId = methods.watch("provinceId");
-  const isInitialMount = useRef(true);
 
   const { data: districtsData } = useRead((api) =>
     api("admin/locations/districts").GET({ query: provinceId ? { provinceId } : undefined }),
   );
   const districts = districtsData?.districts ?? [];
-
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-      return;
-    }
-    methods.setValue("districtId", null);
-  }, [provinceId, methods]);
 
   const handleSubmit = methods.handleSubmit(async (values) => {
     if (section) {
@@ -127,7 +117,7 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
 
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">Province</label>
-            <RHFSelect<string> name="provinceId" placeholder="Any province">
+            <RHFSelect<string> name="provinceId" placeholder="Any province" onChange={() => methods.setValue("districtId", null)}>
               {provinces.map((p) => (
                 <SelectOption key={p.id} value={p.id} label={p.name} />
               ))}
