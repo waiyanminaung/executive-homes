@@ -16,6 +16,7 @@ import {
   Layers,
   Images,
   FileText,
+  Users,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { classNames } from "@/utils/classNames";
@@ -46,6 +47,8 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
     "/admin/properties",
     "/admin/property-types",
     "/admin/features",
+    "/admin/locations",
+    "/admin/transit-stations",
   ];
   const propertiesExpanded = propertiesSubPaths.some((p) => pathname.startsWith(p));
   const [propertiesOpen, setPropertiesOpen] = useState(propertiesExpanded);
@@ -187,6 +190,34 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
                   <Tag className="w-3.5 h-3.5 shrink-0" />
                   Features
                 </Link>
+
+                <Link
+                  href="/admin/locations"
+                  onClick={onClose}
+                  className={classNames(
+                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    isActive("/admin/locations")
+                      ? "text-white bg-white/10"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white",
+                  )}
+                >
+                  <MapPin className="w-3.5 h-3.5 shrink-0" />
+                  Locations
+                </Link>
+
+                <Link
+                  href="/admin/transit-stations"
+                  onClick={onClose}
+                  className={classNames(
+                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    isActive("/admin/transit-stations")
+                      ? "text-white bg-white/10"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white",
+                  )}
+                >
+                  <Train className="w-3.5 h-3.5 shrink-0" />
+                  Transit Stations
+                </Link>
               </div>
             )}
           </div>
@@ -257,27 +288,15 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
           </Link>
 
           <Link
-            href="/admin/locations"
+            href="/admin/users"
             onClick={onClose}
             className={classNames(
               "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-              isActive("/admin/locations") ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white",
+              isActive("/admin/users") ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white",
             )}
           >
-            <MapPin className="w-4 h-4 shrink-0" />
-            Locations
-          </Link>
-
-          <Link
-            href="/admin/transit-stations"
-            onClick={onClose}
-            className={classNames(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-              isActive("/admin/transit-stations") ? "bg-white/10 text-white" : "text-gray-400 hover:bg-white/5 hover:text-white",
-            )}
-          >
-            <Train className="w-4 h-4 shrink-0" />
-            Transit Stations
+            <Users className="w-4 h-4 shrink-0" />
+            Users
           </Link>
 
         </nav>

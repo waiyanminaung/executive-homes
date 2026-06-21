@@ -84,7 +84,7 @@ export default function AdminPropertiesPage() {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3">
       <AdminPageHeader
         title="Properties"
         description={total > 0 ? `${total} listing${total !== 1 ? "s" : ""}` : "Manage your property listings."}
