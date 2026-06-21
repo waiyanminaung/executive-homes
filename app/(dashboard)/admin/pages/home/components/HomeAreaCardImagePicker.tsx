@@ -7,7 +7,6 @@ interface HomeAreaCardImagePickerProps {
   previewUrl: string | null;
   filename: string | null;
   error: string | null;
-  isEditing: boolean;
   onFileChange: (file: File) => void;
 }
 
@@ -15,7 +14,6 @@ export default function HomeAreaCardImagePicker({
   previewUrl,
   filename,
   error,
-  isEditing,
   onFileChange,
 }: HomeAreaCardImagePickerProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -54,7 +52,7 @@ export default function HomeAreaCardImagePicker({
             onClick={() => fileInputRef.current?.click()}
             className="text-sm font-medium text-primary-700 hover:text-primary-800 px-3 py-2 rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors"
           >
-            {isEditing ? "Change Image" : "Select Image"}
+            {previewUrl ? "Change Image" : "Select Image"}
           </button>
 
           {filename && (

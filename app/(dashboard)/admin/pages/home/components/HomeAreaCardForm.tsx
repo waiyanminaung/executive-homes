@@ -77,11 +77,6 @@ export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }:
   );
   const districts = districtsData?.districts ?? [];
 
-  const handleFileChange = (file: File) => {
-    setImageFile(file);
-    setImageError(null);
-  };
-
   const handleSubmit = methods.handleSubmit(async (values) => {
     setImageError(null);
 
@@ -172,8 +167,7 @@ export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }:
             previewUrl={previewUrl}
             filename={imageFile?.name ?? null}
             error={imageError}
-            isEditing={!!card}
-            onFileChange={handleFileChange}
+            onFileChange={(file) => { setImageFile(file); setImageError(null); }}
           />
         </div>
 
