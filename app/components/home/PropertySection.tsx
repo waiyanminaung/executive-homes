@@ -51,9 +51,9 @@ export function PropertySection({ section }: PropertySectionProps) {
       </div>
 
       {section.properties.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-neutral-200 bg-neutral-50 py-16 text-center">
-          <p className="text-base font-semibold text-neutral-400">No properties found</p>
-          <p className="mt-1 text-sm text-neutral-300">Check back later for new listings.</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-gray-50 py-16 text-center">
+          <p className="text-base font-semibold text-gray-400">No properties found</p>
+          <p className="mt-1 text-sm text-gray-300">Check back later for new listings.</p>
         </div>
       ) : (
         <div className="relative">
