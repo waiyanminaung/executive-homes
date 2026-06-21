@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConfirmDialog, RHFInput, RHFSelect, RHFError, SelectOption, RHFNumberInput } from "@geckoui/geckoui";
@@ -58,6 +58,7 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
   });
 
   const provinceId = methods.watch("provinceId");
+  const isInitialMount = useRef(true);
 
   const { data: districtsData } = useRead((api) =>
     api("admin/locations/districts").GET({ query: provinceId ? { provinceId } : undefined }),
@@ -65,6 +66,10 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
   const districts = districtsData?.districts ?? [];
 
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     methods.setValue("districtId", null);
   }, [provinceId, methods]);
 
