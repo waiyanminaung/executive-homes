@@ -376,8 +376,13 @@ export default function AdminLocationsPage() {
                     >
                       {isProvinceOpen ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
                       <span className="text-sm font-semibold text-gray-900">{province.name}</span>
-                      <span className="text-xs text-gray-600 font-mono ml-1">{province.slug}</span>
-                      <span className="ml-2 text-xs text-gray-600">{provinceDistricts.length} districts</span>
+                      <span className="text-xs text-gray-500 font-mono ml-1">{province.slug}</span>
+                      <span className="text-xs text-gray-500">{provinceDistricts.length} districts</span>
+                      {province.propertyCount > 0 && (
+                        <span className="ml-1 text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium">
+                          {province.propertyCount} properties
+                        </span>
+                      )}
                     </button>
                     <div className="flex items-center gap-1">
                       <button
@@ -420,8 +425,13 @@ export default function AdminLocationsPage() {
                                 >
                                   {isDistrictOpen ? <ChevronDown className="w-3.5 h-3.5 text-gray-400" /> : <ChevronRight className="w-3.5 h-3.5 text-gray-400" />}
                                   <span className="text-sm text-gray-700">{district.name}</span>
-                                  <span className="text-xs text-gray-600 font-mono">{district.slug}</span>
+                                  <span className="text-xs text-gray-500 font-mono">{district.slug}</span>
                                   <span className="text-xs text-gray-500">{districtSubDistricts.length} subdistricts</span>
+                                  {district.propertyCount > 0 && (
+                                    <span className="ml-1 text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium">
+                                      {district.propertyCount} properties
+                                    </span>
+                                  )}
                                 </button>
                                 <div className="flex items-center gap-1">
                                   <button
@@ -456,6 +466,11 @@ export default function AdminLocationsPage() {
                                         <div className="flex items-center gap-2">
                                           <span className="text-sm text-gray-600">{subDistrict.name}</span>
                                           <span className="text-xs text-gray-500 font-mono">{subDistrict.slug}</span>
+                                          {subDistrict.propertyCount > 0 && (
+                                            <span className="text-xs bg-blue-50 text-blue-700 px-1.5 py-0.5 rounded font-medium">
+                                              {subDistrict.propertyCount} properties
+                                            </span>
+                                          )}
                                         </div>
                                         <div className="flex items-center gap-1">
                                           <button

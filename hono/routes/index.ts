@@ -12,3 +12,5 @@ export { default as homeSectionsRoutes } from "./homeSections.routes";
 export { default as publicHomeSectionsRoutes } from "./publicHomeSections.routes";
 export { default as homeAreaCardsRoutes } from "./homeAreaCards.routes";
 export { default as publicHomeAreaCardsRoutes } from "./publicHomeAreaCards.routes";
+export { default as contactInfoRoutes } from "./contactInfo.routes";
+export { default as publicLocationsRoutes } from "./publicLocations.routes";

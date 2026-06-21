@@ -3,7 +3,7 @@ import type { Feature } from "@/types/feature";
 import type { TransitStation } from "@/types/transitStation";
 import type { PropertyTypeItem } from "@/types/propertyType";
 import type { PropertyTypeCreateInput, PropertyTypeUpdateInput } from "@/validation/propertyTypeSchema";
-import type { District, SubDistrict } from "@/types/location";
+import type { Province as LocationProvince, District, SubDistrict } from "@/types/location";
 import type { PropertyCreateInput, PropertyUpdateInput } from "@/validation/propertySchema";
 import type { FeatureCreateInput, FeatureUpdateInput } from "@/validation/featureSchema";
 import type { ProvinceCreateInput, ProvinceUpdateInput, DistrictCreateInput, DistrictUpdateInput, SubDistrictCreateInput, SubDistrictUpdateInput } from "@/validation/locationSchema";
@@ -13,6 +13,8 @@ import type { HomeSection, HomeSectionWithProperties } from "@/types/homeSection
 import type { HomeSectionCreateInput, HomeSectionUpdateInput } from "@/validation/homeSectionSchema";
 import type { HomeAreaCard, ClientHomeAreaCard } from "@/types/homeAreaCard";
 import type { HomeAreaCardCreateInput, HomeAreaCardUpdateInput } from "@/validation/homeAreaCardSchema";
+import type { ContactInfo } from "@/types/contactInfo";
+import type { ContactInfoInput } from "@/validation/contactInfoSchema";
 
 interface EnquiryListItem {
   id: string;
@@ -33,7 +35,7 @@ interface PublicPropertyListItem extends PropertyListItem {
 
 export type ApiSchema = {
   "admin/properties": {
-    GET: { data: { properties: PropertyListItem[]; total: number; page: number; limit: number }; query?: { page?: string; limit?: string } };
+    GET: { data: { properties: PropertyListItem[]; total: number; page: number; limit: number }; query?: { page?: string; limit?: string; search?: string; typeId?: string; status?: string; listingType?: string; availability?: string; provinceId?: string; districtId?: string; subDistrictIds?: string } };
     POST: { data: { property: PropertyDetail }; body: PropertyCreateInput };
   };
   "admin/properties/:id": {
@@ -64,11 +66,11 @@ export type ApiSchema = {
     GET: { data: { stations: TransitStation[] } };
   };
   "admin/locations/provinces": {
-    GET: { data: { provinces: Province[] } };
-    POST: { data: { province: Province }; body: ProvinceCreateInput };
+    GET: { data: { provinces: LocationProvince[] } };
+    POST: { data: { province: LocationProvince }; body: ProvinceCreateInput };
   };
   "admin/locations/provinces/:id": {
-    PATCH: { data: { province: Province }; params: { id: string }; body: ProvinceUpdateInput };
+    PATCH: { data: { province: LocationProvince }; params: { id: string }; body: ProvinceUpdateInput };
     DELETE: { data: { ok: true }; params: { id: string } };
   };
   "admin/locations/districts": {
@@ -136,5 +138,18 @@ export type ApiSchema = {
   };
   "home-area-cards": {
     GET: { data: { areaCards: ClientHomeAreaCard[] } };
+  };
+  "admin/contact-info": {
+    GET: { data: { contactInfo: ContactInfo | null } };
+    PUT: { data: { contactInfo: ContactInfo }; body: ContactInfoInput };
+  };
+  "locations/provinces": {
+    GET: { data: { provinces: Array<{ id: string; name: string; slug: string }> } };
+  };
+  "locations/districts": {
+    GET: { data: { districts: Array<{ id: string; name: string; slug: string; provinceId: string }> }; query?: { provinceId?: string } };
+  };
+  "locations/subdistricts": {
+    GET: { data: { subDistricts: Array<{ id: string; name: string; slug: string; districtId: string }> }; query?: { districtId?: string } };
   };
 };

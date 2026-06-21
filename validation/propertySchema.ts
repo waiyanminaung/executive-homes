@@ -60,4 +60,12 @@ export type PropertyUpdateInput = z.infer<typeof propertyUpdateSchema>;
 export const propertyListQuerySchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   limit: z.coerce.number().int().min(1).max(100).default(20),
+  search: z.string().optional(),
+  typeId: z.string().optional(),
+  status: z.enum(["published", "draft"]).optional(),
+  listingType: z.enum(["sale", "rent"]).optional(),
+  availability: z.enum(["AVAILABLE", "SOLD", "RENTED"]).optional(),
+  provinceId: z.string().optional(),
+  districtId: z.string().optional(),
+  subDistrictIds: z.string().optional(),
 });

@@ -1,27 +1,36 @@
 import Image from "next/image";
 import Link from "next/link";
+import { getContactInfo } from "@/lib/getContactInfo";
 import type { FooterColumn } from "@/app/types";
 
 interface HomeFooterProps {
   columns: FooterColumn[];
 }
 
-const SOCIAL_LINKS = [
-  { href: "https://facebook.com", label: "Facebook", src: "https://img.icons8.com/fluency/96/facebook-new.png", size: 45 },
-  { href: "https://instagram.com", label: "Instagram", src: "https://img.icons8.com/fluency/96/instagram-new.png", size: 45 },
-  { href: "https://line.me", label: "Line", src: "https://img.icons8.com/fluency/96/line-me.png", size: 45 },
+const SOCIAL_ICONS = [
+  { key: "facebook" as const, label: "Facebook", src: "https://img.icons8.com/fluency/96/facebook-new.png", size: 45 },
+  { key: "instagram" as const, label: "Instagram", src: "https://img.icons8.com/fluency/96/instagram-new.png", size: 45 },
+  { key: "line" as const, label: "Line", src: "https://img.icons8.com/fluency/96/line-me.png", size: 45 },
 ];
 
-export function HomeFooter({ columns }: HomeFooterProps) {
+export async function HomeFooter({ columns }: HomeFooterProps) {
+  const info = await getContactInfo();
+
+  const socialLinks = SOCIAL_ICONS
+    .map((s) => ({ ...s, href: info[s.key] }))
+    .filter((s) => s.href);
+
   return (
     <footer className="bg-secondary-900 text-slate-300">
-      <div className="flex justify-center gap-4 border-b border-white/10 py-4">
-        {SOCIAL_LINKS.map((social) => (
-          <Link key={social.label} href={social.href} aria-label={social.label} className="opacity-90 transition-opacity hover:opacity-100">
-            <Image src={social.src} alt={social.label} width={social.size} height={social.size} />
-          </Link>
-        ))}
-      </div>
+      {socialLinks.length > 0 && (
+        <div className="flex justify-center gap-4 border-b border-white/10 py-4">
+          {socialLinks.map((social) => (
+            <Link key={social.label} href={social.href} aria-label={social.label} target="_blank" rel="noopener noreferrer" className="opacity-90 transition-opacity hover:opacity-100">
+              <Image src={social.src} alt={social.label} width={social.size} height={social.size} />
+            </Link>
+          ))}
+        </div>
+      )}
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">

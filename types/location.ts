@@ -2,6 +2,7 @@ export interface Province {
   id: string;
   name: string;
   slug: string;
+  propertyCount: number;
 }
 
 export interface District {
@@ -9,6 +10,7 @@ export interface District {
   name: string;
   slug: string;
   provinceId: string;
+  propertyCount: number;
 }
 
 export interface SubDistrict {
@@ -16,4 +18,5 @@ export interface SubDistrict {
   name: string;
   slug: string;
   districtId: string;
+  propertyCount: number;
 }

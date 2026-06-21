@@ -21,13 +21,27 @@ const propertyRoutes = new Hono<AppEnv>();
 propertyRoutes.use("*", authMiddleware, adminMiddleware);
 
 propertyRoutes.get("/", zv("query", propertyListQuerySchema), async (c) => {
-  const { page, limit } = c.req.valid("query");
+  const { page, limit, search, typeId, status, listingType, availability, provinceId, districtId, subDistrictIds } = c.req.valid("query");
   const skip = (page - 1) * limit;
+
+  const where = {
+    ...(search ? { title: { contains: search, mode: "insensitive" as const } } : {}),
+    ...(typeId ? { propertyTypeId: typeId } : {}),
+    ...(status === "published" ? { isPublished: true } : {}),
+    ...(status === "draft" ? { isPublished: false } : {}),
+    ...(listingType === "sale" ? { isForSale: true } : {}),
+    ...(listingType === "rent" ? { isForRent: true } : {}),
+    ...(availability ? { availabilityStatus: availability } : {}),
+    ...(provinceId ? { provinceId } : {}),
+    ...(districtId ? { districtId } : {}),
+    ...(subDistrictIds ? { subDistrictId: { in: subDistrictIds.split(",") } } : {}),
+  };
 
   const [properties, total] = await Promise.all([
     prisma.property.findMany({
       skip,
       take: limit,
+      where,
       orderBy: { createdAt: "desc" },
       select: {
         id: true, slug: true, title: true,
@@ -37,7 +51,7 @@ propertyRoutes.get("/", zv("query", propertyListQuerySchema), async (c) => {
         isFeatured: true, isPublished: true, isPetFriendly: true, createdAt: true,
       },
     }),
-    prisma.property.count(),
+    prisma.property.count({ where }),
   ]);
 
   return c.json({ properties, total, page, limit });

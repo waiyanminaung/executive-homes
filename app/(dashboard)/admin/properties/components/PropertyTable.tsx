@@ -6,14 +6,11 @@ import { ConfirmDialog } from "@geckoui/geckoui";
 import { useWrite } from "@/lib/spoosh";
 import type { PropertyListItem } from "@/types/property";
 import PropertyStatusBadge from "./PropertyStatusBadge";
+import PropertyCard from "./PropertyCard";
 
 const formatPrice = (price: number | null) => {
   if (!price) return "—";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "THB",
-    maximumFractionDigits: 0,
-  }).format(price);
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "THB", maximumFractionDigits: 0 }).format(price);
 };
 
 interface PropertyTableProps {
@@ -45,75 +42,78 @@ export default function PropertyTable({ properties, onDeleted }: PropertyTablePr
   }
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Property</th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Published</th>
-            <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-100">
-          {properties.map((property) => (
-            <tr key={property.id} className="hover:bg-gray-50 transition-colors">
-              <td className="px-6 py-4">
-                <div>
+    <>
+      <div className="md:hidden bg-white rounded-xl border border-gray-200 divide-y divide-gray-100 overflow-hidden">
+        {properties.map((property) => (
+          <PropertyCard key={property.id} property={property} onDelete={handleDelete} />
+        ))}
+      </div>
+
+      <div className="hidden md:block bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Property</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Type</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Price</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Published</th>
+              <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {properties.map((property) => (
+              <tr key={property.id} className="hover:bg-gray-50 transition-colors">
+                <td className="px-6 py-4 max-w-xs">
                   <Link
                     href={`/admin/properties/${property.id}/edit`}
-                    className="text-sm font-medium text-gray-900 hover:text-primary-700 transition-colors"
+                    className="text-sm font-medium text-gray-900 hover:text-primary-700 transition-colors line-clamp-2"
                   >
                     {property.title}
                   </Link>
-                  <p className="text-xs text-gray-600 mt-0.5">{property.slug}</p>
-                </div>
-              </td>
-              <td className="px-6 py-4 text-sm text-gray-700">
-                {property.propertyType.name}
-              </td>
-              <td className="px-6 py-4">
-                <PropertyStatusBadge
-                  isForSale={property.isForSale}
-                  isForRent={property.isForRent}
-                  availabilityStatus={property.availabilityStatus}
-                />
-              </td>
-              <td className="px-6 py-4 text-sm text-gray-700">
-                {property.salePrice ? formatPrice(property.salePrice) : null}
-                {property.salePrice && property.rentPrice ? " / " : null}
-                {property.rentPrice ? `${formatPrice(property.rentPrice)}/mo` : null}
-                {!property.salePrice && !property.rentPrice ? "—" : null}
-              </td>
-              <td className="px-6 py-4">
-                <span
-                  className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${property.isPublished ? "bg-green-50 text-green-700" : "bg-gray-50 text-gray-500"}`}
-                >
-                  {property.isPublished ? "Published" : "Draft"}
-                </span>
-              </td>
-              <td className="px-6 py-4 text-right">
-                <div className="flex items-center justify-end gap-2">
-                  <Link
-                    href={`/admin/properties/${property.id}/edit`}
-                    className="p-1.5 text-gray-500 hover:text-primary-700 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <Pencil className="w-4 h-4" />
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(property.id, property.title)}
-                    className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+                  {property.propertyType.name}
+                </td>
+                <td className="px-6 py-4">
+                  <PropertyStatusBadge
+                    isForSale={property.isForSale}
+                    isForRent={property.isForRent}
+                    availabilityStatus={property.availabilityStatus}
+                  />
+                </td>
+                <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
+                  {property.salePrice ? formatPrice(property.salePrice) : null}
+                  {property.salePrice && property.rentPrice ? " / " : null}
+                  {property.rentPrice ? `${formatPrice(property.rentPrice)}/mo` : null}
+                  {!property.salePrice && !property.rentPrice ? "—" : null}
+                </td>
+                <td className="px-6 py-4">
+                  <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${property.isPublished ? "bg-green-50 text-green-700" : "bg-gray-50 text-gray-500"}`}>
+                    {property.isPublished ? "Published" : "Draft"}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <Link
+                      href={`/admin/properties/${property.id}/edit`}
+                      className="p-1.5 text-gray-500 hover:text-primary-700 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Link>
+                    <button
+                      onClick={() => handleDelete(property.id, property.title)}
+                      className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

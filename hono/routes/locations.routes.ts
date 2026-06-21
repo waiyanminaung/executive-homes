@@ -18,7 +18,16 @@ locationsRoutes.use("*", authMiddleware, adminMiddleware);
 
 locationsRoutes.get("/provinces", async (c) => {
   const provinces = await prisma.province.findMany({ orderBy: { name: "asc" } });
-  return c.json({ provinces });
+
+  const counts = await prisma.property.groupBy({
+    by: ["provinceId"],
+    where: { isPublished: true },
+    _count: { _all: true },
+  });
+
+  const countMap = Object.fromEntries(counts.map((c) => [c.provinceId, c._count._all]));
+
+  return c.json({ provinces: provinces.map((p) => ({ ...p, propertyCount: countMap[p.id] ?? 0 })) });
 });
 
 locationsRoutes.post("/provinces", zv("json", provinceCreateSchema), async (c) => {
@@ -51,7 +60,16 @@ locationsRoutes.get("/districts", async (c) => {
     orderBy: { name: "asc" },
     include: { province: { select: { id: true, name: true } } },
   });
-  return c.json({ districts });
+
+  const counts = await prisma.property.groupBy({
+    by: ["districtId"],
+    where: { isPublished: true, districtId: { not: null } },
+    _count: { _all: true },
+  });
+
+  const countMap = Object.fromEntries(counts.map((c) => [c.districtId, c._count._all]));
+
+  return c.json({ districts: districts.map((d) => ({ ...d, propertyCount: countMap[d.id] ?? 0 })) });
 });
 
 locationsRoutes.post("/districts", zv("json", districtCreateSchema), async (c) => {
@@ -91,7 +109,16 @@ locationsRoutes.get("/subdistricts", async (c) => {
     orderBy: { name: "asc" },
     include: { district: { select: { id: true, name: true } } },
   });
-  return c.json({ subDistricts });
+
+  const counts = await prisma.property.groupBy({
+    by: ["subDistrictId"],
+    where: { isPublished: true, subDistrictId: { not: null } },
+    _count: { _all: true },
+  });
+
+  const countMap = Object.fromEntries(counts.map((c) => [c.subDistrictId, c._count._all]));
+
+  return c.json({ subDistricts: subDistricts.map((s) => ({ ...s, propertyCount: countMap[s.id] ?? 0 })) });
 });
 
 locationsRoutes.post("/subdistricts", zv("json", subDistrictCreateSchema), async (c) => {

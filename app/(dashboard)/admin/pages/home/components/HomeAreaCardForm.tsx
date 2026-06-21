@@ -114,6 +114,7 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
               name="provinceId"
               placeholder="Any province"
               clearable
+              filterable
               onChange={(v) => {
                 if (v === undefined) methods.setValue("provinceId", null);
                 methods.setValue("districtId", null);
@@ -133,6 +134,7 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
                 name="districtId"
                 placeholder="Any district"
                 clearable
+                filterable
                 onChange={(v) => { if (v === undefined) methods.setValue("districtId", null); }}
               >
                 {districts.map((d) => (

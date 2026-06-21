@@ -309,3 +309,16 @@ model HomeAreaCard {
 
   @@map("home_area_cards")
 }
+
+model ContactInfo {
+  id        String @id @default("singleton")
+  phone     String @default("")
+  email     String @default("")
+  whatsapp  String @default("")
+  address   String @default("")
+  facebook  String @default("")
+  instagram String @default("")
+  line      String @default("")
+
+  @@map("contact_info")
+}

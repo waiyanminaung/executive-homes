@@ -26,6 +26,8 @@ export function ContactInfo({ methods }: ContactInfoProps) {
             <Link
               key={method.title}
               href={method.href}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group flex items-start gap-4 rounded-xl border border-gray-200 bg-gray-50 p-4 transition-colors hover:border-gray-300 hover:bg-white"
             >
               <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-500 text-white transition-colors group-hover:bg-primary-600">
