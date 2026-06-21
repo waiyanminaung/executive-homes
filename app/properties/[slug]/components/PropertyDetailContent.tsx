@@ -1,4 +1,4 @@
-import { Check, PawPrint } from "lucide-react";
+import { Check } from "lucide-react";
 import type { PropertyAmenity, PropertyDetail } from "../types";
 
 interface PropertyDetailContentProps {
@@ -59,18 +59,6 @@ export function PropertyDetailContent({ property }: PropertyDetailContentProps) 
         <h2 className="text-lg font-bold text-neutral-950">Amenities</h2>
         <AmenitiesGrid amenities={property.commonFacilities} />
       </div>
-
-      {property.isPetFriendly && (
-        <>
-          <div className="my-6 h-px bg-gray-300" />
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-50">
-              <PawPrint className="h-6 w-6 text-neutral-600" />
-            </span>
-            <span className="text-sm leading-[18px] text-neutral-900 font-medium">Pet Friendly</span>
-          </div>
-        </>
-      )}
 
       <div className="my-6 h-px bg-gray-300" />
 

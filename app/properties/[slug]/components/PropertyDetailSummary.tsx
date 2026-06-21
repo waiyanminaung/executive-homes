@@ -103,14 +103,11 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
       </dl>
 
       {property.transitStations.length > 0 && (
-        <>
-          <div className="my-5 h-px bg-gray-300" />
-          <div className="space-y-2.5">
-            {property.transitStations.map((station) => (
-              <TransitRow key={station.stationId} station={station} />
-            ))}
-          </div>
-        </>
+        <div className="mt-5 space-y-2.5">
+          {property.transitStations.map((station) => (
+            <TransitRow key={station.stationId} station={station} />
+          ))}
+        </div>
       )}
     </section>
   );

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { Bath, BedDouble, Building2, MapPin, Maximize2 } from "lucide-react";
+import { Bath, BedDouble, Building2, MapPin, Maximize2, PawPrint } from "lucide-react";
 import { getLucideIcon } from "@/utils/getLucideIcon";
 import { haversineMeters } from "@/utils/haversine";
 import { prisma } from "@/lib/prisma";
@@ -95,6 +95,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
       { label: "Property Size", value: `${raw.areaSqm} sqm`, icon: Maximize2 },
       { label: "Bedrooms", value: `${raw.beds ?? 0} bedrooms`, icon: BedDouble },
       { label: "Bathrooms", value: `${raw.baths ?? 0} bathrooms`, icon: Bath },
+      ...(raw.isPetFriendly ? [{ label: "Pet Friendly", value: "Yes", icon: PawPrint }] : []),
     ],
     unitFeatures,
     commonFacilities,

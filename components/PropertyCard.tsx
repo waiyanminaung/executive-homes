@@ -15,7 +15,7 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property }: PropertyCardProps) {
-  const images = property.imageUrls;
+  const images = property.imageUrls.slice(0, 5);
   const propertyHref = `/properties/${property.id}`;
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, watchDrag: false });
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -56,19 +56,21 @@ export function PropertyCard({ property }: PropertyCardProps) {
       aria-label={property.title}
       className="flex h-full flex-col overflow-hidden rounded-2xl border border-neutral-100 bg-white shadow-[0_4px_12px_rgb(17_24_39/0.08)] transition-transform duration-300 hover:-translate-y-1"
     >
-      <div className="relative aspect-[305/219] overflow-hidden" ref={emblaRef}>
-        <div className="flex h-full">
-          {images.map((src, i) => (
-            <div key={i} className="relative h-full flex-[0_0_100%]">
-              <Image
-                src={src}
-                alt={property.title}
-                fill
-                sizes="(min-width: 1280px) 305px, (min-width: 768px) 33vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-          ))}
+      <div className="relative aspect-[305/219] overflow-hidden">
+        <div className="h-full" ref={emblaRef}>
+          <div className="flex h-full">
+            {images.map((src, i) => (
+              <div key={i} className="relative h-full flex-[0_0_100%]">
+                <Image
+                  src={src}
+                  alt={property.title}
+                  fill
+                  sizes="(min-width: 1280px) 305px, (min-width: 768px) 33vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded-2xl bg-black/70 px-2.5 py-1.5">
@@ -77,34 +79,36 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </span>
 
         {images.length > 1 && (
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-black/50 px-2 py-1.5">
+          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 items-center gap-1 rounded-full bg-black/50 p-1">
             <button
               type="button"
               aria-label="Previous image"
               onClick={handlePrev}
-              className="flex h-4 w-4 items-center justify-center text-white transition-opacity hover:opacity-70"
+              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-white transition-colors hover:bg-white/20"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
             </button>
 
-            {images.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                aria-label={`Image ${i + 1}`}
-                onClick={(event) => handleDotClick(event, i)}
-                className={classNames(
-                  "h-1.5 w-1.5 rounded-full transition-opacity",
-                  i === selectedIndex ? "bg-white opacity-100" : "bg-white/60",
-                )}
-              />
-            ))}
+            <div className="flex items-center gap-1 px-1">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Image ${i + 1}`}
+                  onClick={(event) => handleDotClick(event, i)}
+                  className={classNames(
+                    "h-1.5 w-1.5 cursor-pointer rounded-full transition-opacity",
+                    i === selectedIndex ? "bg-white opacity-100" : "bg-white/60",
+                  )}
+                />
+              ))}
+            </div>
 
             <button
               type="button"
               aria-label="Next image"
               onClick={handleNext}
-              className="flex h-4 w-4 items-center justify-center text-white transition-opacity hover:opacity-70"
+              className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-white transition-colors hover:bg-white/20"
             >
               <ChevronRight className="h-3.5 w-3.5" />
             </button>

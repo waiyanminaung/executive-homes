@@ -85,8 +85,8 @@ export default function AdminFeaturesPage() {
   const unitFeatures = features.filter((f) => f.category === "UNIT_FEATURE");
   const commonFacilities = features.filter((f) => f.category === "AMENITY");
   const grouped = [
-    { label: "Unit Features", features: unitFeatures },
-    { label: "Amenities", features: commonFacilities },
+    { label: "Unit Features", category: "UNIT_FEATURE", features: unitFeatures },
+    { label: "Amenities", category: "AMENITY", features: commonFacilities },
   ].filter((g) => g.features.length > 0);
 
   const openForm = (editing: Feature | null = null) => {
@@ -140,50 +140,58 @@ export default function AdminFeaturesPage() {
               <p className="text-gray-400 text-sm">No features yet. Add your first one.</p>
             </div>
           ) : (
-            grouped.map((group) => (
-              <div key={group.label} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-                <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{group.label}</p>
-                </div>
-                <table className="min-w-full divide-y divide-gray-100">
-                  <thead className="bg-white">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Label</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Icon</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Slug</th>
-                      <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    {group.features.map((feature) => (
-                      <tr key={feature.id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">{feature.label}</td>
-                        <td className="px-6 py-4">
-                          <FeatureIconCell icon={feature.icon} />
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-600 font-mono">{feature.slug}</td>
-                        <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => openForm(feature)}
-                              className="p-1.5 text-gray-500 hover:text-primary-700 rounded-lg hover:bg-gray-100 transition-colors"
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                            <button
-                              onClick={() => handleDelete(feature)}
-                              className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </div>
-                        </td>
+            grouped.map((group) => {
+              const showIcon = group.category !== "AMENITY";
+
+              return (
+                <div key={group.label} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <div className="px-5 py-3 bg-gray-50 border-b border-gray-100">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{group.label}</p>
+                  </div>
+                  <table className="min-w-full divide-y divide-gray-100">
+                    <thead className="bg-white">
+                      <tr>
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Label</th>
+                        {showIcon && (
+                          <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Icon</th>
+                        )}
+                        <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Slug</th>
+                        <th className="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ))
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {group.features.map((feature) => (
+                        <tr key={feature.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="px-6 py-4 text-sm font-medium text-gray-900">{feature.label}</td>
+                          {showIcon && (
+                            <td className="px-6 py-4">
+                              <FeatureIconCell icon={feature.icon} />
+                            </td>
+                          )}
+                          <td className="px-6 py-4 text-sm text-gray-600 font-mono">{feature.slug}</td>
+                          <td className="px-6 py-4 text-right">
+                            <div className="flex items-center justify-end gap-2">
+                              <button
+                                onClick={() => openForm(feature)}
+                                className="p-1.5 text-gray-500 hover:text-primary-700 rounded-lg hover:bg-gray-100 transition-colors"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(feature)}
+                                className="p-1.5 text-gray-500 hover:text-red-600 rounded-lg hover:bg-gray-100 transition-colors"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })
           )}
         </div>
       )}

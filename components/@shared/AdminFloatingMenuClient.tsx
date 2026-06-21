@@ -15,6 +15,8 @@ function PropertyEditLink({ slug }: { slug: string }) {
   return (
     <Link
       href={`/admin/properties/${data.property.id}/edit`}
+      target="_blank"
+      rel="noopener noreferrer"
       className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
     >
       <Pencil className="w-4 h-4 text-gray-400" />
@@ -50,6 +52,8 @@ export default function AdminFloatingMenuClient({ adminEmail }: AdminFloatingMen
 
             <Link
               href="/admin"
+              target="_blank"
+              rel="noopener noreferrer"
               onClick={() => setOpen(false)}
               className="flex items-center gap-2.5 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
             >
