@@ -2,16 +2,18 @@
 
 import { useRef, useState } from "react";
 import { Upload, AlertCircle } from "lucide-react";
+import { Checkbox } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import { MAX_UPLOAD_SIZE } from "@/validation/mediaSchema";
 
 interface MediaUploadZoneProps {
-  onFiles: (files: FileList | null) => void;
+  onFiles: (files: FileList | null, options?: { watermark?: boolean }) => void;
 }
 
 export default function MediaUploadZone({ onFiles }: MediaUploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [oversizedFiles, setOversizedFiles] = useState<string[]>([]);
+  const [watermark, setWatermark] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleFiles = (fileList: FileList | null) => {
@@ -27,7 +29,7 @@ export default function MediaUploadZone({ onFiles }: MediaUploadZoneProps) {
 
     const dt = new DataTransfer();
     valid.forEach((f) => dt.items.add(f));
-    onFiles(dt.files);
+    onFiles(dt.files, { watermark });
   };
 
   return (
@@ -63,6 +65,19 @@ export default function MediaUploadZone({ onFiles }: MediaUploadZoneProps) {
           <p className="text-sm font-medium text-gray-700">Drop images here or click to browse</p>
           <p className="text-xs text-gray-400 mt-1">JPEG, PNG, WebP, GIF · Max 10MB per file · Converted to WebP</p>
         </div>
+      </div>
+
+      <div
+        className="flex items-center gap-2 cursor-pointer w-fit rounded-lg bg-primary-50 border border-primary-700 px-3 py-2 hover:bg-primary-100 transition-colors"
+        onClick={() => setWatermark((prev) => !prev)}
+      >
+        <Checkbox
+          checked={watermark}
+          onChange={(e) => setWatermark(e.target.checked)}
+          onClick={(e) => e.stopPropagation()}
+          className="!border-primary-700"
+        />
+        <span className="text-sm text-primary-700 select-none">Apply watermark</span>
       </div>
 
       {oversizedFiles.length > 0 && (

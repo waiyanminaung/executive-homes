@@ -19,7 +19,7 @@ interface UseMediaLibraryOptions {
   onStart?: (count: number) => void;
 }
 
-type UploadInput = { id?: string; body: SpooshBody<{ file: File }> };
+type UploadInput = { id?: string; body: SpooshBody<{ file: File; watermark?: string }> };
 
 function extractErrorMessage(error: unknown): string | undefined {
   if (error && typeof error === "object" && "error" in error) {
@@ -72,7 +72,7 @@ export function useMediaLibrary({ onUploaded, onStart }: UseMediaLibraryOptions 
     }
   }, [tasks, onUploaded]);
 
-  const handleFiles = (files: FileList | null) => {
+  const handleFiles = (files: FileList | null, options?: { watermark?: boolean }) => {
     if (!files?.length) return;
 
     removeSettled();
@@ -85,7 +85,7 @@ export function useMediaLibrary({ onUploaded, onStart }: UseMediaLibraryOptions 
     for (const file of fileArray) {
       const id = `upload-${Date.now()}-${Math.random().toString(36).slice(2)}`;
       newMeta[id] = { filename: file.name, file };
-      trigger({ id, body: form({ file }) });
+      trigger({ id, body: form({ file, watermark: options?.watermark ? "true" : "false" }) });
     }
 
     setFileMeta((prev) => ({ ...prev, ...newMeta }));
