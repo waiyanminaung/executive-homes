@@ -9,6 +9,8 @@ import type { FeatureCreateInput, FeatureUpdateInput } from "@/validation/featur
 import type { ProvinceCreateInput, ProvinceUpdateInput, DistrictCreateInput, DistrictUpdateInput, SubDistrictCreateInput, SubDistrictUpdateInput } from "@/validation/locationSchema";
 import type { PublicEnquiryInput } from "@/validation/publicEnquirySchema";
 import type { ClientMediaImage } from "@/types/media";
+import type { HomeSection } from "@/types/homeSection";
+import type { HomeSectionCreateInput, HomeSectionUpdateInput } from "@/validation/homeSectionSchema";
 
 interface EnquiryListItem {
   id: string;
@@ -97,6 +99,14 @@ export type ApiSchema = {
     POST: { data: ClientMediaImage; body: { file: File } };
   };
   "admin/media/:id": {
+    DELETE: { data: { ok: true }; params: { id: string } };
+  };
+  "admin/home-sections": {
+    GET: { data: { sections: HomeSection[] } };
+    POST: { data: { section: HomeSection }; body: HomeSectionCreateInput };
+  };
+  "admin/home-sections/:id": {
+    PATCH: { data: { section: HomeSection }; params: { id: string }; body: HomeSectionUpdateInput };
     DELETE: { data: { ok: true }; params: { id: string } };
   };
   "properties": {
