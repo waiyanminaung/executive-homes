@@ -143,11 +143,6 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
             <RHFError name="limit" />
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700">Display Order</label>
-            <RHFNumberInput name="order" min={0} />
-            <RHFError name="order" />
-          </div>
         </div>
 
         <div className="flex items-center justify-between pt-1">
