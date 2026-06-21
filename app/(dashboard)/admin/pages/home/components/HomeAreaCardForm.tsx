@@ -1,68 +1,50 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { form } from "@spoosh/core";
 import {
   ConfirmDialog,
-  RHFInput,
   RHFSelect,
   RHFError,
   SelectOption,
-  RHFNumberInput,
 } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
 import { getMediaUrl } from "@/utils/getMediaUrl";
 import { homeAreaCardFormSchema, type HomeAreaCardFormValues } from "@/validation/homeAreaCardSchema";
 import type { HomeAreaCard } from "@/types/homeAreaCard";
+import type { ClientMediaImage } from "@/types/media";
 import HomeAreaCardImagePicker from "./HomeAreaCardImagePicker";
 
 const DEFAULT_VALUES: HomeAreaCardFormValues = {
-  name: "",
-  order: 0,
   provinceId: null,
   districtId: null,
 };
 
 interface HomeAreaCardFormProps {
   card: HomeAreaCard | null;
+  defaultOrder?: number;
   onSaved: () => void;
   onCancel: () => void;
   onDeleted?: () => void;
 }
 
-export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }: HomeAreaCardFormProps) {
+export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCancel, onDeleted }: HomeAreaCardFormProps) {
   const { data: provincesData } = useRead((api) => api("admin/provinces").GET());
   const provinces = provincesData?.provinces ?? [];
 
-  const { trigger: uploadMedia } = useWrite((api) => api("admin/media").POST());
   const { trigger: createCard } = useWrite((api) => api("admin/home-area-cards").POST());
   const { trigger: updateCard } = useWrite((api) => api("admin/home-area-cards/:id").PATCH());
   const { trigger: deleteCard } = useWrite((api) => api("admin/home-area-cards/:id").DELETE());
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageKey, setImageKey] = useState<string>(card?.imageKey ?? "");
   const [imageError, setImageError] = useState<string | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(
-    card?.imageKey ? getMediaUrl(card.imageKey) : null,
-  );
 
-  useEffect(() => {
-    if (!imageFile) return;
-
-    const url = URL.createObjectURL(imageFile);
-    setPreviewUrl(url);
-
-    return () => {
-      URL.revokeObjectURL(url);
-    };
-  }, [imageFile]);
+  const previewUrl = imageKey ? getMediaUrl(imageKey) : null;
 
   const methods = useForm<HomeAreaCardFormValues>({
     values: card
       ? {
-          name: card.name,
-          order: card.order,
           provinceId: card.provinceId,
           districtId: card.districtId,
         }
@@ -71,37 +53,33 @@ export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }:
   });
 
   const provinceId = methods.watch("provinceId");
+  const districtId = methods.watch("districtId");
 
   const { data: districtsData } = useRead((api) =>
     api("admin/locations/districts").GET({ query: provinceId ? { provinceId } : undefined }),
   );
   const districts = districtsData?.districts ?? [];
 
+  const deriveName = () => {
+    if (districtId) return districts.find((d) => d.id === districtId)?.name ?? "";
+    if (provinceId) return provinces.find((p) => p.id === provinceId)?.name ?? "";
+    return "";
+  };
+
   const handleSubmit = methods.handleSubmit(async (values) => {
     setImageError(null);
-
-    let imageKey = card?.imageKey ?? "";
-
-    if (imageFile) {
-      const uploaded = await uploadMedia({ body: form({ file: imageFile }) });
-
-      if (!uploaded?.data?.key) {
-        setImageError("Image upload failed. Try again.");
-        return;
-      }
-
-      imageKey = uploaded.data.key;
-    }
 
     if (!imageKey) {
       setImageError("Image is required.");
       return;
     }
 
+    const name = deriveName();
+
     if (card) {
-      await updateCard({ params: { id: card.id }, body: { ...values, imageKey } });
+      await updateCard({ params: { id: card.id }, body: { ...values, name, imageKey } });
     } else {
-      await createCard({ body: { ...values, imageKey } });
+      await createCard({ body: { ...values, name, imageKey, order: defaultOrder } });
     }
 
     onSaved();
@@ -121,28 +99,25 @@ export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }:
     });
   };
 
+  const handleImageSelect = (image: ClientMediaImage) => {
+    setImageKey(image.key);
+    setImageError(null);
+  };
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit} className="p-5 border-t border-gray-100 bg-white space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700">Display Name</label>
-            <RHFInput name="name" placeholder="e.g. Sathorn" />
-            <RHFError name="name" />
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700">Display Order</label>
-            <RHFNumberInput name="order" min={0} />
-            <RHFError name="order" />
-          </div>
-
-          <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">Province</label>
             <RHFSelect<string>
               name="provinceId"
               placeholder="Any province"
-              onChange={() => methods.setValue("districtId", null)}
+              clearable
+              onChange={(v) => {
+                if (v === undefined) methods.setValue("provinceId", null);
+                methods.setValue("districtId", null);
+              }}
             >
               {provinces.map((p) => (
                 <SelectOption key={p.id} value={p.id} label={p.name} />
@@ -154,7 +129,12 @@ export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }:
           {provinceId && (
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-gray-700">District</label>
-              <RHFSelect<string> name="districtId" placeholder="Any district">
+              <RHFSelect<string>
+                name="districtId"
+                placeholder="Any district"
+                clearable
+                onChange={(v) => { if (v === undefined) methods.setValue("districtId", null); }}
+              >
                 {districts.map((d) => (
                   <SelectOption key={d.id} value={d.id} label={d.name} />
                 ))}
@@ -165,9 +145,8 @@ export default function HomeAreaCardForm({ card, onSaved, onCancel, onDeleted }:
 
           <HomeAreaCardImagePicker
             previewUrl={previewUrl}
-            filename={imageFile?.name ?? null}
             error={imageError}
-            onFileChange={(file) => { setImageFile(file); setImageError(null); }}
+            onSelect={handleImageSelect}
           />
         </div>
 

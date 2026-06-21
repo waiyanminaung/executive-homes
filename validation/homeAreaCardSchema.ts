@@ -14,8 +14,6 @@ export const homeAreaCardUpdateSchema = homeAreaCardCreateSchema.partial();
 export type HomeAreaCardUpdateInput = z.infer<typeof homeAreaCardUpdateSchema>;
 
 export const homeAreaCardFormSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  order: z.number().int().min(0),
   provinceId: z.string().nullable().optional(),
   districtId: z.string().nullable().optional(),
 });

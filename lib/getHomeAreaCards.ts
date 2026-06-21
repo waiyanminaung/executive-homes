@@ -30,6 +30,7 @@ export async function getHomeAreaCards(): Promise<ClientHomeAreaCard[]> {
         createdAt: card.createdAt.toISOString(),
         updatedAt: card.updatedAt.toISOString(),
         listings,
+        listingCount: listings,
         imageUrl: getMediaUrl(card.imageKey),
       };
     }),

@@ -12,6 +12,7 @@ import MediaUploadZone from "./MediaUploadZone";
 interface MediaPickerDialogProps {
   onClose: () => void;
   onSelect: (urls: string[]) => void;
+  onSelectImages?: (images: ClientMediaImage[]) => void;
   multiple?: boolean;
   initialSelected?: string[];
 }
@@ -20,6 +21,7 @@ type Tab = "library" | "upload";
 
 export function openMediaPicker(opts: {
   onSelect: (urls: string[]) => void;
+  onSelectImages?: (images: ClientMediaImage[]) => void;
   multiple?: boolean;
   initialSelected?: string[];
 }) {
@@ -32,6 +34,7 @@ export function openMediaPicker(opts: {
           opts.onSelect(urls);
           dismiss();
         }}
+        onSelectImages={opts.onSelectImages}
         multiple={opts.multiple}
         initialSelected={opts.initialSelected}
       />
@@ -42,6 +45,7 @@ export function openMediaPicker(opts: {
 export default function MediaPickerDialog({
   onClose,
   onSelect,
+  onSelectImages,
   multiple = true,
   initialSelected,
 }: MediaPickerDialogProps) {
@@ -137,7 +141,15 @@ export default function MediaPickerDialog({
           <Button type="button" variant="outlined" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="button" disabled={selected.size === 0} onClick={() => onSelect(Array.from(selected))}>
+          <Button
+            type="button"
+            disabled={selected.size === 0}
+            onClick={() => {
+              const selectedUrls = Array.from(selected);
+              onSelect(selectedUrls);
+              onSelectImages?.(images.filter((img) => selected.has(img.url)));
+            }}
+          >
             Add Selected
           </Button>
         </div>

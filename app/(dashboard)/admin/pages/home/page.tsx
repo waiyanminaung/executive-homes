@@ -114,6 +114,36 @@ export default function AdminHomePage() {
       />
 
       <HomePageSection
+        title="Locations"
+        addLabel="Add Location"
+        newFormLabel="New Location"
+        loading={cardsLoading}
+        items={orderedCards}
+        expandedId={expandedCardId}
+        emptyMessage="No locations yet. Add your first one."
+        onAdd={() => setExpandedCardId("new")}
+        onDragEnd={handleCardDragEnd}
+        renderRow={(card) => (
+          <HomeAreaCardRow
+            key={card.id}
+            card={card}
+            isExpanded={expandedCardId === card.id}
+            onToggle={() => setExpandedCardId((prev) => (prev === card.id ? null : card.id))}
+            onSaved={handleCardSaved}
+            onDeleted={handleCardDeleted}
+          />
+        )}
+        renderNewForm={() => (
+          <HomeAreaCardForm
+            card={null}
+            defaultOrder={orderedCards.length}
+            onSaved={handleCardSaved}
+            onCancel={() => setExpandedCardId(null)}
+          />
+        )}
+      />
+
+      <HomePageSection
         title="Property Sections"
         addLabel="Add Section"
         newFormLabel="New Section"
@@ -138,35 +168,6 @@ export default function AdminHomePage() {
             section={null}
             onSaved={handleSectionSaved}
             onCancel={() => setExpandedSectionId(null)}
-          />
-        )}
-      />
-
-      <HomePageSection
-        title="Locations"
-        addLabel="Add Location"
-        newFormLabel="New Location"
-        loading={cardsLoading}
-        items={orderedCards}
-        expandedId={expandedCardId}
-        emptyMessage="No locations yet. Add your first one."
-        onAdd={() => setExpandedCardId("new")}
-        onDragEnd={handleCardDragEnd}
-        renderRow={(card) => (
-          <HomeAreaCardRow
-            key={card.id}
-            card={card}
-            isExpanded={expandedCardId === card.id}
-            onToggle={() => setExpandedCardId((prev) => (prev === card.id ? null : card.id))}
-            onSaved={handleCardSaved}
-            onDeleted={handleCardDeleted}
-          />
-        )}
-        renderNewForm={() => (
-          <HomeAreaCardForm
-            card={null}
-            onSaved={handleCardSaved}
-            onCancel={() => setExpandedCardId(null)}
           />
         )}
       />

@@ -15,10 +15,27 @@ const INCLUDE = {
 } as const;
 
 homeAreaCardsRoutes.get("/", async (c) => {
-  const areaCards = await prisma.homeAreaCard.findMany({
+  const cards = await prisma.homeAreaCard.findMany({
     orderBy: { order: "asc" },
     include: INCLUDE,
   });
+
+  const areaCards = await Promise.all(
+    cards.map(async (card) => {
+      const listingCount = await prisma.property.count({
+        where: {
+          isPublished: true,
+          ...(card.districtId
+            ? { districtId: card.districtId }
+            : card.provinceId
+              ? { provinceId: card.provinceId }
+              : {}),
+        },
+      });
+
+      return { ...card, listingCount };
+    }),
+  );
 
   return c.json({ areaCards });
 });

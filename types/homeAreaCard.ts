@@ -3,6 +3,7 @@ export interface HomeAreaCard {
   name: string;
   imageKey: string;
   order: number;
+  listingCount: number;
   provinceId: string | null;
   province: { id: string; name: string; slug: string } | null;
   districtId: string | null;

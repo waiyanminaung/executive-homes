@@ -61,15 +61,11 @@ export default function HomeAreaCardRow({
           </div>
 
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-gray-900 truncate">{card.name}</p>
-            <p className="text-xs text-gray-500 mt-0.5">
-              {card.district
-                ? `${card.district.name} district`
-                : card.province
-                  ? `${card.province.name} province`
-                  : "No location linked"}
-              {` · order ${card.order}`}
+            <p className="text-sm font-semibold text-gray-900 truncate">
+              {card.province?.name}
+              {card.district ? ` | ${card.district.name}` : ""}
             </p>
+            <p className="text-xs text-gray-500 mt-0.5">{card.listingCount} listings</p>
           </div>
 
           <ChevronDown

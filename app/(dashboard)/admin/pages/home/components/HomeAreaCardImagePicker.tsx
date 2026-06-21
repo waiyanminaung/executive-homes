@@ -1,22 +1,26 @@
 "use client";
 
-import { useRef } from "react";
 import Image from "next/image";
+import { openMediaPicker } from "@/components/@shared/MediaPickerDialog";
+import type { ClientMediaImage } from "@/types/media";
 
 interface HomeAreaCardImagePickerProps {
   previewUrl: string | null;
-  filename: string | null;
   error: string | null;
-  onFileChange: (file: File) => void;
+  onSelect: (image: ClientMediaImage) => void;
 }
 
-export default function HomeAreaCardImagePicker({
-  previewUrl,
-  filename,
-  error,
-  onFileChange,
-}: HomeAreaCardImagePickerProps) {
-  const fileInputRef = useRef<HTMLInputElement>(null);
+export default function HomeAreaCardImagePicker({ previewUrl, error, onSelect }: HomeAreaCardImagePickerProps) {
+  const handleOpen = () => {
+    openMediaPicker({
+      multiple: false,
+      initialSelected: previewUrl ? [previewUrl] : [],
+      onSelect: () => {},
+      onSelectImages: (images) => {
+        if (images[0]) onSelect(images[0]);
+      },
+    });
+  };
 
   return (
     <div className="space-y-1.5 sm:col-span-2">
@@ -36,29 +40,13 @@ export default function HomeAreaCardImagePicker({
           </div>
         )}
 
-        <div className="flex-1">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) onFileChange(file);
-            }}
-          />
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="text-sm font-medium text-primary-700 hover:text-primary-800 px-3 py-2 rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors"
-          >
-            {previewUrl ? "Change Image" : "Select Image"}
-          </button>
-
-          {filename && (
-            <p className="text-xs text-gray-500 mt-1">{filename}</p>
-          )}
-        </div>
+        <button
+          type="button"
+          onClick={handleOpen}
+          className="text-sm font-medium text-primary-700 hover:text-primary-800 px-3 py-2 rounded-lg border border-primary-200 hover:bg-primary-50 transition-colors"
+        >
+          {previewUrl ? "Change Image" : "Select Image"}
+        </button>
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}

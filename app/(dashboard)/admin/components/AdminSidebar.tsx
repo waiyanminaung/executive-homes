@@ -50,7 +50,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   const propertiesExpanded = propertiesSubPaths.some((p) => pathname.startsWith(p));
   const [propertiesOpen, setPropertiesOpen] = useState(propertiesExpanded);
 
-  const pagesSubPaths = ["/admin/pages"];
+  const pagesSubPaths = ["/admin/pages/home", "/admin/pages/contact"];
   const pagesExpanded = pagesSubPaths.some((p) => pathname.startsWith(p));
   const [pagesOpen, setPagesOpen] = useState(pagesExpanded);
 
@@ -225,6 +225,20 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
                 >
                   <FileText className="w-3.5 h-3.5 shrink-0" />
                   Home
+                </Link>
+
+                <Link
+                  href="/admin/pages/contact"
+                  onClick={onClose}
+                  className={classNames(
+                    "flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                    isActive("/admin/pages/contact")
+                      ? "text-white bg-white/10"
+                      : "text-gray-400 hover:bg-white/5 hover:text-white",
+                  )}
+                >
+                  <FileText className="w-3.5 h-3.5 shrink-0" />
+                  Contact
                 </Link>
               </div>
             )}
