@@ -84,7 +84,7 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
       <ListingSearchBar />
 
       <main className="min-h-screen bg-neutral-50">
-        <div className="mx-auto max-w-[1292px] px-4 py-8 md:px-6 xl:px-0">
+        <div className="container mx-auto px-4 py-8">
           <ListingResultsBar title={title} count={total} />
 
           {loading ? (

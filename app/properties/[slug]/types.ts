@@ -23,6 +23,7 @@ export interface PropertyTransitItem {
   name: string;
   line: string;
   calculatedMeters: number | null;
+  googleMapsUrl: string | null;
 }
 
 export interface PropertyDetail extends PropertyItem {

@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ExternalLink } from "lucide-react";
 import type { PropertyDetail, PropertyTransitItem } from "../types";
 import { PropertyShareButton } from "./PropertyShareButton";
 import { formatPrice } from "@/utils/formatPrice";
@@ -23,7 +25,19 @@ function TransitRow({ station }: { station: PropertyTransitItem }) {
   return (
     <div className="flex items-center gap-2.5">
       <span className="h-3.5 w-3.5 shrink-0 rounded-sm" style={{ backgroundColor: color }} />
-      <span className="text-sm text-neutral-700">{distanceText}</span>
+      {station.googleMapsUrl ? (
+        <Link
+          href={station.googleMapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="group flex items-center gap-1 text-sm text-neutral-700 hover:text-primary-600 hover:underline transition-colors"
+        >
+          {distanceText}
+          <ExternalLink className="h-3.5 w-3.5 shrink-0 text-neutral-400 group-hover:text-primary-500 transition-colors" />
+        </Link>
+      ) : (
+        <span className="text-sm text-neutral-700">{distanceText}</span>
+      )}
     </div>
   );
 }

@@ -30,7 +30,7 @@ export function ListingSearchBar() {
 
   return (
     <div className="sticky top-0 z-40 bg-white shadow-sm">
-      <div className="mx-auto max-w-[1292px] px-4 py-5 md:px-6 xl:px-0">
+      <div className="container mx-auto px-4 py-5">
         <div className="flex flex-col gap-3 md:flex-row md:gap-2">
           <Input
             aria-label="Search keyword"

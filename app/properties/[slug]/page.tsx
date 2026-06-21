@@ -110,12 +110,17 @@ export default async function PropertyDetailPage({ params }: PageProps) {
       ? haversineMeters(raw.lat!, raw.lng!, pt.station.lat!, pt.station.lng!)
       : null;
 
+    const googleMapsUrl = hasCoords
+      ? `https://www.google.com/maps/dir/?api=1&origin=${raw.lat},${raw.lng}&destination=${pt.station.lat},${pt.station.lng}&travelmode=walking`
+      : null;
+
     return {
       stationId: pt.stationId,
       code: pt.station.code ?? null,
       name: pt.station.name,
       line: pt.station.line,
       calculatedMeters,
+      googleMapsUrl,
     };
   });
 
