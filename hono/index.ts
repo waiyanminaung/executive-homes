@@ -43,5 +43,13 @@ router.route("/home-area-cards", publicHomeAreaCardsRoutes);
 router.route("/enquiries", publicEnquiriesRoutes);
 router.route("/locations", publicLocationsRoutes);
 
+router.onError((err, c) => {
+  console.error(err);
+  return c.json(
+    { error: process.env.NODE_ENV === "development" ? err.message : "Internal Server Error" },
+    500,
+  );
+});
+
 export type AppType = typeof router;
 export default router;

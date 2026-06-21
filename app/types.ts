@@ -21,6 +21,7 @@ export interface AreaCard {
 
 export interface PropertyItem {
   id: string;
+  slug: string;
   title: string;
   location: string;
   price: number;

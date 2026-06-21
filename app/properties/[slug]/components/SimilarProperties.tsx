@@ -1,18 +1,24 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { PropertyCard } from "@/components/PropertyCard";
-import { SIMILAR_PROPERTY_CARDS } from "../constants";
+import type { PropertyItem } from "@/app/types";
 
-export function SimilarProperties() {
+interface SimilarPropertiesProps {
+  properties: PropertyItem[];
+}
+
+export function SimilarProperties({ properties }: SimilarPropertiesProps) {
+  if (properties.length === 0) return null;
+
   return (
     <section className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <h2 className="text-2xl font-bold leading-[1.5] text-neutral-950">
-          Simlar listing for sale in Surat Thani
+          Similar listings
         </h2>
 
         <Link
-          href="/property-for-sale/surat-thani"
+          href="/properties"
           className="hidden items-center gap-1.5 text-sm font-semibold text-primary-500 sm:flex"
         >
           <span>View More</span>
@@ -21,7 +27,7 @@ export function SimilarProperties() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        {SIMILAR_PROPERTY_CARDS.map((property) => (
+        {properties.map((property) => (
           <PropertyCard key={property.id} property={property} />
         ))}
       </div>

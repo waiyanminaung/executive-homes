@@ -28,7 +28,8 @@ function toPropertyItem(p: {
   const price = p.isForSale ? (p.salePrice ?? 0) : (p.rentPrice ?? 0);
   const listingType = p.isForSale && p.isForRent ? "Sale & Rent" : p.isForSale ? "Sale" : "Rent";
   return {
-    id: p.slug,
+    id: p.id,
+    slug: p.slug,
     title: p.title,
     location: p.address,
     price,

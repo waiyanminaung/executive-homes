@@ -2,7 +2,7 @@
 
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ConfirmDialog, RHFInput, RHFSelect, RHFError, SelectOption, RHFNumberInput } from "@geckoui/geckoui";
+import { ConfirmDialog, RHFInput, RHFSelect, RHFError, SelectOption, RHFNumberInput, RHFSwitch } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
 import { homeSectionCreateSchema, type HomeSectionCreateInput } from "@/validation/homeSectionSchema";
 import type { HomeSection } from "@/types/homeSection";
@@ -11,6 +11,7 @@ const DEFAULT_VALUES: HomeSectionCreateInput = {
   title: "",
   propertyTypeId: null,
   listingType: "BOTH",
+  onlyFeatured: false,
   provinceId: null,
   districtId: null,
   limit: 8,
@@ -45,10 +46,11 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
     values: section
       ? {
           title: section.title,
-          propertyTypeId: section.propertyTypeId,
+          propertyTypeId: section.propertyTypeId ?? "",
           listingType: section.listingType,
+          onlyFeatured: section.onlyFeatured,
           provinceId: section.provinceId,
-          districtId: section.districtId,
+          districtId: section.districtId ?? "",
           limit: section.limit,
           order: section.order,
         }
@@ -105,9 +107,11 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
             <RHFError name="listingType" />
           </div>
 
+
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">Property Type</label>
-            <RHFSelect<string> name="propertyTypeId" placeholder="Any type">
+            <RHFSelect<string> name="propertyTypeId">
+              <SelectOption value="" label="All" />
               {propertyTypes.map((pt) => (
                 <SelectOption key={pt.id} value={pt.id} label={pt.name} />
               ))}
@@ -128,7 +132,8 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
           {provinceId && (
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-gray-700">District</label>
-              <RHFSelect<string> name="districtId" placeholder="Any district">
+              <RHFSelect<string> name="districtId">
+                <SelectOption value="" label="All" />
                 {districts.map((d) => (
                   <SelectOption key={d.id} value={d.id} label={d.name} />
                 ))}
@@ -143,6 +148,15 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
             <RHFError name="limit" />
           </div>
 
+        </div>
+
+
+        <div className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3 col-span-full sm:col-span-1">
+            <div>
+              <p className="text-sm font-medium text-gray-700">Featured only</p>
+              <p className="text-xs text-gray-400 mt-0.5">Show only properties marked as featured</p>
+            </div>
+            <RHFSwitch name="onlyFeatured" />
         </div>
 
         <div className="flex items-center justify-between pt-1">

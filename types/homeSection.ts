@@ -6,6 +6,7 @@ export interface HomeSection {
   propertyTypeId: string | null;
   propertyType: { id: string; name: string; slug: string } | null;
   listingType: "RENT" | "SALE" | "BOTH";
+  onlyFeatured: boolean;
   provinceId: string | null;
   province: { id: string; name: string; slug: string } | null;
   districtId: string | null;

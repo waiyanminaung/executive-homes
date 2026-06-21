@@ -16,7 +16,7 @@ interface PropertyCardProps {
 
 export function PropertyCard({ property }: PropertyCardProps) {
   const images = property.imageUrls.slice(0, 5);
-  const propertyHref = `/properties/${property.id}`;
+  const propertyHref = `/properties/${property.slug}`;
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, watchDrag: false });
   const [selectedIndex, setSelectedIndex] = useState(0);
 

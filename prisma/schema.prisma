@@ -283,6 +283,7 @@ model HomeSection {
   propertyTypeId String?
   propertyType   PropertyType?          @relation(fields: [propertyTypeId], references: [id])
   listingType    HomeSectionListingType @default(BOTH)
+  onlyFeatured   Boolean                @default(false)
   provinceId     String?
   province       Province?              @relation(fields: [provinceId], references: [id])
   districtId     String?

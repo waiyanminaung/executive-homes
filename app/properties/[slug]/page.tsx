@@ -14,6 +14,7 @@ import {
   SimilarProperties,
 } from "./components";
 import type { PropertyDetail } from "./types";
+import type { PropertyItem } from "@/app/types";
 
 
 interface PageProps {
@@ -37,6 +38,54 @@ export default async function PropertyDetailPage({ params }: PageProps) {
   });
 
   if (!raw) notFound();
+
+  const [similarRaw, contactInfo] = await Promise.all([
+    prisma.property.findMany({
+      where: {
+        isPublished: true,
+        NOT: { slug },
+        OR: [{ provinceId: raw.provinceId }, { propertyTypeId: raw.propertyTypeId }],
+      },
+      take: 4,
+      orderBy: { createdAt: "desc" },
+      select: {
+        slug: true,
+        title: true,
+        address: true,
+        isForSale: true,
+        isForRent: true,
+        availabilityStatus: true,
+        salePrice: true,
+        rentPrice: true,
+        beds: true,
+        baths: true,
+        areaSqm: true,
+        images: { take: 1, orderBy: { order: "asc" }, select: { url: true } },
+        id: true,
+      },
+    }),
+    prisma.contactInfo.findUnique({ where: { id: "singleton" } }),
+  ]);
+
+  const similarProperties: PropertyItem[] = similarRaw.map((p) => {
+    const isForSale = p.isForSale;
+    const isForRent = p.isForRent;
+    const listingType = isForSale && isForRent ? "Sale & Rent" : isForSale ? "Sale" : "Rent";
+
+    return {
+      id: p.id,
+      slug: p.slug,
+      title: p.title,
+      location: p.address,
+      price: isForSale ? (p.salePrice ?? 0) : (p.rentPrice ?? 0),
+      listingType,
+      availabilityStatus: p.availabilityStatus,
+      beds: p.beds ?? 0,
+      baths: p.baths ?? 0,
+      area: `${p.areaSqm} sqm`,
+      imageUrls: p.images.map((img) => img.url),
+    };
+  });
 
   const price = raw.isForSale ? (raw.salePrice ?? 0) : (raw.rentPrice ?? 0);
   const listingType = raw.isForSale && raw.isForRent ? "Sale & Rent" : raw.isForSale ? "Sale" : "Rent";
@@ -71,7 +120,8 @@ export default async function PropertyDetailPage({ params }: PageProps) {
   });
 
   const property: PropertyDetail = {
-    id: raw.slug,
+    id: raw.id,
+    slug: raw.slug,
     title: raw.title,
     location: raw.address,
     price,
@@ -86,6 +136,9 @@ export default async function PropertyDetailPage({ params }: PageProps) {
     salePrice: raw.salePrice ?? 0,
     rentPrice: raw.rentPrice ?? 0,
     address: raw.address,
+    provinceName: raw.province?.name ?? null,
+    districtName: raw.district?.name ?? null,
+    subDistrictName: raw.subDistrict?.name ?? null,
     description: raw.description,
     mapImageUrl: raw.mapImageUrl ?? "",
     isPetFriendly: raw.isPetFriendly,
@@ -116,11 +169,11 @@ export default async function PropertyDetailPage({ params }: PageProps) {
               <PropertyDetailContent property={property} />
             </div>
 
-            <PropertyDetailSidebar />
+            <PropertyDetailSidebar contactInfo={contactInfo} />
           </div>
 
           <div className="mt-[50px]">
-            <SimilarProperties />
+            <SimilarProperties properties={similarProperties} />
           </div>
         </div>
       </main>

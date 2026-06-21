@@ -57,10 +57,19 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
             )}
           </div>
 
-          <p className="flex items-center gap-2 text-sm font-semibold text-neutral-600">
-            <LocationIcon className="h-5 w-5 shrink-0" />
-            <span>{property.address}</span>
-          </p>
+          <div className="flex items-start gap-2">
+            <LocationIcon className="h-5 w-5 shrink-0 mt-0.5 text-neutral-600" />
+            <div>
+              <p className="text-sm font-semibold text-neutral-600">{property.address}</p>
+              {(property.provinceName || property.districtName || property.subDistrictName) && (
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {[property.provinceName, property.districtName, property.subDistrictName]
+                    .filter(Boolean)
+                    .join(" › ")}
+                </p>
+              )}
+            </div>
+          </div>
 
           <div className="mt-4 grid gap-2">
             {property.isForSale && (

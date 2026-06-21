@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { Search } from "lucide-react";
 import { Button, Input, Select, SelectOption } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
-import { MOCK_PROPERTIES } from "@/app/components/home/mock";
 import { HomePetToggle } from "./HomePetToggle";
-import { HomeSearchResults } from "./HomeSearchResults";
 
 export function HomeHero() {
+  const router = useRouter();
   const [tab, setTab] = useState<"rent" | "buy">("rent");
   const [keyword, setKeyword] = useState("");
   const [type, setType] = useState<string | null>(null);
@@ -18,22 +18,19 @@ export function HomeHero() {
   const [price, setPrice] = useState<string | null>(null);
   const [bedrooms, setBedrooms] = useState<string | null>(null);
   const [petAllow, setPetAllow] = useState(false);
-  const [showResults, setShowResults] = useState(false);
 
   const selectClass = classNames(
     "h-[46px] rounded-md border border-border bg-white px-[18px]",
     "text-sm font-semibold text-neutral-600 shadow-none",
   );
 
-  const searchResults = MOCK_PROPERTIES.filter((property) => {
-    const keywordValue = keyword.trim().toLowerCase();
-    const matchesTab = tab === "rent" ? property.listingType !== "Sale" : property.listingType !== "Rent";
-    const matchesKeyword = keywordValue.length === 0 || `${property.title} ${property.location}`.toLowerCase().includes(keywordValue);
-    const matchesLocation = !location || property.location.toLowerCase().includes(location);
-    const matchesBedrooms = !bedrooms || bedrooms === "5+" || property.beds === Number(bedrooms);
-
-    return matchesTab && matchesKeyword && matchesLocation && matchesBedrooms;
-  });
+  const handleSearch = () => {
+    const params = new URLSearchParams();
+    params.set("tab", tab === "rent" ? "rent" : "buy");
+    if (keyword.trim()) params.set("q", keyword.trim());
+    if (bedrooms) params.set("bedrooms", bedrooms);
+    router.push(`/properties?${params.toString()}`);
+  };
 
   return (
     <section className="relative overflow-hidden bg-[url('/banner.webp')] bg-cover bg-center text-white md:h-[698px] md:overflow-visible">
@@ -80,13 +77,14 @@ export function HomeHero() {
               placeholder="Type keyword..."
               value={keyword}
               onChange={(event) => setKeyword(event.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
               className="flex-1 border-border [&:focus-within]:border-primary-500"
               inputClassName="h-12 text-base font-medium text-neutral-900 md:h-[46px] md:text-sm"
             />
             <Button
               type="button"
               variant="ghost"
-              onClick={() => setShowResults(true)}
+              onClick={handleSearch}
               className="h-12 rounded-md bg-gradient-to-b from-primary-500 to-primary-400 px-[30px] text-base font-semibold !text-white hover:bg-gradient-to-b md:h-[46px] md:text-sm"
             >
               <Search className="h-4 w-4" />
@@ -147,8 +145,6 @@ export function HomeHero() {
               <HomePetToggle value={petAllow} onChange={setPetAllow} />
             </div>
           </div>
-
-          {showResults ? <HomeSearchResults properties={searchResults} /> : null}
         </div>
       </div>
     </section>

@@ -31,6 +31,9 @@ export interface PropertyDetail extends PropertyItem {
   isForSale: boolean;
   isForRent: boolean;
   address: string;
+  provinceName: string | null;
+  districtName: string | null;
+  subDistrictName: string | null;
   description: string;
   isPetFriendly: boolean;
   detailStats: PropertyDetailStat[];

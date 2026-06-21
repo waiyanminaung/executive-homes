@@ -15,6 +15,7 @@ export async function getHomeSections(): Promise<PropertySection[]> {
 
         if (section.listingType === "RENT") where.isForRent = true;
         if (section.listingType === "SALE") where.isForSale = true;
+        if (section.onlyFeatured) where.isFeatured = true;
         if (section.propertyTypeId) where.propertyTypeId = section.propertyTypeId;
         if (section.provinceId) where.provinceId = section.provinceId;
         if (section.districtId) where.districtId = section.districtId;
@@ -24,7 +25,7 @@ export async function getHomeSections(): Promise<PropertySection[]> {
           take: section.limit,
           orderBy: { createdAt: "desc" },
           select: {
-            id: true, title: true,
+            id: true, slug: true, title: true,
             isForSale: true, isForRent: true, availabilityStatus: true,
             salePrice: true, rentPrice: true, beds: true, baths: true, areaSqm: true,
             address: true,
@@ -34,6 +35,7 @@ export async function getHomeSections(): Promise<PropertySection[]> {
 
         const properties: PropertyItem[] = rawProperties.map((p) => ({
           id: p.id,
+          slug: p.slug,
           title: p.title,
           location: p.address,
           price: toPrice(section.listingType, p.rentPrice, p.salePrice),
