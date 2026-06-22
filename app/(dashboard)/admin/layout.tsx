@@ -1,5 +1,3 @@
-export const dynamic = "force-dynamic";
-
 import AdminGuard from "./components/AdminGuard";
 import AdminShell from "./components/AdminShell";
 
