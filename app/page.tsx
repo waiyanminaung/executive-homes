@@ -7,8 +7,10 @@ import {
   PropertySection,
   WhyExecutiveHomes,
 } from "./components/home";
-import { getHomeSections } from "@/lib/getHomeSections";
-import { getHomeAreaCards } from "@/lib/getHomeAreaCards";
+export const dynamic = "force-dynamic";
+
+import { getHomeSections } from "@/hono/services/homeSection.service";
+import { getHomeAreaCards } from "@/hono/services/homeAreaCard.service";
 
 export default async function HomePage() {
   const [sections, areaCards] = await Promise.all([getHomeSections(), getHomeAreaCards()]);

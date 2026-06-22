@@ -1,5 +1,5 @@
 import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
-import { getContactInfo } from "@/lib/getContactInfo";
+import { getContactInfo } from "@/hono/services/contactInfo.service";
 import { ContactForm } from "./ContactForm";
 import { ContactInfo } from "./ContactInfo";
 import type { ContactMethod } from "../types";

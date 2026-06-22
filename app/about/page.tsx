@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader, WhyExecutiveHomes } from "@/app/components/home";
 import { ABOUT_STATS } from "./constants";

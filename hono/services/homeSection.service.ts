@@ -1,7 +1,7 @@
 import { Prisma } from "@/prisma/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
-import type { PropertyItem, PropertySection } from "@/app/types";
 import { toListingType, toPrice } from "@/utils/homeSectionUtils";
+import type { PropertyItem, PropertySection } from "@/app/types";
 
 export async function getHomeSections(): Promise<PropertySection[]> {
   try {

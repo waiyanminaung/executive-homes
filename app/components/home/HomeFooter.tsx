@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getContactInfo } from "@/lib/getContactInfo";
+import { getContactInfo } from "@/hono/services/contactInfo.service";
 import type { FooterColumn } from "@/app/types";
 
 interface HomeFooterProps {

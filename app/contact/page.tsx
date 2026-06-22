@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
 import { ContactHero, ContactMain } from "./components";

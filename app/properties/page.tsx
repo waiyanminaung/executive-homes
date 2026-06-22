@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
