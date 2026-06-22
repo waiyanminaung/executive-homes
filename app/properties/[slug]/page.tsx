@@ -2,7 +2,8 @@ import { notFound } from "next/navigation";
 import { Bath, BedDouble, Building2, MapPin, Maximize2, PawPrint } from "lucide-react";
 import { getLucideIcon } from "@/utils/getLucideIcon";
 import { haversineMeters } from "@/utils/haversine";
-import { prisma } from "@/lib/prisma";
+import { getPropertyBySlug, getSimilarProperties } from "@/hono/services/propertyDetail.service";
+import { getContactInfo } from "@/hono/services/contactInfo.service";
 import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
 import {
@@ -14,7 +15,6 @@ import {
   SimilarProperties,
 } from "./components";
 import type { PropertyDetail } from "./types";
-import type { PropertyItem } from "@/app/types";
 
 
 interface PageProps {
@@ -24,68 +24,14 @@ interface PageProps {
 export default async function PropertyDetailPage({ params }: PageProps) {
   const { slug } = await params;
 
-  const raw = await prisma.property.findUnique({
-    where: { slug, isPublished: true },
-    include: {
-      propertyType: true,
-      images: { orderBy: { order: "asc" } },
-      features: { include: { feature: true } },
-      transitStations: { include: { station: true } },
-      province: { select: { name: true } },
-      district: { select: { name: true } },
-      subDistrict: { select: { name: true } },
-    },
-  });
+  const raw = await getPropertyBySlug(slug);
 
   if (!raw) notFound();
 
-  const [similarRaw, contactInfo] = await Promise.all([
-    prisma.property.findMany({
-      where: {
-        isPublished: true,
-        NOT: { slug },
-        OR: [{ provinceId: raw.provinceId }, { propertyTypeId: raw.propertyTypeId }],
-      },
-      take: 4,
-      orderBy: { createdAt: "desc" },
-      select: {
-        slug: true,
-        title: true,
-        address: true,
-        isForSale: true,
-        isForRent: true,
-        availabilityStatus: true,
-        salePrice: true,
-        rentPrice: true,
-        beds: true,
-        baths: true,
-        areaSqm: true,
-        images: { take: 1, orderBy: { order: "asc" }, select: { url: true } },
-        id: true,
-      },
-    }),
-    prisma.contactInfo.findUnique({ where: { id: "singleton" } }),
+  const [similarProperties, contactInfo] = await Promise.all([
+    getSimilarProperties(slug, raw.provinceId, raw.propertyTypeId),
+    getContactInfo(),
   ]);
-
-  const similarProperties: PropertyItem[] = similarRaw.map((p) => {
-    const isForSale = p.isForSale;
-    const isForRent = p.isForRent;
-    const listingType = isForSale && isForRent ? "Sale & Rent" : isForSale ? "Sale" : "Rent";
-
-    return {
-      id: p.id,
-      slug: p.slug,
-      title: p.title,
-      location: p.address,
-      price: isForSale ? (p.salePrice ?? 0) : (p.rentPrice ?? 0),
-      listingType,
-      availabilityStatus: p.availabilityStatus,
-      beds: p.beds ?? 0,
-      baths: p.baths ?? 0,
-      area: `${p.areaSqm} sqm`,
-      imageUrls: p.images.map((img) => img.url),
-    };
-  });
 
   const price = raw.isForSale ? (raw.salePrice ?? 0) : (raw.rentPrice ?? 0);
   const listingType = raw.isForSale && raw.isForRent ? "Sale & Rent" : raw.isForSale ? "Sale" : "Rent";

@@ -3,6 +3,7 @@ import { getMediaUrl } from "@/utils/getMediaUrl";
 import type { ClientHomeAreaCard } from "@/types/homeAreaCard";
 
 export async function getHomeAreaCards(): Promise<ClientHomeAreaCard[]> {
+  try {
   const cards = await prisma.homeAreaCard.findMany({
     orderBy: { order: "asc" },
     include: {
@@ -35,4 +36,7 @@ export async function getHomeAreaCards(): Promise<ClientHomeAreaCard[]> {
       };
     }),
   );
+  } catch {
+    return [];
+  }
 }

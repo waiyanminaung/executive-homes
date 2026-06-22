@@ -13,7 +13,11 @@ const DEFAULT_CONTACT_INFO: ContactInfo = {
 };
 
 export async function getContactInfo(): Promise<ContactInfo> {
-  const info = await prisma.contactInfo.findUnique({ where: { id: "singleton" } });
+  try {
+    const info = await prisma.contactInfo.findUnique({ where: { id: "singleton" } });
 
-  return info ?? DEFAULT_CONTACT_INFO;
+    return info ?? DEFAULT_CONTACT_INFO;
+  } catch {
+    return DEFAULT_CONTACT_INFO;
+  }
 }
