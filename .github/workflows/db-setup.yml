@@ -1,6 +1,9 @@
 name: DB Setup
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -14,6 +17,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            set -e
             PROJECT_DIR="/var/www/executive-homes"
             REPO_URL="git@github.com:${{ github.repository }}.git"
 
