@@ -13,6 +13,7 @@ CMD ["pnpm", "dev"]
 FROM base AS build
 RUN pnpm install --frozen-lockfile
 COPY . .
+RUN pnpm prisma generate
 RUN pnpm build
 
 FROM node:lts-alpine3.22 AS production
