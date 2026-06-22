@@ -63,5 +63,3 @@ jobs:
             docker compose pull executive-homes-app-prod
 
             docker compose --profile prod up -d executive-homes-db executive-homes-app-prod
-
-            docker compose exec executive-homes-app-prod npx prisma migrate deploy
