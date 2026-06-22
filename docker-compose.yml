@@ -1,5 +1,6 @@
 services:
   executive-homes-app:
+    profiles: [dev]
     build:
       context: .
       target: development
@@ -22,6 +23,24 @@ services:
     depends_on:
       executive-homes-db:
         condition: service_healthy
+
+  executive-homes-app-prod:
+    profiles: [prod]
+    build:
+      context: .
+      target: production
+    image: waiyandev/executive-homes-app-prod:latest
+    container_name: executive-homes-app-prod
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.docker
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      executive-homes-db:
+        condition: service_healthy
+    restart: unless-stopped
 
   executive-homes-db:
     image: postgres:15-alpine
