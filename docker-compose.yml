@@ -7,7 +7,8 @@ services:
     container_name: executive-homes-app
     ports:
       - "3001:3001"
-    command: ["sh", "-c", "pnpm install && pnpm dev --hostname 0.0.0.0 --port 3001"]
+    command:
+      ["sh", "-c", "pnpm install && pnpm dev --hostname 0.0.0.0 --port 3001"]
     env_file:
       - .env.docker
     environment:
@@ -26,10 +27,6 @@ services:
     image: postgres:15-alpine
     env_file:
       - .env.docker
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
     container_name: executive-homes-db
     ports:
       - "5433:5432"
