@@ -18,7 +18,7 @@ RUN pnpm build
 
 FROM node:lts-alpine3.22 AS production
 WORKDIR /app
-RUN corepack enable
+RUN corepack enable && corepack prepare pnpm@10.33.4 --activate
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/public ./public
