@@ -29,8 +29,7 @@ jobs:
           target: production
           push: true
           tags: waiyandev/executive-homes-app-prod:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          no-cache: true
 
   deploy:
     runs-on: ubuntu-latest
