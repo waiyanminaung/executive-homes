@@ -5,6 +5,7 @@ import { seedFeatures } from "./seeds/features";
 import { seedTransitStations } from "./seeds/transitStations";
 import { seedPropertyTypes } from "./seeds/propertyTypes";
 import { seedContactInfo } from "./seeds/contactInfo";
+import { seedProperties } from "./seeds/properties";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -15,6 +16,7 @@ async function main() {
   await seedFeatures(prisma);
   await seedTransitStations(prisma);
   await seedContactInfo(prisma);
+  await seedProperties(prisma);
 
   console.log("Seed complete.");
 }
