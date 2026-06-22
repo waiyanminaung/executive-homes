@@ -32,7 +32,7 @@ services:
     image: waiyandev/executive-homes-app-prod:latest
     container_name: executive-homes-app-prod
     ports:
-      - "3000:3000"
+      - "3001:3000"
     env_file:
       - .env.docker
     environment:
@@ -40,7 +40,12 @@ services:
     depends_on:
       executive-homes-db:
         condition: service_healthy
-    restart: unless-stopped
+    restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   executive-homes-db:
     image: postgres:15-alpine
@@ -51,6 +56,7 @@ services:
       - "5433:5432"
     volumes:
       - executive_homes_db_data:/var/lib/postgresql/data
+    restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U executive_user -d executive_homes"]
       interval: 5s
