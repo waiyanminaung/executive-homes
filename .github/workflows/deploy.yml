@@ -53,7 +53,8 @@ jobs:
 
             cd $PROJECT_DIR
 
-            git pull origin main
+            git fetch origin main
+            git reset --hard origin/main
 
             cat > .env.docker <<'EOF'
             ${{ secrets.DOTENV_DOCKER }}
