@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import type { PropertyItem } from "@/app/types";
+import type { PropertyPricingTier } from "@/types/property";
 
 export interface PropertyDetailStat {
   label: string;
@@ -27,8 +28,7 @@ export interface PropertyTransitItem {
 }
 
 export interface PropertyDetail extends PropertyItem {
-  salePrice: number;
-  rentPrice: number;
+  pricingTiers: PropertyPricingTier[];
   isForSale: boolean;
   isForRent: boolean;
   address: string;
