@@ -144,7 +144,7 @@ export default async function AdminDashboardPage() {
               <p className="text-sm text-gray-400">No enquiries yet</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
               {recentEnquiries.map((enquiry) => (
                 <Link
                   key={enquiry.id}
@@ -193,7 +193,7 @@ export default async function AdminDashboardPage() {
               <p className="text-sm text-gray-400">No property types</p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-50">
+            <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
               {propertiesByType.map((type) => {
                 const pct = publishedCount > 0
                   ? Math.round((type._count.properties / publishedCount) * 100)
