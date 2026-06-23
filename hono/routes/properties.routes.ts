@@ -14,6 +14,7 @@ const PROPERTY_INCLUDE = {
   features: { include: { feature: true } },
   transitStations: { include: { station: true } },
   propertyType: { select: { id: true, name: true, slug: true } },
+  pricingTiers: { orderBy: { order: "asc" as const } },
 };
 
 const propertyRoutes = new Hono<AppEnv>();
@@ -47,7 +48,8 @@ propertyRoutes.get("/", zv("query", propertyListQuerySchema), async (c) => {
         id: true, slug: true, title: true,
         isForSale: true, isForRent: true, availabilityStatus: true,
         propertyType: { select: { id: true, name: true, slug: true } },
-        salePrice: true, rentPrice: true, beds: true, baths: true, areaSqm: true,
+        pricingTiers: { orderBy: { order: "asc" as const } },
+        beds: true, baths: true, areaSqm: true,
         isFeatured: true, isPublished: true, isPetFriendly: true, createdAt: true,
       },
     }),
@@ -58,7 +60,7 @@ propertyRoutes.get("/", zv("query", propertyListQuerySchema), async (c) => {
 });
 
 propertyRoutes.post("/", zv("json", propertyCreateSchema), async (c) => {
-  const { imageUrls, featureIds, transitStations, ...data } = c.req.valid("json");
+  const { imageUrls, featureIds, transitStations, pricingTiers, ...data } = c.req.valid("json");
 
   const property = await prisma.property.create({
     data: {
@@ -66,6 +68,7 @@ propertyRoutes.post("/", zv("json", propertyCreateSchema), async (c) => {
       images: { create: imageUrls.map((url, order) => ({ url, order })) },
       features: { create: featureIds.map((featureId) => ({ featureId })) },
       transitStations: { create: transitStations },
+      pricingTiers: { create: pricingTiers.map((tier, order) => ({ ...tier, order })) },
     },
     include: PROPERTY_INCLUDE,
   });
@@ -98,7 +101,7 @@ propertyRoutes.get("/:id", async (c) => {
 
 propertyRoutes.patch("/:id", zv("json", propertyUpdateSchema), async (c) => {
   const id = c.req.param("id");
-  const { imageUrls, featureIds, transitStations, ...data } = c.req.valid("json");
+  const { imageUrls, featureIds, transitStations, pricingTiers, ...data } = c.req.valid("json");
 
   const existing = await prisma.property.findUnique({ where: { id } });
   if (!existing) return c.json({ error: "Property not found" }, 404);
@@ -115,6 +118,9 @@ propertyRoutes.patch("/:id", zv("json", propertyUpdateSchema), async (c) => {
       }),
       ...(transitStations !== undefined && {
         transitStations: { deleteMany: {}, create: transitStations },
+      }),
+      ...(pricingTiers !== undefined && {
+        pricingTiers: { deleteMany: {}, create: pricingTiers.map((tier, order) => ({ ...tier, order })) },
       }),
     },
     include: PROPERTY_INCLUDE,
