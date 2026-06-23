@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import { ChevronRight, ArrowLeft, ExternalLink } from "lucide-react";
 import { Spinner, toast } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
-import type { PropertyCreateInput } from "@/validation/propertySchema";
+import type { PropertyCreateInput, PricingTierInput } from "@/validation/propertySchema";
 import PropertyForm from "../../components/PropertyForm";
 
 export default function AdminPropertyEditPage() {
@@ -58,7 +58,7 @@ export default function AdminPropertyEditPage() {
     isForSale: property.isForSale,
     isForRent: property.isForRent,
     availabilityStatus: property.availabilityStatus as PropertyCreateInput["availabilityStatus"],
-    pricingTiers: property.pricingTiers.map((tier: { label: string; salePrice: number | null; rentPrice: number | null; order: number }) => ({
+    pricingTiers: property.pricingTiers.map((tier: PricingTierInput) => ({
       label: tier.label,
       salePrice: tier.salePrice,
       rentPrice: tier.rentPrice,

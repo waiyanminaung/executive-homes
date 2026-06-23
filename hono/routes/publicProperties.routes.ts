@@ -1,23 +1,11 @@
 import { Hono } from "hono";
-import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { zv } from "@/validation/zv";
+import { publicPropertyListQuerySchema } from "@/validation/publicPropertySchema";
 
 const publicPropertiesRoutes = new Hono();
 
-const listQuerySchema = z.object({
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(12),
-  isForSale: z.coerce.boolean().optional(),
-  isForRent: z.coerce.boolean().optional(),
-  type: z.string().optional(),
-  provinceId: z.string().optional(),
-  districtId: z.string().optional(),
-  beds: z.coerce.number().int().optional(),
-  q: z.string().optional(),
-});
-
-publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
+publicPropertiesRoutes.get("/", zv("query", publicPropertyListQuerySchema), async (c) => {
   const { page, limit, isForSale, isForRent, type, provinceId, districtId, beds, q } = c.req.valid("query");
   const skip = (page - 1) * limit;
 
@@ -33,52 +21,60 @@ publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
 
   const orderBy = { createdAt: "desc" as const };
 
-  const [properties, total] = await Promise.all([
-    prisma.property.findMany({
-      where,
-      skip,
-      take: limit,
-      orderBy,
-      select: {
-        id: true, slug: true, title: true,
-        isForSale: true, isForRent: true, availabilityStatus: true,
-        propertyType: { select: { id: true, name: true, slug: true } },
-        pricingTiers: { orderBy: { order: "asc" as const } },
-        beds: true, baths: true, areaSqm: true,
-        address: true, isFeatured: true, isPublished: true, isPetFriendly: true, createdAt: true,
-        images: { take: 5, orderBy: { order: "asc" }, select: { url: true } },
-      },
-    }),
-    prisma.property.count({ where }),
-  ]);
+  try {
+    const [properties, total] = await Promise.all([
+      prisma.property.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy,
+        select: {
+          id: true, slug: true, title: true,
+          isForSale: true, isForRent: true, availabilityStatus: true,
+          propertyType: { select: { id: true, name: true, slug: true } },
+          pricingTiers: { orderBy: { order: "asc" as const } },
+          beds: true, baths: true, areaSqm: true,
+          address: true, isFeatured: true, isPublished: true, isPetFriendly: true, createdAt: true,
+          images: { take: 5, orderBy: { order: "asc" }, select: { url: true } },
+        },
+      }),
+      prisma.property.count({ where }),
+    ]);
 
-  return c.json({ properties, total, page, limit });
+    return c.json({ properties, total, page, limit });
+  } catch {
+    return c.json({ error: "Internal server error" }, 500);
+  }
 });
 
 publicPropertiesRoutes.get("/:slug", async (c) => {
   const slug = c.req.param("slug");
 
-  const property = await prisma.property.findUnique({
-    where: { slug, isPublished: true },
-    include: {
-      images: { orderBy: { order: "asc" } },
-      features: { include: { feature: true } },
-      transitStations: { include: { station: true } },
-      pricingTiers: { orderBy: { order: "asc" as const } },
-      province: { select: { id: true, name: true, slug: true } },
-      district: { select: { id: true, name: true, slug: true } },
-    },
-  });
+  try {
+    const property = await prisma.property.findUnique({
+      where: { slug, isPublished: true },
+      include: {
+        images: { orderBy: { order: "asc" } },
+        features: { include: { feature: true } },
+        transitStations: { include: { station: true } },
+        pricingTiers: { orderBy: { order: "asc" as const } },
+        province: { select: { id: true, name: true, slug: true } },
+        district: { select: { id: true, name: true, slug: true } },
+      },
+    });
 
-  if (!property) return c.json({ error: "Property not found" }, 404);
+    if (!property) return c.json({ error: "Property not found" }, 404);
 
-  return c.json({
-    property: {
-      ...property,
-      features: property.features.map((pf) => pf.feature),
-      transitStations: property.transitStations,
-    },
-  });
+    return c.json({
+      property: {
+        ...property,
+        features: property.features.map((pf) => pf.feature),
+        transitStations: property.transitStations,
+      },
+    });
+  } catch {
+    return c.json({ error: "Internal server error" }, 500);
+  }
 });
 
 export default publicPropertiesRoutes;
