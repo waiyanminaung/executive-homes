@@ -88,10 +88,16 @@ export default function PropertyTable({ properties, onDeleted }: PropertyTablePr
                   />
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-700 whitespace-nowrap">
-                  {property.salePrice ? formatPrice(property.salePrice) : null}
-                  {property.salePrice && property.rentPrice ? " / " : null}
-                  {property.rentPrice ? `${formatPrice(property.rentPrice)}/mo` : null}
-                  {!property.salePrice && !property.rentPrice ? "—" : null}
+                  {(() => {
+                    const salePrices = property.pricingTiers.map((t) => t.salePrice).filter((v): v is number => v !== null);
+                    const rentPrices = property.pricingTiers.map((t) => t.rentPrice).filter((v): v is number => v !== null);
+                    const salePrice = salePrices.length > 0 ? formatPrice(Math.min(...salePrices)) : null;
+                    const rentPrice = rentPrices.length > 0 ? formatPrice(Math.min(...rentPrices)) : null;
+                    if (salePrice && rentPrice) return `${salePrice} / ${rentPrice}/mo`;
+                    if (salePrice) return salePrice;
+                    if (rentPrice) return `${rentPrice}/mo`;
+                    return "—";
+                  })()}
                 </td>
                 <td className="px-6 py-4">
                   <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${property.isPublished ? "bg-green-50 text-green-700" : "bg-gray-50 text-gray-500"}`}>

@@ -160,8 +160,6 @@ export async function seedProperties(prisma: PrismaClient) {
         propertyTypeId: propertyType.id,
         isForSale: p.isForSale ?? false,
         isForRent: p.isForRent ?? false,
-        salePrice: p.salePrice,
-        rentPrice: p.rentPrice,
         beds: p.beds,
         baths: p.baths,
         areaSqm: p.areaSqm,
@@ -173,6 +171,16 @@ export async function seedProperties(prisma: PrismaClient) {
         isPetFriendly: p.isPetFriendly,
         provinceId: bangkok.id,
         districtId: district?.id,
+        pricingTiers: {
+          create: [
+            {
+              label: "Standard",
+              salePrice: p.salePrice ?? null,
+              rentPrice: p.rentPrice ?? null,
+              order: 0,
+            },
+          ],
+        },
       },
     });
   }

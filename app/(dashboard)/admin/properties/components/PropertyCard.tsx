@@ -17,8 +17,10 @@ interface Props {
 }
 
 export default function PropertyCard({ property, onDelete }: Props) {
-  const salePrice = formatPrice(property.salePrice ?? null);
-  const rentPrice = formatPrice(property.rentPrice ?? null);
+  const minSale = property.pricingTiers.map((t) => t.salePrice).filter((v): v is number => v !== null);
+  const minRent = property.pricingTiers.map((t) => t.rentPrice).filter((v): v is number => v !== null);
+  const salePrice = minSale.length > 0 ? formatPrice(Math.min(...minSale)) : null;
+  const rentPrice = minRent.length > 0 ? formatPrice(Math.min(...minRent)) : null;
 
   let priceDisplay = "—";
   if (salePrice && rentPrice) priceDisplay = `${salePrice} / ${rentPrice}/mo`;
