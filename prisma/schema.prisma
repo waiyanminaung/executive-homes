@@ -97,8 +97,6 @@ model Property {
   isForSale          Boolean            @default(false)
   isForRent          Boolean            @default(false)
   availabilityStatus AvailabilityStatus @default(AVAILABLE)
-  salePrice     Float?
-  rentPrice     Float?
   beds          Int?
   baths         Int?
   areaSqm       Float
@@ -123,11 +121,24 @@ model Property {
   features        PropertyFeature[]
   transitStations PropertyTransit[]
   enquiries       Enquiry[]
+  pricingTiers    PropertyPricingTier[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@map("properties")
+}
+
+model PropertyPricingTier {
+  id         String   @id @default(cuid())
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  label      String   @default("")
+  salePrice  Float?
+  rentPrice  Float?
+  order      Int      @default(0)
+
+  @@map("property_pricing_tiers")
 }
 
 model PropertyImage {
