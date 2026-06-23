@@ -2,6 +2,14 @@ import type { Feature } from "./feature";
 import type { PropertyTransitItem } from "./transitStation";
 import type { PropertyTypeItem } from "./propertyType";
 
+export interface PropertyPricingTier {
+  id: string;
+  label: string;
+  salePrice: number | null;
+  rentPrice: number | null;
+  order: number;
+}
+
 export interface PropertyListItem {
   id: string;
   slug: string;
@@ -10,8 +18,7 @@ export interface PropertyListItem {
   isForSale: boolean;
   isForRent: boolean;
   availabilityStatus: string;
-  salePrice: number | null;
-  rentPrice: number | null;
+  pricingTiers: PropertyPricingTier[];
   beds: number | null;
   baths: number | null;
   areaSqm: number;
@@ -36,8 +43,7 @@ export interface PropertyDetail {
   isForSale: boolean;
   isForRent: boolean;
   availabilityStatus: string;
-  salePrice: number | null;
-  rentPrice: number | null;
+  pricingTiers: PropertyPricingTier[];
   beds: number | null;
   baths: number | null;
   areaSqm: number;

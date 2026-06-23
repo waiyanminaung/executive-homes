@@ -25,6 +25,7 @@ export interface PropertyItem {
   title: string;
   location: string;
   price: number;
+  hasMultipleTiers: boolean;
   imageUrls: string[];
   listingType: "Sale" | "Rent" | "Sale & Rent";
   availabilityStatus: "AVAILABLE" | "SOLD" | "RENTED";
