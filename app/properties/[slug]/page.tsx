@@ -33,7 +33,9 @@ export default async function PropertyDetailPage({ params }: PageProps) {
     getContactInfo(),
   ]);
 
-  const price = raw.isForSale ? (raw.salePrice ?? 0) : (raw.rentPrice ?? 0);
+  const prices = raw.pricingTiers.flatMap((t) => [t.salePrice, t.rentPrice]).filter((v): v is number => v !== null);
+  const price = prices.length > 0 ? Math.min(...prices) : 0;
+  const hasMultipleTiers = raw.pricingTiers.length > 1;
   const listingType = raw.isForSale && raw.isForRent ? "Sale & Rent" : raw.isForSale ? "Sale" : "Rent";
   const locationLabel = raw.subDistrict?.name ?? raw.district?.name ?? raw.province?.name ?? raw.address;
 
@@ -84,8 +86,8 @@ export default async function PropertyDetailPage({ params }: PageProps) {
     beds: raw.beds ?? 0,
     baths: raw.baths ?? 0,
     area: `${raw.areaSqm} sqm`,
-    salePrice: raw.salePrice ?? 0,
-    rentPrice: raw.rentPrice ?? 0,
+    hasMultipleTiers,
+    pricingTiers: raw.pricingTiers,
     address: raw.address,
     provinceName: raw.province?.name ?? null,
     districtName: raw.district?.name ?? null,
