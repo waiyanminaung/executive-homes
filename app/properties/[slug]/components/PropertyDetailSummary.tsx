@@ -62,7 +62,7 @@ function PricingTiersTable({ tiers, isForSale, isForRent }: PricingTiersTablePro
               <td className="py-2.5 pr-4 font-medium text-neutral-900">{tier.label || "—"}</td>
               {isForRent && (
                 <td className="py-2.5 pr-4 font-bold text-secondary-500">
-                  {tier.rentPrice != null ? `${formatPrice(tier.rentPrice)}` : "—"}
+                  {tier.rentPrice != null ? formatPrice(tier.rentPrice) : "—"}
                 </td>
               )}
               {isForSale && (
