@@ -7,6 +7,76 @@ import { TRANSIT_LINE_COLORS } from "@/constants/transitStations";
 import { WALKING_SPEED_METERS_PER_MIN } from "@/app/constants";
 import { classNames } from "@/utils/classNames";
 import type { TransitLine } from "@/constants/transitStations";
+import type { PropertyPricingTier } from "@/types/property";
+
+interface SinglePriceDisplayProps {
+  tier: PropertyPricingTier;
+  isForSale: boolean;
+  isForRent: boolean;
+}
+
+function SinglePriceDisplay({ tier, isForSale, isForRent }: SinglePriceDisplayProps) {
+  return (
+    <div className="grid gap-2">
+      {isForSale && tier.salePrice != null && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-semibold text-neutral-600">For sale</span>
+          <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
+            {formatPrice(tier.salePrice)}
+          </span>
+        </div>
+      )}
+
+      {isForRent && tier.rentPrice != null && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm font-semibold text-neutral-600">For rent</span>
+          <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
+            {formatPrice(tier.rentPrice)}/mo
+          </span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface PricingTiersTableProps {
+  tiers: PropertyPricingTier[];
+  isForSale: boolean;
+  isForRent: boolean;
+}
+
+function PricingTiersTable({ tiers, isForSale, isForRent }: PricingTiersTableProps) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr className="border-b border-gray-200">
+            <th className="py-2 pr-4 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Furnishing</th>
+            {isForRent && <th className="py-2 pr-4 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Rent / mo</th>}
+            {isForSale && <th className="py-2 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Sale</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {tiers.map((tier) => (
+            <tr key={tier.id} className="border-b border-gray-100 last:border-0">
+              <td className="py-2.5 pr-4 font-medium text-neutral-900">{tier.label || "—"}</td>
+              {isForRent && (
+                <td className="py-2.5 pr-4 font-bold text-secondary-500">
+                  {tier.rentPrice != null ? `${formatPrice(tier.rentPrice)}` : "—"}
+                </td>
+              )}
+              {isForSale && (
+                <td className="py-2.5 font-bold text-secondary-500">
+                  {tier.salePrice != null ? formatPrice(tier.salePrice) : "—"}
+                </td>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 const AVAILABILITY_BADGE: Record<string, string> = {
   SOLD: "bg-gray-100 text-gray-700",
@@ -80,24 +150,12 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
             </p>
           </div>
 
-          <div className="mt-4 grid gap-2">
-            {property.isForSale && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-semibold text-neutral-600">For sale</span>
-                <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
-                  {formatPrice(property.salePrice)}
-                </span>
-              </div>
-            )}
-
-            {property.isForRent && (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-sm font-semibold text-neutral-600">For rent</span>
-                <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
-                  {formatPrice(property.rentPrice)}/mo
-                </span>
-              </div>
-            )}
+          <div className="mt-4">
+            {property.pricingTiers.length === 1 ? (
+              <SinglePriceDisplay tier={property.pricingTiers[0]} isForSale={property.isForSale} isForRent={property.isForRent} />
+            ) : property.pricingTiers.length > 1 ? (
+              <PricingTiersTable tiers={property.pricingTiers} isForSale={property.isForSale} isForRent={property.isForRent} />
+            ) : null}
           </div>
         </div>
 
