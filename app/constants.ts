@@ -5,8 +5,6 @@ import type {
   WhyItem,
 } from "./types";
 
-export const R2_PUBLIC_URL = (process.env.NEXT_PUBLIC_R2_PUBLIC_URL ?? process.env.R2_PUBLIC_URL)!;
-
 export const WALKING_SPEED_METERS_PER_MIN = 80;
 
 export const HOME_HERO_FILTER_OPTIONS = {

@@ -5,7 +5,6 @@ import { ChevronDown, GripVertical } from "lucide-react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { classNames } from "@/utils/classNames";
-import { getMediaUrl } from "@/utils/getMediaUrl";
 import type { HomeAreaCard } from "@/types/homeAreaCard";
 import HomeAreaCardForm from "./HomeAreaCardForm";
 
@@ -51,7 +50,7 @@ export default function HomeAreaCardRow({
         >
           <div className="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100">
             <Image
-              src={getMediaUrl(card.imageKey)}
+              src={card.imageUrl}
               alt={card.name}
               width={40}
               height={40}

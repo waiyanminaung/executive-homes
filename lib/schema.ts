@@ -99,7 +99,10 @@ export type ApiSchema = {
     DELETE: { data: { ok: true }; params: { id: string } };
   };
   "admin/media": {
-    GET: { data: { images: ClientMediaImage[] } };
+    GET: {
+      data: { images: ClientMediaImage[]; total: number; page: number; limit: number };
+      query?: { page?: string; limit?: string; search?: string };
+    };
     POST: { data: ClientMediaImage; body: { file: File; watermark?: string } };
   };
   "admin/media/:id": {

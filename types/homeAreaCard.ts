@@ -2,6 +2,7 @@ export interface HomeAreaCard {
   id: string;
   name: string;
   imageKey: string;
+  imageUrl: string;
   order: number;
   listingCount: number;
   provinceId: string | null;

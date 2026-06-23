@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Image from "next/image";
-import { Trash2, ExternalLink } from "lucide-react";
-import { Button, ConfirmDialog, Spinner } from "@geckoui/geckoui";
+import { Trash2, ExternalLink, Search, X } from "lucide-react";
+import { Button, ConfirmDialog, Input, Pagination, Spinner } from "@geckoui/geckoui";
 import { useWrite } from "@/lib/spoosh";
 import { formatBytes } from "@/utils/formatBytes";
 import { useMediaLibrary } from "@/utils/useMediaLibrary";
@@ -11,15 +11,30 @@ import type { ClientMediaImage } from "@/types/media";
 import MediaUploadZone from "@/components/@shared/MediaUploadZone";
 import MediaUploadingCell from "@/components/@shared/MediaUploadingCell";
 
+const PAGE_LIMIT = 30;
+
 export default function LibraryPage() {
   const { trigger: deleteImage } = useWrite((api) => api("admin/media/:id").DELETE());
   const [showUploadZone, setShowUploadZone] = useState(false);
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
 
-  const { images, loading, items: uploadItems, handleFiles, retry, remove } = useMediaLibrary({
-    onStart: () => setShowUploadZone(false),
+  const handleStart = useCallback(() => setShowUploadZone(false), []);
+
+  const { images, total, loading, items: uploadItems, handleFiles, retry, remove } = useMediaLibrary({
+    onStart: handleStart,
+    search,
+    page,
+    limit: PAGE_LIMIT,
   });
 
+  const totalPages = Math.ceil(total / PAGE_LIMIT);
   const hasImages = images.length > 0 || uploadItems.length > 0;
+
+  const handleSearchChange = (val: string) => {
+    setSearch(val);
+    setPage(1);
+  };
 
   const handleDelete = (image: ClientMediaImage) => {
     ConfirmDialog.show({
@@ -54,19 +69,35 @@ export default function LibraryPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold text-gray-900">Media Library</h1>
           <p className="text-sm text-gray-500 mt-0.5">
-            {images.length} image{images.length !== 1 ? "s" : ""}
+            {total} image{total !== 1 ? "s" : ""}
           </p>
         </div>
 
-        {hasImages && uploadItems.length === 0 && (
-          <Button type="button" variant="outlined" onClick={() => setShowUploadZone((prev) => !prev)}>
-            {showUploadZone ? "Close" : "Upload Images"}
-          </Button>
-        )}
+        <div className="flex items-center gap-3">
+          <div className="w-64">
+            <Input
+              value={search}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder="Search by filename..."
+              prefix={<Search className="w-4 h-4 text-gray-400" />}
+              suffix={search ? (
+                <button type="button" onClick={() => handleSearchChange("")}>
+                  <X className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600" />
+                </button>
+              ) : undefined}
+            />
+          </div>
+
+          {uploadItems.length === 0 && (
+            <Button type="button" variant="outlined" onClick={() => setShowUploadZone((prev) => !prev)}>
+              {showUploadZone ? "Close" : "Upload Images"}
+            </Button>
+          )}
+        </div>
       </div>
 
       {loading ? (
@@ -129,6 +160,17 @@ export default function LibraryPage() {
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {totalPages > 1 && (
+            <div className="flex justify-center pt-2">
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                onChange={setPage}
+                className="justify-center"
+              />
             </div>
           )}
         </div>

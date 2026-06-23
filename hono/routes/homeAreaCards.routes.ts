@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { prisma } from "@/lib/prisma";
+import { getMediaUrl } from "@/utils/getMediaUrl";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
 import { zv } from "@/validation/zv";
 import { homeAreaCardCreateSchema, homeAreaCardUpdateSchema } from "@/validation/homeAreaCardSchema";
@@ -33,7 +34,7 @@ homeAreaCardsRoutes.get("/", async (c) => {
         },
       });
 
-      return { ...card, listingCount };
+      return { ...card, listingCount, imageUrl: getMediaUrl(card.imageKey) };
     }),
   );
 
@@ -44,7 +45,7 @@ homeAreaCardsRoutes.post("/", zv("json", homeAreaCardCreateSchema), async (c) =>
   const data = c.req.valid("json");
   const areaCard = await prisma.homeAreaCard.create({ data, include: INCLUDE });
 
-  return c.json({ areaCard }, 201);
+  return c.json({ areaCard: { ...areaCard, imageUrl: getMediaUrl(areaCard.imageKey) } }, 201);
 });
 
 homeAreaCardsRoutes.patch("/:id", zv("json", homeAreaCardUpdateSchema), async (c) => {
@@ -56,7 +57,7 @@ homeAreaCardsRoutes.patch("/:id", zv("json", homeAreaCardUpdateSchema), async (c
 
   const areaCard = await prisma.homeAreaCard.update({ where: { id }, data, include: INCLUDE });
 
-  return c.json({ areaCard });
+  return c.json({ areaCard: { ...areaCard, imageUrl: getMediaUrl(areaCard.imageKey) } });
 });
 
 homeAreaCardsRoutes.delete("/:id", async (c) => {

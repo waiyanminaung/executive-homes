@@ -17,6 +17,9 @@ export type UploadFileItem = {
 interface UseMediaLibraryOptions {
   onUploaded?: (image: ClientMediaImage) => void;
   onStart?: (count: number) => void;
+  search?: string;
+  page?: number;
+  limit?: number;
 }
 
 type UploadInput = { id?: string; body: SpooshBody<{ file: File; watermark?: string }> };
@@ -29,8 +32,11 @@ function extractErrorMessage(error: unknown): string | undefined {
   return undefined;
 }
 
-export function useMediaLibrary({ onUploaded, onStart }: UseMediaLibraryOptions = {}) {
-  const { data, loading } = useRead((api) => api("admin/media").GET());
+export function useMediaLibrary({ onUploaded, onStart, search = "", page = 1, limit = 30 }: UseMediaLibraryOptions = {}) {
+  const query: Record<string, string> = { page: String(page), limit: String(limit) };
+  if (search) query.search = search;
+
+  const { data, loading } = useRead((api) => api("admin/media").GET({ query }));
   const [fileMeta, setFileMeta] = useState<Record<string, { filename: string; file: File }>>({});
   const processedSuccessRef = useRef<Set<string>>(new Set());
 
@@ -63,7 +69,8 @@ export function useMediaLibrary({ onUploaded, onStart }: UseMediaLibraryOptions 
 
         optimistic((cache) =>
           cache("admin/media").set((current) => ({
-            images: [...(current?.images ?? []), image],
+            ...current,
+            images: [image, ...(current?.images ?? [])],
           })),
         );
 
@@ -93,6 +100,9 @@ export function useMediaLibrary({ onUploaded, onStart }: UseMediaLibraryOptions 
 
   return {
     images: data?.images ?? [],
+    total: data?.total ?? 0,
+    page: data?.page ?? page,
+    limit: data?.limit ?? limit,
     loading,
     items,
     handleFiles,

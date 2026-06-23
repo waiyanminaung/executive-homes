@@ -19,11 +19,24 @@ const mediaRoutes = new Hono<AppEnv>();
 mediaRoutes.use("*", authMiddleware, adminMiddleware);
 
 mediaRoutes.get("/", async (c) => {
-  const images = await prisma.mediaImage.findMany({
-    orderBy: { createdAt: "desc" },
-  });
+  const { page = "1", limit = "30", search = "" } = c.req.query();
+  const pageNum = Math.max(1, parseInt(page));
+  const limitNum = Math.min(100, Math.max(1, parseInt(limit)));
+  const skip = (pageNum - 1) * limitNum;
 
-  return c.json({ images: images.map((img) => ({ ...img, url: getMediaUrl(img.key) })) });
+  const where = search ? { filename: { contains: search, mode: "insensitive" as const } } : {};
+
+  const [images, total] = await Promise.all([
+    prisma.mediaImage.findMany({ where, orderBy: { createdAt: "desc" }, skip, take: limitNum }),
+    prisma.mediaImage.count({ where }),
+  ]);
+
+  return c.json({
+    images: images.map((img) => ({ ...img, url: getMediaUrl(img.key) })),
+    total,
+    page: pageNum,
+    limit: limitNum,
+  });
 });
 
 mediaRoutes.post("/", async (c) => {

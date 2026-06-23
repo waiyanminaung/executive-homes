@@ -10,7 +10,6 @@ import {
   SelectOption,
 } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
-import { getMediaUrl } from "@/utils/getMediaUrl";
 import { homeAreaCardFormSchema, type HomeAreaCardFormValues } from "@/validation/homeAreaCardSchema";
 import type { HomeAreaCard } from "@/types/homeAreaCard";
 import type { ClientMediaImage } from "@/types/media";
@@ -38,9 +37,8 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
   const { trigger: deleteCard } = useWrite((api) => api("admin/home-area-cards/:id").DELETE());
 
   const [imageKey, setImageKey] = useState<string>(card?.imageKey ?? "");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(card?.imageUrl ?? null);
   const [imageError, setImageError] = useState<string | null>(null);
-
-  const previewUrl = imageKey ? getMediaUrl(imageKey) : null;
 
   const methods = useForm<HomeAreaCardFormValues>({
     values: card
@@ -101,10 +99,14 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
 
   const handleImageSelect = (image: ClientMediaImage) => {
     setImageKey(image.key);
+    setPreviewUrl(image.url);
     setImageError(null);
   };
 
-  const handleImageClear = () => setImageKey("");
+  const handleImageClear = () => {
+    setImageKey("");
+    setPreviewUrl(null);
+  };
 
   return (
     <FormProvider {...methods}>
