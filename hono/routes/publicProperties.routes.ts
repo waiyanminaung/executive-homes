@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { z } from "zod";
-import { Prisma } from "@/prisma/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { zv } from "@/validation/zv";
 
@@ -20,10 +19,10 @@ const listQuerySchema = z.object({
 });
 
 publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
-  const { page, limit, isForSale, isForRent, type, provinceId, districtId, beds, q, sort } = c.req.valid("query");
+  const { page, limit, isForSale, isForRent, type, provinceId, districtId, beds, q } = c.req.valid("query");
   const skip = (page - 1) * limit;
 
-  const where: Prisma.PropertyWhereInput = { isPublished: true };
+  const where: Record<string, unknown> = { isPublished: true };
 
   if (isForSale !== undefined) where.isForSale = isForSale;
   if (isForRent !== undefined) where.isForRent = isForRent;
@@ -33,12 +32,7 @@ publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
   if (beds !== undefined) where.beds = beds;
   if (q) where.title = { contains: q, mode: "insensitive" };
 
-  const orderBy =
-    sort === "price-asc"
-      ? { salePrice: "asc" as const }
-      : sort === "price-desc"
-        ? { salePrice: "desc" as const }
-        : { createdAt: "desc" as const };
+  const orderBy = { createdAt: "desc" as const };
 
   const [properties, total] = await Promise.all([
     prisma.property.findMany({
@@ -50,7 +44,8 @@ publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
         id: true, slug: true, title: true,
         isForSale: true, isForRent: true, availabilityStatus: true,
         propertyType: { select: { id: true, name: true, slug: true } },
-        salePrice: true, rentPrice: true, beds: true, baths: true, areaSqm: true,
+        pricingTiers: { orderBy: { order: "asc" as const } },
+        beds: true, baths: true, areaSqm: true,
         address: true, isFeatured: true, isPublished: true, isPetFriendly: true, createdAt: true,
         images: { take: 5, orderBy: { order: "asc" }, select: { url: true } },
       },
@@ -70,6 +65,7 @@ publicPropertiesRoutes.get("/:slug", async (c) => {
       images: { orderBy: { order: "asc" } },
       features: { include: { feature: true } },
       transitStations: { include: { station: true } },
+      pricingTiers: { orderBy: { order: "asc" as const } },
       province: { select: { id: true, name: true, slug: true } },
       district: { select: { id: true, name: true, slug: true } },
     },
