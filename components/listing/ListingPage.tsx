@@ -10,13 +10,12 @@ import { ListingResultsBar } from "./ListingResultsBar";
 import { ListingPagination } from "./ListingPagination";
 
 
-function toPropertyItem(p: {
+interface PropertyApiItem {
   id: string;
   slug: string;
   title: string;
   address: string;
-  salePrice: number | null;
-  rentPrice: number | null;
+  pricingTiers: { salePrice: number | null; rentPrice: number | null; order: number }[];
   isForSale: boolean;
   isForRent: boolean;
   availabilityStatus: string;
@@ -24,15 +23,20 @@ function toPropertyItem(p: {
   baths: number | null;
   areaSqm: number;
   images: { url: string }[];
-}): PropertyItem {
-  const price = p.isForSale ? (p.salePrice ?? 0) : (p.rentPrice ?? 0);
+}
+
+function toPropertyItem(p: PropertyApiItem): PropertyItem {
   const listingType = p.isForSale && p.isForRent ? "Sale & Rent" : p.isForSale ? "Sale" : "Rent";
+  const prices = p.pricingTiers.flatMap((t) => [t.salePrice, t.rentPrice]).filter((v): v is number => v !== null);
+  const price = prices.length > 0 ? Math.min(...prices) : 0;
+
   return {
     id: p.id,
     slug: p.slug,
     title: p.title,
     location: p.address,
     price,
+    hasMultipleTiers: p.pricingTiers.length > 1,
     imageUrls: p.images.map((img) => img.url),
     listingType,
     availabilityStatus: p.availabilityStatus as "AVAILABLE" | "SOLD" | "RENTED",
