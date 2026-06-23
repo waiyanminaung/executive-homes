@@ -145,7 +145,8 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
 
         <p className="text-base font-bold text-primary-500 md:text-lg">
-          {formatPrice(property.price)}{property.listingType === "Rent" ? "/mo" : ""}
+          {property.hasMultipleTiers ? "Starting from " : ""}
+          {formatPrice(property.price)}{property.listingType === "Rent" || property.listingType === "Sale & Rent" ? "/mo" : ""}
         </p>
       </div>
     </Link>
