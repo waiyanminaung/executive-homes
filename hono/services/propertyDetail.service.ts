@@ -10,6 +10,7 @@ export async function getPropertyBySlug(slug: string) {
         images: { orderBy: { order: "asc" } },
         features: { include: { feature: true } },
         transitStations: { include: { station: true } },
+        pricingTiers: { orderBy: { order: "asc" } },
         province: { select: { name: true } },
         district: { select: { name: true } },
         subDistrict: { select: { name: true } },
@@ -37,8 +38,7 @@ export async function getSimilarProperties(slug: string, provinceId: string, pro
         isForSale: true,
         isForRent: true,
         availabilityStatus: true,
-        salePrice: true,
-        rentPrice: true,
+        pricingTiers: { orderBy: { order: "asc" as const } },
         beds: true,
         baths: true,
         areaSqm: true,
@@ -49,13 +49,16 @@ export async function getSimilarProperties(slug: string, provinceId: string, pro
 
     return results.map((p) => {
       const listingType = p.isForSale && p.isForRent ? "Sale & Rent" : p.isForSale ? "Sale" : "Rent";
+      const prices = p.pricingTiers.flatMap((t) => [t.salePrice, t.rentPrice]).filter((v): v is number => v !== null);
+      const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
 
       return {
         id: p.id,
         slug: p.slug,
         title: p.title,
         location: p.address,
-        price: p.isForSale ? (p.salePrice ?? 0) : (p.rentPrice ?? 0),
+        price: minPrice,
+        hasMultipleTiers: p.pricingTiers.length > 1,
         listingType,
         availabilityStatus: p.availabilityStatus,
         beds: p.beds ?? 0,
