@@ -15,7 +15,6 @@ const listQuerySchema = z.object({
   districtId: z.string().optional(),
   beds: z.coerce.number().int().optional(),
   q: z.string().optional(),
-  sort: z.enum(["default", "price-asc", "price-desc"]).optional(),
 });
 
 publicPropertiesRoutes.get("/", zv("query", listQuerySchema), async (c) => {
