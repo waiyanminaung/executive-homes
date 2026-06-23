@@ -2,6 +2,15 @@ import { z } from "zod";
 
 export const AVAILABILITY_STATUSES = ["AVAILABLE", "SOLD", "RENTED"] as const;
 
+export const pricingTierSchema = z.object({
+  label: z.string(),
+  salePrice: z.preprocess((v) => (!v ? null : Number(v)), z.number().positive().nullable()),
+  rentPrice: z.preprocess((v) => (!v ? null : Number(v)), z.number().positive().nullable()),
+  order: z.number().int().default(0),
+});
+
+export type PricingTierInput = z.infer<typeof pricingTierSchema>;
+
 const propertyBaseSchema = z.object({
   title: z.string().min(1, "Title is required"),
   slug: z
@@ -13,8 +22,7 @@ const propertyBaseSchema = z.object({
   isForSale: z.boolean(),
   isForRent: z.boolean(),
   availabilityStatus: z.enum(AVAILABILITY_STATUSES),
-  salePrice: z.preprocess((v) => (!v ? null : Number(v)), z.number().positive().nullable()),
-  rentPrice: z.preprocess((v) => (!v ? null : Number(v)), z.number().positive().nullable()),
+  pricingTiers: z.array(pricingTierSchema).min(1, "At least one pricing tier is required"),
   beds: z.coerce.number().int().min(0).nullable().optional(),
   baths: z.coerce.number().int().min(0).nullable().optional(),
   areaSqm: z.coerce.number().positive("Area is required"),
@@ -38,32 +46,14 @@ const propertyBaseSchema = z.object({
   ),
 });
 
-const withPriceValidation = propertyBaseSchema.superRefine((data, ctx) => {
-  if (data.isForSale && !data.salePrice) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Sale price is required when For Sale is enabled", path: ["salePrice"] });
-  }
-
-  if (data.isForRent && !data.rentPrice) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Rent price is required when For Rent is enabled", path: ["rentPrice"] });
-  }
-});
-
-export const propertyCreateSchema = withPriceValidation.refine(
+export const propertyCreateSchema = propertyBaseSchema.refine(
   (data) => data.isForSale || data.isForRent,
   { message: "At least one of For Sale or For Rent must be selected", path: ["isForSale"] },
 );
 
 export type PropertyCreateInput = z.infer<typeof propertyCreateSchema>;
 
-export const propertyUpdateSchema = propertyBaseSchema.partial().superRefine((data, ctx) => {
-  if (data.isForSale && !data.salePrice) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Sale price is required when For Sale is enabled", path: ["salePrice"] });
-  }
-
-  if (data.isForRent && !data.rentPrice) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Rent price is required when For Rent is enabled", path: ["rentPrice"] });
-  }
-}).refine(
+export const propertyUpdateSchema = propertyBaseSchema.partial().refine(
   (data) => {
     if (data.isForSale !== undefined && data.isForRent !== undefined) {
       return data.isForSale || data.isForRent;
