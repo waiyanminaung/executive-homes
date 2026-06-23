@@ -21,7 +21,7 @@ const DEFAULT_VALUES: PropertyCreateInput = {
   slug: "",
   description: "",
   propertyTypeId: "",
-  isForSale: true,
+  isForSale: false,
   isForRent: false,
   availabilityStatus: "AVAILABLE",
   salePrice: null,

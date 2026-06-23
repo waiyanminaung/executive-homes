@@ -1,6 +1,6 @@
 "use client";
 
-import { RHFInput, RHFController, RHFSelect, RHFError, RHFSwitch, SelectOption, Spinner } from "@geckoui/geckoui";
+import { RHFInput, RHFController, RHFSelect, RHFError, RHFSwitch, SelectOption, Spinner, Label } from "@geckoui/geckoui";
 import TiptapEditor from "@/components/TiptapEditor";
 import { AVAILABILITY_STATUSES } from "@/validation/propertySchema";
 import { useSlugAutoFill } from "@/utils/useSlugAutoFill";
@@ -23,7 +23,7 @@ export default function PropertyFormBasicSection() {
       <h2 className="text-sm font-semibold text-gray-900">Basic Information</h2>
 
       <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-gray-700">Title</label>
+        <Label required>Title</Label>
         <RHFInput name="title" placeholder="e.g. Modern Condo at Sukhumvit 11" onBlur={handleTitleBlur} />
         <RHFError name="title" />
       </div>
@@ -32,7 +32,7 @@ export default function PropertyFormBasicSection() {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-gray-700">Property Type</label>
+          <Label required>Property Type</Label>
           {loading ? (
             <div className="flex items-center h-10">
               <Spinner className="w-4 h-4 text-primary-600" />
@@ -48,7 +48,7 @@ export default function PropertyFormBasicSection() {
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-gray-700">Availability</label>
+          <Label required>Availability</Label>
           <RHFSelect<string> name="availabilityStatus">
             {AVAILABILITY_STATUSES.map((status) => (
               <SelectOption key={status} value={status} label={AVAILABILITY_LABELS[status] ?? status} />
@@ -59,7 +59,7 @@ export default function PropertyFormBasicSection() {
       </div>
 
       <div className="space-y-3">
-        <label className="block text-sm font-medium text-gray-700">Listed As</label>
+        <Label required>Listed As</Label>
         <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
           <label className="flex cursor-pointer items-center gap-2.5">
             <RHFSwitch name="isForSale" />
@@ -74,7 +74,7 @@ export default function PropertyFormBasicSection() {
       </div>
 
       <div className="space-y-1.5">
-        <label className="block text-sm font-medium text-gray-700">Description</label>
+        <Label required>Description</Label>
         <RHFController
           name="description"
           render={({ field, fieldState }) => (

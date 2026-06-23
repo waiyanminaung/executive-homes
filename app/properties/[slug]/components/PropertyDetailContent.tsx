@@ -41,7 +41,7 @@ export function PropertyDetailContent({ property }: PropertyDetailContentProps) 
       <div className="space-y-4">
         <h2 className="text-lg font-bold text-neutral-900">About this property</h2>
         <div
-          className="text-sm leading-relaxed text-neutral-950 [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_li]:mb-1 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:mb-2 [&_h3]:text-sm [&_h3]:font-semibold [&_h3]:mb-1 [&_strong]:font-semibold [&_em]:italic"
+          className="prose max-w-none text-neutral-950"
           dangerouslySetInnerHTML={{ __html: property.description }}
         />
       </div>

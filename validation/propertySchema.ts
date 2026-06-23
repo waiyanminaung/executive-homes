@@ -13,8 +13,8 @@ const propertyBaseSchema = z.object({
   isForSale: z.boolean(),
   isForRent: z.boolean(),
   availabilityStatus: z.enum(AVAILABILITY_STATUSES),
-  salePrice: z.coerce.number().positive().nullable().optional(),
-  rentPrice: z.coerce.number().positive().nullable().optional(),
+  salePrice: z.preprocess((v) => (!v ? null : Number(v)), z.number().positive().nullable()),
+  rentPrice: z.preprocess((v) => (!v ? null : Number(v)), z.number().positive().nullable()),
   beds: z.coerce.number().int().min(0).nullable().optional(),
   baths: z.coerce.number().int().min(0).nullable().optional(),
   areaSqm: z.coerce.number().positive("Area is required"),
@@ -38,14 +38,32 @@ const propertyBaseSchema = z.object({
   ),
 });
 
-export const propertyCreateSchema = propertyBaseSchema.refine(
+const withPriceValidation = propertyBaseSchema.superRefine((data, ctx) => {
+  if (data.isForSale && !data.salePrice) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Sale price is required when For Sale is enabled", path: ["salePrice"] });
+  }
+
+  if (data.isForRent && !data.rentPrice) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Rent price is required when For Rent is enabled", path: ["rentPrice"] });
+  }
+});
+
+export const propertyCreateSchema = withPriceValidation.refine(
   (data) => data.isForSale || data.isForRent,
   { message: "At least one of For Sale or For Rent must be selected", path: ["isForSale"] },
 );
 
 export type PropertyCreateInput = z.infer<typeof propertyCreateSchema>;
 
-export const propertyUpdateSchema = propertyBaseSchema.partial().refine(
+export const propertyUpdateSchema = propertyBaseSchema.partial().superRefine((data, ctx) => {
+  if (data.isForSale && !data.salePrice) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Sale price is required when For Sale is enabled", path: ["salePrice"] });
+  }
+
+  if (data.isForRent && !data.rentPrice) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Rent price is required when For Rent is enabled", path: ["rentPrice"] });
+  }
+}).refine(
   (data) => {
     if (data.isForSale !== undefined && data.isForRent !== undefined) {
       return data.isForSale || data.isForRent;
