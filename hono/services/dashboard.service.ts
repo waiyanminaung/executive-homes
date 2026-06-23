@@ -26,6 +26,7 @@ export async function getDashboardData() {
         propertyType: { select: { name: true } },
         province: { select: { name: true } },
         images: { take: 1, orderBy: { order: "asc" }, select: { url: true } },
+        pricingTiers: { orderBy: { order: "asc" as const } },
       },
     }),
     prisma.propertyType.findMany({
