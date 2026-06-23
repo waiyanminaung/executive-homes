@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import type { PropertyItem } from "@/app/types";
+import { getMinPrice } from "@/utils/getMinPrice";
 
 export async function getPropertyBySlug(slug: string) {
   try {
@@ -49,15 +50,12 @@ export async function getSimilarProperties(slug: string, provinceId: string, pro
 
     return results.map((p) => {
       const listingType = p.isForSale && p.isForRent ? "Sale & Rent" : p.isForSale ? "Sale" : "Rent";
-      const prices = p.pricingTiers.flatMap((t) => [t.salePrice, t.rentPrice]).filter((v): v is number => v !== null);
-      const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
-
       return {
         id: p.id,
         slug: p.slug,
         title: p.title,
         location: p.address,
-        price: minPrice,
+        price: getMinPrice(p.pricingTiers),
         hasMultipleTiers: p.pricingTiers.length > 1,
         listingType,
         availabilityStatus: p.availabilityStatus,

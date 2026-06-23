@@ -1,6 +1,7 @@
 import { Prisma } from "@/prisma/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { toListingType } from "@/utils/homeSectionUtils";
+import { getMinPrice } from "@/utils/getMinPrice";
 import type { PropertyItem, PropertySection } from "@/app/types";
 
 export async function getHomeSections(): Promise<PropertySection[]> {
@@ -35,10 +36,7 @@ export async function getHomeSections(): Promise<PropertySection[]> {
         });
 
         const properties: PropertyItem[] = rawProperties.map((p) => {
-          const prices = p.pricingTiers
-            .flatMap((t) => [t.salePrice, t.rentPrice])
-            .filter((v): v is number => v !== null);
-          const price = prices.length > 0 ? Math.min(...prices) : 0;
+          const price = getMinPrice(p.pricingTiers);
 
           return {
             id: p.id,

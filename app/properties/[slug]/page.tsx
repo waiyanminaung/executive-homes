@@ -3,6 +3,7 @@ import { Bath, BedDouble, Building2, MapPin, Maximize2, PawPrint } from "lucide-
 import { getLucideIcon } from "@/utils/getLucideIcon";
 import { haversineMeters } from "@/utils/haversine";
 import { getPropertyBySlug, getSimilarProperties } from "@/hono/services/propertyDetail.service";
+import { getMinPrice } from "@/utils/getMinPrice";
 import { getContactInfo } from "@/hono/services/contactInfo.service";
 import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
@@ -33,8 +34,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
     getContactInfo(),
   ]);
 
-  const prices = raw.pricingTiers.flatMap((t) => [t.salePrice, t.rentPrice]).filter((v): v is number => v !== null);
-  const price = prices.length > 0 ? Math.min(...prices) : 0;
+  const price = getMinPrice(raw.pricingTiers);
   const hasMultipleTiers = raw.pricingTiers.length > 1;
   const listingType = raw.isForSale && raw.isForRent ? "Sale & Rent" : raw.isForSale ? "Sale" : "Rent";
   const locationLabel = raw.subDistrict?.name ?? raw.district?.name ?? raw.province?.name ?? raw.address;
