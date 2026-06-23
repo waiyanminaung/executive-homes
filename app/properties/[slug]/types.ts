@@ -41,5 +41,7 @@ export interface PropertyDetail extends PropertyItem {
   unitFeatures: PropertyAmenity[];
   commonFacilities: PropertyAmenity[];
   mapImageUrl: string;
+  lat: number | null;
+  lng: number | null;
   transitStations: PropertyTransitItem[];
 }

@@ -61,7 +61,7 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
       {provinceId && (
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-gray-700">District</label>
-          <RHFSelect<string> name="districtId" placeholder="Select district...">
+          <RHFSelect<string> name="districtId" placeholder="Select district..." clearable>
             <SelectDropdownSearch />
             {districts.map((d) => (
               <SelectOption key={d.id} value={d.id} label={d.name} />
@@ -75,7 +75,7 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
       {districtId && (
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-gray-700">Subdistrict</label>
-          <RHFSelect<string> name="subDistrictId" placeholder="Select subdistrict...">
+          <RHFSelect<string> name="subDistrictId" placeholder="Select subdistrict..." clearable>
             <SelectDropdownSearch />
             {subDistricts.map((s) => (
               <SelectOption key={s.id} value={s.id} label={s.name} />

@@ -47,7 +47,12 @@ export async function getHomeSections(): Promise<PropertySection[]> {
           area: `${p.areaSqm.toFixed(2)} sqm`,
         }));
 
-        return { title: section.title, properties };
+        const viewMoreHref =
+          section.listingType === "RENT" ? "/property-for-rent" :
+          section.listingType === "SALE" ? "/property-for-sale" :
+          "/properties";
+
+        return { title: section.title, viewMoreHref, properties };
       }),
     );
   } catch {

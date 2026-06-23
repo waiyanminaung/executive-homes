@@ -76,10 +76,10 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
             <div>
               <p className="text-sm font-semibold text-neutral-600">{property.address}</p>
               {(property.provinceName || property.districtName || property.subDistrictName) && (
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className="text-xs text-gray-500 mt-0.5">
                   {[property.provinceName, property.districtName, property.subDistrictName]
                     .filter(Boolean)
-                    .join(" › ")}
+                    .join(", ")}
                 </p>
               )}
             </div>

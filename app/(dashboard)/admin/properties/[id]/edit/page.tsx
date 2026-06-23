@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronRight, ArrowLeft, ExternalLink } from "lucide-react";
-import { Spinner } from "@geckoui/geckoui";
+import { Spinner, toast } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
 import PropertyForm from "../../components/PropertyForm";
@@ -24,7 +24,12 @@ export default function AdminPropertyEditPage() {
   );
 
   const handleSubmit = async (values: PropertyCreateInput) => {
-    await updateProperty({ params: { id }, body: values });
+    try {
+      await updateProperty({ params: { id }, body: values });
+      toast.success("Property updated successfully");
+    } catch {
+      toast.error("Failed to update property");
+    }
   };
 
   if (propertyLoading || provincesLoading) {

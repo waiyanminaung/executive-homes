@@ -2,19 +2,33 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronRight, ArrowLeft } from "lucide-react";
-import { Spinner } from "@geckoui/geckoui";
+import { Spinner, toast } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
 import PropertyForm from "../components/PropertyForm";
 
 export default function AdminPropertyNewPage() {
   const [title, setTitle] = useState("");
+  const router = useRouter();
   const { data: provincesData, loading } = useRead((api) => api("admin/provinces").GET());
   const { trigger: createProperty } = useWrite((api) => api("admin/properties").POST());
 
   const handleSubmit = async (values: PropertyCreateInput) => {
-    await createProperty({ body: values });
+    try {
+      const result = await createProperty({ body: values });
+
+      if (result.error || !result.data?.property.id) {
+        toast.error("Failed to create property");
+        return;
+      }
+
+      toast.success("Property created successfully");
+      router.push(`/admin/properties/${result.data.property.id}/edit`);
+    } catch {
+      toast.error("Failed to create property");
+    }
   };
 
   if (loading) {

@@ -92,6 +92,8 @@ export default async function PropertyDetailPage({ params }: PageProps) {
     subDistrictName: raw.subDistrict?.name ?? null,
     description: raw.description,
     mapImageUrl: raw.mapImageUrl ?? "",
+    lat: raw.lat ?? null,
+    lng: raw.lng ?? null,
     isPetFriendly: raw.isPetFriendly,
     detailStats: [
       { label: "Location", value: locationLabel, icon: MapPin },
@@ -99,7 +101,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
       { label: "Property Size", value: `${raw.areaSqm} sqm`, icon: Maximize2 },
       { label: "Bedrooms", value: `${raw.beds ?? 0} bedrooms`, icon: BedDouble },
       { label: "Bathrooms", value: `${raw.baths ?? 0} bathrooms`, icon: Bath },
-      ...(raw.isPetFriendly ? [{ label: "Pet Friendly", value: "Yes", icon: PawPrint }] : []),
+      { label: "Pet Friendly", value: raw.isPetFriendly ? "Yes" : "No", icon: PawPrint },
     ],
     unitFeatures,
     commonFacilities,

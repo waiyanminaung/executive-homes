@@ -35,6 +35,7 @@ export interface PropertyItem {
 
 export interface PropertySection {
   title: string;
+  viewMoreHref: string;
   properties: PropertyItem[];
 }
 

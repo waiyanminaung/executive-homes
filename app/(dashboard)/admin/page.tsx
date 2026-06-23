@@ -245,7 +245,7 @@ export default async function AdminDashboardPage() {
               return (
                 <Link
                   key={property.id}
-                  href={`/admin/properties/${property.id}`}
+                  href={`/properties/${property.slug}`}
                   className="flex items-center gap-3 px-5 py-4 hover:bg-gray-50 transition-colors"
                 >
                   <div className="w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-gray-100">

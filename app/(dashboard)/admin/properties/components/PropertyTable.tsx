@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Pencil, Trash2 } from "lucide-react";
-import { ConfirmDialog } from "@geckoui/geckoui";
+import { ConfirmDialog, toast } from "@geckoui/geckoui";
 import { useWrite } from "@/lib/spoosh";
 import type { PropertyListItem } from "@/types/property";
 import PropertyStatusBadge from "./PropertyStatusBadge";
@@ -27,8 +27,13 @@ export default function PropertyTable({ properties, onDeleted }: PropertyTablePr
       content: `"${title}" will be permanently deleted and cannot be recovered.`,
       confirmButtonLabel: "Delete",
       onConfirm: async () => {
-        await deleteProperty({ params: { id } });
-        onDeleted();
+        try {
+          await deleteProperty({ params: { id } });
+          onDeleted();
+          toast.success(`"${title}" deleted`);
+        } catch {
+          toast.error("Failed to delete property");
+        }
       },
     });
   };
