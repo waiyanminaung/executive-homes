@@ -104,52 +104,57 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
     setImageError(null);
   };
 
+  const handleImageClear = () => setImageKey("");
+
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit} className="p-5 border-t border-gray-100 bg-white space-y-4">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700">Province</label>
-            <RHFSelect<string>
-              name="provinceId"
-              placeholder="Any province"
-              clearable
-              filterable
-              onChange={(v) => {
-                if (v === undefined) methods.setValue("provinceId", null);
-                methods.setValue("districtId", null);
-              }}
-            >
-              {provinces.map((p) => (
-                <SelectOption key={p.id} value={p.id} label={p.name} />
-              ))}
-            </RHFSelect>
-            <RHFError name="provinceId" />
-          </div>
-
-          {provinceId && (
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-gray-700">District</label>
-              <RHFSelect<string>
-                name="districtId"
-                placeholder="Any district"
-                clearable
-                filterable
-                onChange={(v) => { if (v === undefined) methods.setValue("districtId", null); }}
-              >
-                {districts.map((d) => (
-                  <SelectOption key={d.id} value={d.id} label={d.name} />
-                ))}
-              </RHFSelect>
-              <RHFError name="districtId" />
-            </div>
-          )}
-
+        <div className="flex gap-4 items-start">
           <HomeAreaCardImagePicker
             previewUrl={previewUrl}
             error={imageError}
             onSelect={handleImageSelect}
+            onClear={handleImageClear}
           />
+
+          <div className="flex-1 space-y-3">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-gray-700">Province</label>
+              <RHFSelect<string>
+                name="provinceId"
+                placeholder="Any province"
+                clearable
+                filterable
+                onChange={(v) => {
+                  if (v === undefined) methods.setValue("provinceId", null);
+                  methods.setValue("districtId", null);
+                }}
+              >
+                {provinces.map((p) => (
+                  <SelectOption key={p.id} value={p.id} label={p.name} />
+                ))}
+              </RHFSelect>
+              <RHFError name="provinceId" />
+            </div>
+
+            {provinceId && (
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-gray-700">District</label>
+                <RHFSelect<string>
+                  name="districtId"
+                  placeholder="Any district"
+                  clearable
+                  filterable
+                  onChange={(v) => { if (v === undefined) methods.setValue("districtId", null); }}
+                >
+                  {districts.map((d) => (
+                    <SelectOption key={d.id} value={d.id} label={d.name} />
+                  ))}
+                </RHFSelect>
+                <RHFError name="districtId" />
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center justify-between pt-1">
