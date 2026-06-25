@@ -10,4 +10,5 @@ export const publicPropertyListQuerySchema = z.object({
   districtId: z.string().optional(),
   beds: z.coerce.number().int().optional(),
   q: z.string().optional(),
+  stationIds: z.string().optional(),
 });

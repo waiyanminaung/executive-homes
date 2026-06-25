@@ -6,7 +6,7 @@ import { publicPropertyListQuerySchema } from "@/validation/publicPropertySchema
 const publicPropertiesRoutes = new Hono();
 
 publicPropertiesRoutes.get("/", zv("query", publicPropertyListQuerySchema), async (c) => {
-  const { page, limit, isForSale, isForRent, type, provinceId, districtId, beds, q } = c.req.valid("query");
+  const { page, limit, isForSale, isForRent, type, provinceId, districtId, beds, q, stationIds } = c.req.valid("query");
   const skip = (page - 1) * limit;
 
   const where: Record<string, unknown> = { isPublished: true };
@@ -18,6 +18,10 @@ publicPropertiesRoutes.get("/", zv("query", publicPropertyListQuerySchema), asyn
   if (districtId) where.districtId = districtId;
   if (beds !== undefined) where.beds = beds;
   if (q) where.title = { contains: q, mode: "insensitive" };
+  if (stationIds) {
+    const ids = stationIds.split(",").filter(Boolean);
+    where.transitStations = { some: { stationId: { in: ids } } };
+  }
 
   const orderBy = { createdAt: "desc" as const };
 
