@@ -1,14 +1,60 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormContext } from "react-hook-form";
-import { RHFInput, RHFSelect, RHFError, SelectOption, SelectDropdownSearch, SelectEmpty, Label } from "@geckoui/geckoui";
+import type { UseFormSetValue } from "react-hook-form";
+import { RHFInput, RHFSelect, RHFError, SelectOption, SelectDropdownSearch, SelectEmpty, Label, Dialog, Button, Textarea } from "@geckoui/geckoui";
+import { MapPin } from "lucide-react";
 import { useRead } from "@/lib/spoosh";
+import { extractLatLng } from "@/utils/extractLatLng";
 import type { Province } from "@/types/property";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
 
 interface PropertyFormLocationSectionProps {
   provinces: Province[];
+}
+
+function EmbedImportDialog({ dismiss, setValue }: { dismiss: () => void; setValue: UseFormSetValue<PropertyCreateInput> }) {
+  const [embed, setEmbed] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const handleImport = () => {
+    const coords = extractLatLng(embed);
+
+    if (!coords) {
+      setError("No coordinates found. Paste a valid Google Maps embed code.");
+      return;
+    }
+
+    setValue("lat", coords.lat);
+    setValue("lng", coords.lng);
+    dismiss();
+  };
+
+  return (
+    <div className="bg-white rounded-2xl space-y-4 w-full">
+      <div className="space-y-1">
+        <h3 className="text-base font-semibold text-gray-900">Import from Google Maps Embed</h3>
+        <p className="text-sm text-gray-500">Paste the iframe embed code from Google Maps Share.</p>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label>Embed Code</Label>
+        <Textarea
+          value={embed}
+          onChange={(e) => { setEmbed(e.target.value); setError(null); }}
+          placeholder='<iframe src="https://www.google.com/maps/embed?pb=..." />'
+          rows={4}
+        />
+        {error && <p className="text-sm text-red-500">{error}</p>}
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <Button variant="outlined" type="button" onClick={dismiss}>Cancel</Button>
+        <Button type="button" onClick={handleImport} disabled={!embed.trim()}>Import</Button>
+      </div>
+    </div>
+  );
 }
 
 export default function PropertyFormLocationSection({ provinces }: PropertyFormLocationSectionProps) {
@@ -17,7 +63,7 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
   const lng = watch("lng");
   const provinceId = watch("provinceId");
   const districtId = watch("districtId");
-  const hasCoords = lat != null && lng != null;
+  const hasCoords = !!lat && !!lng;
 
   const { data: districtsData } = useRead((api) =>
     api("admin/locations/districts").GET({ query: provinceId ? { provinceId } : undefined }),
@@ -88,17 +134,33 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <Label>Latitude</Label>
-          <RHFInput name="lat" placeholder="e.g. 13.7563" type="number" step="any" />
-          <RHFError name="lat" />
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Label>Coordinates</Label>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => Dialog.show({ content: ({ dismiss }) => <EmbedImportDialog dismiss={dismiss} setValue={setValue} /> })}
+            className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700 font-medium bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg"
+          >
+            <MapPin className="w-3.5 h-3.5" />
+            Import from Embed Map
+          </Button>
         </div>
 
-        <div className="space-y-1.5">
-          <Label>Longitude</Label>
-          <RHFInput name="lng" placeholder="e.g. 100.5018" type="number" step="any" />
-          <RHFError name="lng" />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-1.5">
+            <Label>Latitude</Label>
+            <RHFInput name="lat" placeholder="e.g. 13.7563" type="number" step="any" />
+            <RHFError name="lat" />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label>Longitude</Label>
+            <RHFInput name="lng" placeholder="e.g. 100.5018" type="number" step="any" />
+            <RHFError name="lng" />
+          </div>
         </div>
       </div>
 
