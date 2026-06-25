@@ -16,14 +16,18 @@ import type { TransitStation } from "@/types/transitStation";
 interface TransitStationPickerModalProps {
   selectedIds: string[];
   onConfirm: (ids: string[]) => void;
+  onConfirmWithStations?: (stations: { id: string; name: string }[]) => void;
   dismiss: () => void;
   multiple?: boolean;
+  endpoint?: "admin/transit-stations" | "transit-stations";
 }
 
 export function openTransitStationPicker(opts: {
   selectedIds: string[];
   onConfirm: (ids: string[]) => void;
+  onConfirmWithStations?: (stations: { id: string; name: string }[]) => void;
   multiple?: boolean;
+  endpoint?: "admin/transit-stations" | "transit-stations";
 }) {
   Dialog.show({
     className: "w-full max-w-2xl",
@@ -34,8 +38,13 @@ export function openTransitStationPicker(opts: {
           opts.onConfirm(ids);
           dismiss();
         }}
+        onConfirmWithStations={opts.onConfirmWithStations ? (stations) => {
+          opts.onConfirmWithStations!(stations);
+          dismiss();
+        } : undefined}
         dismiss={dismiss}
         multiple={opts.multiple}
+        endpoint={opts.endpoint}
       />
     ),
   });
@@ -44,14 +53,20 @@ export function openTransitStationPicker(opts: {
 export default function TransitStationPickerModal({
   selectedIds,
   onConfirm,
+  onConfirmWithStations,
   dismiss,
   multiple = true,
+  endpoint = "admin/transit-stations",
 }: TransitStationPickerModalProps) {
   const [localSelected, setLocalSelected] = useState<Set<string>>(new Set(selectedIds));
   const [search, setSearch] = useState("");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
 
-  const { data, loading } = useRead((api) => api("admin/transit-stations").GET());
+  const { data, loading } = useRead((api) =>
+    endpoint === "transit-stations"
+      ? api("transit-stations").GET()
+      : api("admin/transit-stations").GET(),
+  );
   const stations = data?.stations ?? [];
 
   const grouped = TRANSIT_LINES.reduce<Record<TransitLine, TransitStation[]>>(
@@ -247,7 +262,21 @@ export default function TransitStationPickerModal({
           <Button type="button" variant="outlined" onClick={dismiss}>
             Cancel
           </Button>
-          <Button type="button" onClick={() => onConfirm(Array.from(localSelected))}>
+          <Button
+            type="button"
+            onClick={() => {
+              const ids = Array.from(localSelected);
+
+              if (onConfirmWithStations) {
+                const selected = stations
+                  .filter((s) => localSelected.has(s.id))
+                  .map((s) => ({ id: s.id, name: s.name }));
+                onConfirmWithStations(selected);
+              } else {
+                onConfirm(ids);
+              }
+            }}
+          >
             Confirm
           </Button>
         </div>
