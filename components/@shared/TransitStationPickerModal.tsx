@@ -15,7 +15,7 @@ import type { TransitStation } from "@/types/transitStation";
 
 interface TransitStationPickerModalProps {
   selectedIds: string[];
-  onConfirm: (ids: string[]) => void;
+  onConfirm?: (ids: string[]) => void;
   onConfirmWithStations?: (stations: { id: string; name: string }[]) => void;
   dismiss: () => void;
   multiple?: boolean;
@@ -24,7 +24,7 @@ interface TransitStationPickerModalProps {
 
 export function openTransitStationPicker(opts: {
   selectedIds: string[];
-  onConfirm: (ids: string[]) => void;
+  onConfirm?: (ids: string[]) => void;
   onConfirmWithStations?: (stations: { id: string; name: string }[]) => void;
   multiple?: boolean;
   endpoint?: "admin/transit-stations" | "transit-stations";
@@ -34,10 +34,7 @@ export function openTransitStationPicker(opts: {
     content: ({ dismiss }) => (
       <TransitStationPickerModal
         selectedIds={opts.selectedIds}
-        onConfirm={(ids) => {
-          opts.onConfirm(ids);
-          dismiss();
-        }}
+        onConfirm={opts.onConfirm ? (ids) => { opts.onConfirm!(ids); dismiss(); } : () => dismiss()}
         onConfirmWithStations={opts.onConfirmWithStations ? (stations) => {
           opts.onConfirmWithStations!(stations);
           dismiss();
@@ -273,7 +270,7 @@ export default function TransitStationPickerModal({
                   .map((s) => ({ id: s.id, name: s.name }));
                 onConfirmWithStations(selected);
               } else {
-                onConfirm(ids);
+                onConfirm?.(ids);
               }
             }}
           >

@@ -2,11 +2,12 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { Search, MapPin, Train } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button, Input } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import { openLocationPicker } from "@/components/@shared/LocationPickerDialog";
 import { openTransitStationPicker } from "@/components/@shared/TransitStationPickerModal";
+import { HomeSearchDropdown } from "./HomeSearchDropdown";
 
 const SEARCH_PLACEHOLDER_PHRASES = [
   "Provinces",
@@ -100,10 +101,9 @@ export function HomeSearchInput({ onSearch }: HomeSearchInputProps) {
   const openDropdownAtAnchor = () => {
     const rect = anchorRef.current?.getBoundingClientRect();
 
-    if (rect) {
-      setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
-    }
+    if (!rect) return;
 
+    setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
     setDropdownOpen(true);
   };
 
@@ -143,7 +143,6 @@ export function HomeSearchInput({ onSearch }: HomeSearchInputProps) {
     setDropdownOpen(false);
     openTransitStationPicker({
       selectedIds: stationIds,
-      onConfirm: () => {},
       onConfirmWithStations: (stations) => {
         setInputValue(stations.map((s) => s.name).join(", "));
         setStationIds(stations.map((s) => s.id));
@@ -192,37 +191,12 @@ export function HomeSearchInput({ onSearch }: HomeSearchInputProps) {
 
       {dropdownOpen &&
         createPortal(
-          <div
-            ref={dropdownRef}
-            style={{
-              position: "fixed",
-              top: dropdownPos.top,
-              left: dropdownPos.left,
-              width: dropdownPos.width,
-              zIndex: 9999,
-            }}
-            className="rounded-xl border border-gray-200 bg-white shadow-lg"
-          >
-            <button
-              type="button"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={handleProvinceClick}
-              className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <MapPin className="h-4 w-4 shrink-0 text-primary-500" />
-              Search by Province
-            </button>
-            <div className="mx-4 border-t border-gray-100" />
-            <button
-              type="button"
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={handleTransitClick}
-              className="flex w-full items-center gap-3 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <Train className="h-4 w-4 shrink-0 text-primary-500" />
-              Search by BTS/MRT
-            </button>
-          </div>,
+          <HomeSearchDropdown
+            pos={dropdownPos}
+            onProvinceClick={handleProvinceClick}
+            onTransitClick={handleTransitClick}
+            dropdownRef={dropdownRef}
+          />,
           document.body,
         )}
     </div>
