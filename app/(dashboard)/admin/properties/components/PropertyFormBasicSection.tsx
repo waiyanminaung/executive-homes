@@ -73,6 +73,14 @@ export default function PropertyFormBasicSection() {
         <RHFError name="isForSale" />
       </div>
 
+      <div className="space-y-3">
+        <Label>Property Attributes</Label>
+        <label className="inline-flex cursor-pointer items-center gap-2.5">
+          <RHFSwitch name="isPetFriendly" />
+          <span className="text-sm text-gray-700">Pet Friendly</span>
+        </label>
+      </div>
+
       <div className="space-y-1.5">
         <Label required>Description</Label>
         <RHFController

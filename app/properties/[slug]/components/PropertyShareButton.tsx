@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Share2 } from "lucide-react";
-import { Button } from "@geckoui/geckoui";
 import { PropertyShareModal } from "./PropertyShareModal";
 
 interface PropertyShareButtonProps {
@@ -14,15 +13,14 @@ export function PropertyShareButton({ title }: PropertyShareButtonProps) {
 
   return (
     <>
-      <Button
+      <button
         type="button"
-        variant="outlined"
         aria-label="Share property"
         onClick={() => setShareOpen(true)}
-        className="h-[45px] w-[45px] rounded-full border-gray-200 bg-white p-0 text-neutral-900 shadow-detail-card"
+        className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-gray-300 bg-white text-neutral-700 shadow-sm transition-colors hover:border-primary-300 hover:text-primary-500"
       >
-        <Share2 className="h-5 w-5" />
-      </Button>
+        <Share2 className="h-4 w-4" />
+      </button>
 
       <PropertyShareModal
         open={shareOpen}

@@ -10,6 +10,41 @@ import { formatArea } from "@/utils/formatArea";
 import { formatPrice } from "@/utils/formatPrice";
 import type { PropertyItem } from "@/app/types";
 
+interface PropertyPriceProps {
+  minSalePrice: number | null;
+  minRentPrice: number | null;
+  hasMultipleTiers: boolean;
+}
+
+function PropertyPrice({ minSalePrice, minRentPrice, hasMultipleTiers }: PropertyPriceProps) {
+  const hasSale = minSalePrice !== null;
+  const hasRent = minRentPrice !== null;
+  const prefix = hasMultipleTiers ? "From " : "";
+
+  if (!hasSale && !hasRent) {
+    return <p className="text-base font-semibold text-primary-500 md:text-lg">Contact for price</p>;
+  }
+
+  if (hasSale && hasRent) {
+    return hasMultipleTiers ? (
+      <div className="flex flex-col gap-0.5">
+        <p className="text-base font-bold text-primary-500 md:text-lg">From {formatPrice(minSalePrice!)}</p>
+        <p className="text-base font-bold text-primary-500 md:text-lg">From {formatPrice(minRentPrice!)}/mo</p>
+      </div>
+    ) : (
+      <p className="text-base font-bold text-primary-500 md:text-lg">
+        {formatPrice(minSalePrice!)} · {formatPrice(minRentPrice!)}/mo
+      </p>
+    );
+  }
+
+  if (hasSale) {
+    return <p className="text-base font-bold text-primary-500 md:text-lg">{prefix}{formatPrice(minSalePrice!)}</p>;
+  }
+
+  return <p className="text-base font-bold text-primary-500 md:text-lg">{prefix}{formatPrice(minRentPrice!)}/mo</p>;
+}
+
 interface PropertyCardProps {
   property: PropertyItem;
 }
@@ -144,10 +179,11 @@ export function PropertyCard({ property }: PropertyCardProps) {
           </dl>
         </div>
 
-        <p className="text-base font-bold text-primary-500 md:text-lg">
-          {property.hasMultipleTiers ? "Starting from " : ""}
-          {formatPrice(property.price)}{property.listingType === "Rent" || property.listingType === "Sale & Rent" ? "/mo" : ""}
-        </p>
+        <PropertyPrice
+          minSalePrice={property.minSalePrice}
+          minRentPrice={property.minRentPrice}
+          hasMultipleTiers={property.hasMultipleTiers}
+        />
       </div>
     </Link>
   );

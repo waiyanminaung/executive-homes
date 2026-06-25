@@ -15,6 +15,7 @@ import PropertyFormMediaSection from "./PropertyFormMediaSection";
 import PropertyFormFlagsSection from "./PropertyFormFlagsSection";
 import PropertyFormFeaturesSection from "./PropertyFormFeaturesSection";
 import PropertyFormTransitSection from "./PropertyFormTransitSection";
+import PropertyFormDetailsSection from "./PropertyFormDetailsSection";
 
 const DEFAULT_VALUES: PropertyCreateInput = {
   title: "",
@@ -85,12 +86,13 @@ export default function PropertyForm({
           <div className="lg:col-span-2 space-y-5">
             <PropertyFormBasicSection />
             <PropertyFormPricingSection />
+            <PropertyFormDetailsSection />
             <PropertyFormLocationSection provinces={provinces} />
             <PropertyFormFeaturesSection />
             <PropertyFormTransitSection />
             <PropertyFormMediaSection />
           </div>
-          <div className="space-y-5 lg:sticky lg:top-5 lg:self-start">
+          <div className="space-y-5 lg:sticky lg:top-0 lg:self-start">
             <PropertyFormFlagsSection submitLabel={submitLabel} />
           </div>
         </div>

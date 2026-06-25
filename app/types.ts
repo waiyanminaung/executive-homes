@@ -24,7 +24,8 @@ export interface PropertyItem {
   slug: string;
   title: string;
   location: string;
-  price: number;
+  minSalePrice: number | null;
+  minRentPrice: number | null;
   hasMultipleTiers: boolean;
   imageUrls: string[];
   listingType: "Sale" | "Rent" | "Sale & Rent";

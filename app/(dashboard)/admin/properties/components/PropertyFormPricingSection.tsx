@@ -1,7 +1,7 @@
 "use client";
 
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { RHFCurrencyInput, RHFNumberInput, RHFError, RHFInput, Label, Button } from "@geckoui/geckoui";
+import { RHFCurrencyInput, RHFError, RHFInput, Label, Button } from "@geckoui/geckoui";
 import { Trash2, Plus } from "lucide-react";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
 
@@ -79,25 +79,6 @@ export default function PropertyFormPricingSection() {
         )}
       </div>
 
-      <div className="grid grid-cols-3 gap-4 pt-2 border-t border-gray-100">
-        <div className="space-y-1.5">
-          <Label>Bedrooms</Label>
-          <RHFNumberInput name="beds" placeholder="0" min={0} />
-          <RHFError name="beds" />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label>Bathrooms</Label>
-          <RHFNumberInput name="baths" placeholder="0" min={0} />
-          <RHFError name="baths" />
-        </div>
-
-        <div className="space-y-1.5">
-          <Label required>Area</Label>
-          <RHFNumberInput name="areaSqm" placeholder="0" suffix="sqm" min={0} />
-          <RHFError name="areaSqm" />
-        </div>
-      </div>
     </div>
   );
 }

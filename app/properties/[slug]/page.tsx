@@ -3,7 +3,7 @@ import { Bath, BedDouble, Building2, MapPin, Maximize2, PawPrint } from "lucide-
 import { getLucideIcon } from "@/utils/getLucideIcon";
 import { haversineMeters } from "@/utils/haversine";
 import { getPropertyBySlug, getSimilarProperties } from "@/hono/services/propertyDetail.service";
-import { getMinPrice } from "@/utils/getMinPrice";
+import { getMinSalePrice, getMinRentPrice } from "@/utils/getMinPrice";
 import { getContactInfo } from "@/hono/services/contactInfo.service";
 import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
@@ -34,7 +34,6 @@ export default async function PropertyDetailPage({ params }: PageProps) {
     getContactInfo(),
   ]);
 
-  const price = getMinPrice(raw.pricingTiers);
   const hasMultipleTiers = raw.pricingTiers.length > 1;
   const listingType = raw.isForSale && raw.isForRent ? "Sale & Rent" : raw.isForSale ? "Sale" : "Rent";
   const locationLabel = raw.subDistrict?.name ?? raw.district?.name ?? raw.province?.name ?? raw.address;
@@ -77,7 +76,8 @@ export default async function PropertyDetailPage({ params }: PageProps) {
     slug: raw.slug,
     title: raw.title,
     location: raw.address,
-    price,
+    minSalePrice: getMinSalePrice(raw.pricingTiers, raw.isForSale),
+    minRentPrice: getMinRentPrice(raw.pricingTiers, raw.isForRent),
     imageUrls: raw.images.map((img) => img.url),
     listingType,
     availabilityStatus: raw.availabilityStatus,

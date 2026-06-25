@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ExternalLink } from "lucide-react";
 import type { PropertyDetail, PropertyTransitItem } from "../types";
-import { PropertyShareButton } from "./PropertyShareButton";
 import { formatPrice } from "@/utils/formatPrice";
 import { TRANSIT_LINE_COLORS } from "@/constants/transitStations";
 import { WALKING_SPEED_METERS_PER_MIN } from "@/app/constants";
@@ -20,8 +19,8 @@ function SinglePriceDisplay({ tier, isForSale, isForRent }: SinglePriceDisplayPr
     <div className="grid gap-2">
       {isForSale && tier.salePrice != null && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-neutral-600">For sale</span>
-          <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
+          <span className="text-base font-semibold text-neutral-600">For sale</span>
+          <span className="whitespace-nowrap text-xl font-bold text-secondary-500">
             {formatPrice(tier.salePrice)}
           </span>
         </div>
@@ -29,8 +28,8 @@ function SinglePriceDisplay({ tier, isForSale, isForRent }: SinglePriceDisplayPr
 
       {isForRent && tier.rentPrice != null && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm font-semibold text-neutral-600">For rent</span>
-          <span className="whitespace-nowrap text-2xl font-bold text-secondary-500">
+          <span className="text-base font-semibold text-neutral-600">For rent</span>
+          <span className="whitespace-nowrap text-xl font-bold text-secondary-500">
             {formatPrice(tier.rentPrice)}/mo
           </span>
         </div>
@@ -48,7 +47,7 @@ interface PricingTiersTableProps {
 function PricingTiersTable({ tiers, isForSale, isForRent }: PricingTiersTableProps) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm border-collapse">
+      <table className="w-full text-base border-collapse">
         <thead>
           <tr className="border-b border-gray-200">
             <th className="py-2 pr-4 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Furnishing</th>
@@ -122,7 +121,7 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
 
   return (
     <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-detail-card md:p-[30px]">
-      <div className="grid gap-5 md:grid-cols-[minmax(0,1fr)_45px] md:items-start">
+      <div>
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
             <h1 className="text-xl font-bold leading-snug text-neutral-900">
@@ -143,7 +142,7 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
 
           <div className="flex items-center gap-2">
             <LocationIcon className="h-5 w-5 shrink-0 text-neutral-600" />
-            <p className="text-sm font-semibold text-neutral-600">
+            <p className="text-base font-semibold text-neutral-600">
               {[property.address, property.subDistrictName, property.districtName, property.provinceName]
                 .filter(Boolean)
                 .join(", ")}
@@ -158,8 +157,6 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
             ) : null}
           </div>
         </div>
-
-        <PropertyShareButton title={property.title} />
       </div>
 
       <dl className="mt-5 grid overflow-hidden rounded-[10px] border border-gray-300 bg-gray-400 sm:grid-cols-2 lg:grid-cols-3">

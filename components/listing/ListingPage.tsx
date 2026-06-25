@@ -8,7 +8,7 @@ import type { PropertyItem } from "@/app/types";
 import { ListingSearchBar } from "./ListingSearchBar";
 import { ListingResultsBar } from "./ListingResultsBar";
 import { ListingPagination } from "./ListingPagination";
-import { getMinPrice } from "@/utils/getMinPrice";
+import { getMinSalePrice, getMinRentPrice } from "@/utils/getMinPrice";
 
 
 interface PropertyApiItem {
@@ -28,14 +28,14 @@ interface PropertyApiItem {
 
 function toPropertyItem(p: PropertyApiItem): PropertyItem {
   const listingType = p.isForSale && p.isForRent ? "Sale & Rent" : p.isForSale ? "Sale" : "Rent";
-  const price = getMinPrice(p.pricingTiers);
 
   return {
     id: p.id,
     slug: p.slug,
     title: p.title,
     location: p.address,
-    price,
+    minSalePrice: getMinSalePrice(p.pricingTiers, p.isForSale),
+    minRentPrice: getMinRentPrice(p.pricingTiers, p.isForRent),
     hasMultipleTiers: p.pricingTiers.length > 1,
     imageUrls: p.images.map((img) => img.url),
     listingType,
