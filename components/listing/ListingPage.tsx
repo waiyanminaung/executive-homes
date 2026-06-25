@@ -59,6 +59,8 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
   const [tab] = useQueryState("tab", parseAsString.withDefault(defaultTab));
   const [bedrooms] = useQueryState("bedrooms");
   const [page] = useQueryState("page", parseAsInteger.withDefault(1));
+  const [provinceId] = useQueryState("provinceId");
+  const [stationIds] = useQueryState("stationIds");
 
   const isForRent = tab === "rent" ? "true" : undefined;
   const isForSale = tab === "buy" ? "true" : undefined;
@@ -71,6 +73,8 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
     ...(q ? { q } : {}),
     ...(bedrooms ? { beds: bedrooms } : {}),
     ...(propertyType ? { type: propertyType } : {}),
+    ...(provinceId ? { provinceId } : {}),
+    ...(stationIds ? { stationIds } : {}),
   };
 
   const { data, loading } = useRead((api) => api("properties").GET({ query }));
