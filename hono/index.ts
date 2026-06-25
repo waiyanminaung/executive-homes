@@ -17,6 +17,7 @@ import {
   publicHomeAreaCardsRoutes,
   contactInfoRoutes,
   publicLocationsRoutes,
+  publicTransitStationsRoutes,
 } from "@/hono/routes";
 
 const router = new Hono().basePath("/api");
@@ -42,6 +43,7 @@ router.route("/home-sections", publicHomeSectionsRoutes);
 router.route("/home-area-cards", publicHomeAreaCardsRoutes);
 router.route("/enquiries", publicEnquiriesRoutes);
 router.route("/locations", publicLocationsRoutes);
+router.route("/transit-stations", publicTransitStationsRoutes);
 
 router.onError((err, c) => {
   console.error(err);
