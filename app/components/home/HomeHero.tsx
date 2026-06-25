@@ -3,16 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Search } from "lucide-react";
-import { Button, Input, Select, SelectOption } from "@geckoui/geckoui";
+import { Select, SelectOption } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
 import { HomePetToggle } from "./HomePetToggle";
+import { HomeSearchInput } from "./HomeSearchInput";
 
 export function HomeHero() {
   const router = useRouter();
   const [tab, setTab] = useState<"rent" | "buy">("rent");
-  const [keyword, setKeyword] = useState("");
   const [type, setType] = useState<string | null>(null);
   const [location, setLocation] = useState<string | null>(null);
   const [price, setPrice] = useState<string | null>(null);
@@ -24,12 +23,14 @@ export function HomeHero() {
     "text-sm font-semibold text-neutral-600 shadow-none",
   );
 
-  const handleSearch = () => {
-    const params = new URLSearchParams();
-    params.set("tab", tab === "rent" ? "rent" : "buy");
-    if (keyword.trim()) params.set("q", keyword.trim());
-    if (bedrooms) params.set("bedrooms", bedrooms);
-    router.push(`/properties?${params.toString()}`);
+  const handleSearch = (params: { q?: string; provinceId?: string; stationIds?: string }) => {
+    const urlParams = new URLSearchParams();
+    urlParams.set("tab", tab === "rent" ? "rent" : "buy");
+    if (params.q) urlParams.set("q", params.q);
+    if (params.provinceId) urlParams.set("provinceId", params.provinceId);
+    if (params.stationIds) urlParams.set("stationIds", params.stationIds);
+    if (bedrooms) urlParams.set("bedrooms", bedrooms);
+    router.push(`/properties?${urlParams.toString()}`);
   };
 
   return (
@@ -71,26 +72,7 @@ export function HomeHero() {
         </div>
 
         <div className="rounded-2xl bg-white p-4 shadow-[0_18px_40px_rgb(17_24_39/0.16)] md:rounded-xl md:p-[22px] md:shadow-[0_4px_12px_rgb(17_24_39/0.08)]">
-          <div className="flex flex-col gap-3 md:flex-row md:gap-2">
-            <Input
-              aria-label="Search keyword"
-              placeholder="Type keyword..."
-              value={keyword}
-              onChange={(event) => setKeyword(event.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-              className="flex-1 border-border [&:focus-within]:border-primary-500"
-              inputClassName="h-12 text-base font-medium text-neutral-900 md:h-[46px] md:text-sm"
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleSearch}
-              className="h-12 rounded-md bg-gradient-to-b from-primary-500 to-primary-400 px-[30px] text-base font-semibold !text-white hover:bg-gradient-to-b md:h-[46px] md:text-sm"
-            >
-              <Search className="h-4 w-4" />
-              <span>Search</span>
-            </Button>
-          </div>
+          <HomeSearchInput tab={tab} onSearch={handleSearch} />
 
           <div className="mt-3 grid grid-cols-2 gap-3 md:flex md:flex-wrap">
             <Select
