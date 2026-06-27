@@ -168,13 +168,13 @@ export function HomeSearchInput({ onSearch }: HomeSearchInputProps) {
       <div ref={anchorRef} className="flex-1">
         <Input
           aria-label="Search keyword"
-          placeholder={animatedPlaceholder || "Search..."}
+          placeholder={`Search by ${animatedPlaceholder}`}
           value={inputValue}
           onChange={handleInputChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          className="flex-1 border-border [&:focus-within]:border-primary-500"
+          className="flex-1 border-gray-300 shadow-sm [&:focus-within]:border-primary-500 [&:focus-within]:ring-2 [&:focus-within]:ring-primary-100"
           inputClassName="h-12 text-base font-medium text-neutral-900 md:h-[46px] md:text-sm"
         />
       </div>

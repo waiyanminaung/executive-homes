@@ -1,6 +1,7 @@
 "use client";
 
-import { RHFNumberInput, RHFError, Label } from "@geckoui/geckoui";
+import { RHFNumberInput, RHFError, RHFSelect, SelectOption, Label } from "@geckoui/geckoui";
+import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
 
 export default function PropertyFormDetailsSection() {
   return (
@@ -10,7 +11,11 @@ export default function PropertyFormDetailsSection() {
       <div className="grid grid-cols-3 gap-4">
         <div className="space-y-1.5">
           <Label>Bedrooms</Label>
-          <RHFNumberInput name="beds" placeholder="0" min={0} />
+          <RHFSelect name="beds" placeholder="Select">
+            {HOME_HERO_FILTER_OPTIONS.bedrooms.map((o) => (
+              <SelectOption key={o.value} value={o.value} label={o.label} />
+            ))}
+          </RHFSelect>
           <RHFError name="beds" />
         </div>
 

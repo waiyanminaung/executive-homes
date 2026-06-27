@@ -8,7 +8,7 @@ export const publicPropertyListQuerySchema = z.object({
   type: z.string().optional(),
   provinceId: z.string().optional(),
   districtId: z.string().optional(),
-  beds: z.coerce.number().int().optional(),
+  beds: z.enum(["0", "1", "2", "3", "4", "5"]).optional(),
   q: z.string().optional(),
   stationIds: z.string().optional(),
 });

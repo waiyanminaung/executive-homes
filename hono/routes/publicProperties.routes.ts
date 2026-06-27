@@ -16,7 +16,10 @@ publicPropertiesRoutes.get("/", zv("query", publicPropertyListQuerySchema), asyn
   if (type) where.propertyType = { slug: type };
   if (provinceId) where.provinceId = provinceId;
   if (districtId) where.districtId = districtId;
-  if (beds !== undefined) where.beds = beds;
+  if (beds !== undefined) {
+    if (beds === "5") where.beds = { gte: 5 };
+    else where.beds = Number(beds);
+  }
   if (q) where.title = { contains: q, mode: "insensitive" };
   if (stationIds) {
     const ids = stationIds.split(",").filter(Boolean);

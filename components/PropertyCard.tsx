@@ -8,6 +8,7 @@ import { Bath, BedDouble, ChevronLeft, ChevronRight, Maximize2 } from "lucide-re
 import { classNames } from "@/utils/classNames";
 import { formatArea } from "@/utils/formatArea";
 import { formatPrice } from "@/utils/formatPrice";
+import { formatBeds } from "@/utils/formatBeds";
 import type { PropertyItem } from "@/app/types";
 
 interface PropertyPriceProps {
@@ -164,7 +165,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
             <div className="flex items-center gap-1.5">
               <BedDouble className="h-[18px] w-[18px]" />
               <dt className="sr-only">Bedrooms</dt>
-              <dd>{property.beds}</dd>
+              <dd>{formatBeds(property.beds)}</dd>
             </div>
             <div className="flex items-center gap-1.5">
               <Bath className="h-[18px] w-[18px]" />

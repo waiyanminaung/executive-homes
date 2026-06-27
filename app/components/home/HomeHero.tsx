@@ -3,25 +3,52 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Select, SelectOption } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
 import { HomePetToggle } from "./HomePetToggle";
 import { HomeSearchInput } from "./HomeSearchInput";
+import { openFilterModal, type FilterValues } from "./HomeFilterModal";
 
 export function HomeHero() {
   const router = useRouter();
   const [tab, setTab] = useState<"rent" | "buy">("rent");
-  const [type, setType] = useState<string | null>(null);
-  const [location, setLocation] = useState<string | null>(null);
-  const [price, setPrice] = useState<string | null>(null);
-  const [bedrooms, setBedrooms] = useState<string | null>(null);
   const [petAllow, setPetAllow] = useState(false);
+  const [filters, setFilters] = useState<FilterValues>({
+    type: null,
+    minPrice: "",
+    maxPrice: "",
+    bedrooms: null,
+  });
 
   const selectClass = classNames(
-    "h-[46px] rounded-md border border-border bg-white px-[18px]",
-    "text-sm font-semibold text-neutral-600 shadow-none",
+    "h-[46px] rounded-md border border-gray-300 bg-white px-[18px]",
+    "text-sm font-semibold text-neutral-600 shadow-sm cursor-pointer",
+    "hover:border-gray-400 transition-colors truncate text-left",
   );
+
+  const typeLabel = filters.type
+    ? (HOME_HERO_FILTER_OPTIONS.types.find((o) => o.value === filters.type)?.label ?? "Type")
+    : "Type";
+
+  const priceLabel = (() => {
+    if (!filters.minPrice && !filters.maxPrice) return "Price";
+    if (filters.minPrice && filters.maxPrice)
+      return `฿${Number(filters.minPrice).toLocaleString()} – ฿${Number(filters.maxPrice).toLocaleString()}`;
+    if (filters.minPrice) return `฿${Number(filters.minPrice).toLocaleString()}+`;
+    return `Up to ฿${Number(filters.maxPrice).toLocaleString()}`;
+  })();
+
+  const bedroomsLabel = filters.bedrooms
+    ? (HOME_HERO_FILTER_OPTIONS.bedrooms.find((o) => o.value === filters.bedrooms)?.label ?? "Bedrooms")
+    : "Bedrooms";
+
+  const openModal = (initialTab: "type" | "price" | "bedrooms") => {
+    openFilterModal({
+      initialTab,
+      initialValues: filters,
+      onApply: setFilters,
+    });
+  };
 
   const handleSearch = (params: { q?: string; provinceId?: string; stationIds?: string }) => {
     const urlParams = new URLSearchParams();
@@ -29,7 +56,10 @@ export function HomeHero() {
     if (params.q) urlParams.set("q", params.q);
     if (params.provinceId) urlParams.set("provinceId", params.provinceId);
     if (params.stationIds) urlParams.set("stationIds", params.stationIds);
-    if (bedrooms) urlParams.set("bedrooms", bedrooms);
+    if (filters.type) urlParams.set("type", filters.type);
+    if (filters.bedrooms) urlParams.set("bedrooms", filters.bedrooms);
+    if (filters.minPrice) urlParams.set("minPrice", filters.minPrice);
+    if (filters.maxPrice) urlParams.set("maxPrice", filters.maxPrice);
     router.push(`/properties?${urlParams.toString()}`);
   };
 
@@ -54,7 +84,7 @@ export function HomeHero() {
         </p>
       </div>
 
-      <div className="relative z-50 mt-8 w-full max-w-[954px] px-4 pb-8 md:absolute md:bottom-10 md:left-1/2 md:mt-0 md:-translate-x-1/2 md:translate-y-1/2 md:px-6 md:pb-0 lg:px-0">
+      <div className="relative z-50 mt-8 w-full max-w-3xl px-4 pb-8 md:absolute md:bottom-10 md:left-1/2 md:mt-0 md:-translate-x-1/2 md:translate-y-1/2 md:px-6 md:pb-0 lg:px-0">
         <div className="mx-auto mb-4 grid w-full max-w-[280px] grid-cols-2 items-center rounded-lg border border-white/40 bg-black/60 p-1 md:flex md:w-fit md:max-w-none">
           {(["rent", "buy"] as const).map((t) => (
             <button
@@ -75,53 +105,41 @@ export function HomeHero() {
           <HomeSearchInput tab={tab} onSearch={handleSearch} />
 
           <div className="mt-3 grid grid-cols-2 gap-3 md:flex md:flex-wrap">
-            <Select
-              value={type}
-              onChange={setType}
-              placeholder="Type"
-              className={selectClass}
-              wrapperClassName="min-w-0 md:flex-1"
+            <button
+              type="button"
+              onClick={() => openModal("type")}
+              className={classNames(
+                selectClass,
+                "min-w-0 md:flex-1",
+                filters.type ? "text-neutral-900" : "text-neutral-400",
+              )}
             >
-              {HOME_HERO_FILTER_OPTIONS.types.map((o) => (
-                <SelectOption key={o.value} value={o.value} label={o.label} />
-              ))}
-            </Select>
+              {typeLabel}
+            </button>
 
-            <Select
-              value={location}
-              onChange={setLocation}
-              placeholder="Location"
-              className={selectClass}
-              wrapperClassName="min-w-0 md:flex-1"
+            <button
+              type="button"
+              onClick={() => openModal("price")}
+              className={classNames(
+                selectClass,
+                "min-w-0 md:flex-1",
+                filters.minPrice || filters.maxPrice ? "text-neutral-900" : "text-neutral-400",
+              )}
             >
-              {HOME_HERO_FILTER_OPTIONS.locations.map((o) => (
-                <SelectOption key={o.value} value={o.value} label={o.label} />
-              ))}
-            </Select>
+              {priceLabel}
+            </button>
 
-            <Select
-              value={price}
-              onChange={setPrice}
-              placeholder="Price"
-              className={selectClass}
-              wrapperClassName="min-w-0 md:flex-1"
+            <button
+              type="button"
+              onClick={() => openModal("bedrooms")}
+              className={classNames(
+                selectClass,
+                "min-w-0 md:flex-1",
+                filters.bedrooms ? "text-neutral-900" : "text-neutral-400",
+              )}
             >
-              {HOME_HERO_FILTER_OPTIONS.prices.map((o) => (
-                <SelectOption key={o.value} value={o.value} label={o.label} />
-              ))}
-            </Select>
-
-            <Select
-              value={bedrooms}
-              onChange={setBedrooms}
-              placeholder="Bedrooms"
-              className={selectClass}
-              wrapperClassName="min-w-0 md:flex-1"
-            >
-              {HOME_HERO_FILTER_OPTIONS.bedrooms.map((o) => (
-                <SelectOption key={o.value} value={o.value} label={o.label} />
-              ))}
-            </Select>
+              {bedroomsLabel}
+            </button>
 
             <div className="col-span-2 flex justify-end self-center md:col-span-1">
               <HomePetToggle value={petAllow} onChange={setPetAllow} />

@@ -5,6 +5,7 @@ import { haversineMeters } from "@/utils/haversine";
 import { getPropertyBySlug, getSimilarProperties } from "@/hono/services/propertyDetail.service";
 import { getMinSalePrice, getMinRentPrice } from "@/utils/getMinPrice";
 import { getContactInfo } from "@/hono/services/contactInfo.service";
+import { formatBeds } from "@/utils/formatBeds";
 import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
 import {
@@ -101,7 +102,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
       { label: "Location", value: locationLabel, icon: MapPin },
       { label: "Property Type", value: raw.propertyType.name, icon: Building2 },
       { label: "Property Size", value: `${raw.areaSqm} sqm`, icon: Maximize2 },
-      { label: "Bedrooms", value: `${raw.beds ?? 0} bedrooms`, icon: BedDouble },
+      { label: "Bedrooms", value: raw.beds === 0 ? "Studio" : `${formatBeds(raw.beds)} bedrooms`, icon: BedDouble },
       { label: "Bathrooms", value: `${raw.baths ?? 0} bathrooms`, icon: Bath },
       { label: "Pet Friendly", value: raw.isPetFriendly ? "Yes" : "No", icon: PawPrint },
     ],

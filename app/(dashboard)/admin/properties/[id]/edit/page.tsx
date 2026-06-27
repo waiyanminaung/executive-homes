@@ -64,7 +64,9 @@ export default function AdminPropertyEditPage() {
       rentPrice: tier.rentPrice,
       order: tier.order,
     })),
-    beds: property.beds,
+    beds: (property.beds !== null && property.beds !== undefined
+      ? String(property.beds)
+      : null) as unknown as PropertyCreateInput["beds"],
     baths: property.baths,
     areaSqm: property.areaSqm,
     address: property.address,
