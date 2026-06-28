@@ -39,6 +39,7 @@ export interface PropertySection {
   title: string;
   viewMoreHref: string;
   properties: PropertyItem[];
+  hasMore: boolean;
 }
 
 export interface WhyItem {

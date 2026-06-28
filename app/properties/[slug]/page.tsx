@@ -30,8 +30,8 @@ export default async function PropertyDetailPage({ params }: PageProps) {
 
   if (!raw) notFound();
 
-  const [similarProperties, contactInfo] = await Promise.all([
-    getSimilarProperties(slug, raw.provinceId, raw.propertyTypeId),
+  const [{ properties: similarProperties, viewMoreHref: similarViewMoreHref, hasMore: similarHasMore }, contactInfo] = await Promise.all([
+    getSimilarProperties(slug, raw.provinceId, raw.propertyTypeId, raw.propertyType?.slug ?? undefined),
     getContactInfo(),
   ]);
 
@@ -129,7 +129,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
           </div>
 
           <div className="mt-[50px]">
-            <SimilarProperties properties={similarProperties} />
+            <SimilarProperties properties={similarProperties} viewMoreHref={similarViewMoreHref} hasMore={similarHasMore} />
           </div>
         </div>
       </main>

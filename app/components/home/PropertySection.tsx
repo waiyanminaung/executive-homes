@@ -41,13 +41,15 @@ export function PropertySection({ section }: PropertySectionProps) {
         <h2 className="text-2xl font-bold text-neutral-950 md:text-[28px]">
           {section.title}
         </h2>
-        <Link
-          href={section.viewMoreHref}
-          className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary-500"
-        >
-          <span>View More</span>
-          <ArrowRight className="h-4 w-4" />
-        </Link>
+        {section.hasMore && (
+          <Link
+            href={section.viewMoreHref}
+            className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary-500"
+          >
+            <span>View More</span>
+            <ArrowRight className="h-4 w-4" />
+          </Link>
+        )}
       </div>
 
       {section.properties.length === 0 ? (

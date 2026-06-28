@@ -2,12 +2,14 @@ import { Prisma } from "@/prisma/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { toListingType } from "@/utils/homeSectionUtils";
 import { getMinSalePrice, getMinRentPrice } from "@/utils/getMinPrice";
+import { buildPropertiesHref } from "@/utils/buildPropertiesHref";
 import type { PropertyItem, PropertySection } from "@/app/types";
 
 export async function getHomeSections(): Promise<PropertySection[]> {
   try {
     const sections = await prisma.homeSection.findMany({
       orderBy: { order: "asc" },
+      include: { propertyType: { select: { slug: true } } },
     });
 
     return await Promise.all(
@@ -23,7 +25,7 @@ export async function getHomeSections(): Promise<PropertySection[]> {
 
         const rawProperties = await prisma.property.findMany({
           where,
-          take: section.limit,
+          take: section.limit + 1,
           orderBy: { createdAt: "desc" },
           select: {
             id: true, slug: true, title: true,
@@ -35,7 +37,8 @@ export async function getHomeSections(): Promise<PropertySection[]> {
           },
         });
 
-        const properties: PropertyItem[] = rawProperties.map((p) => {
+        const hasMore = rawProperties.length > section.limit;
+        const properties: PropertyItem[] = rawProperties.slice(0, section.limit).map((p) => {
           return {
             id: p.id,
             slug: p.slug,
@@ -53,12 +56,14 @@ export async function getHomeSections(): Promise<PropertySection[]> {
           };
         });
 
-        const viewMoreHref =
-          section.listingType === "RENT" ? "/property-for-rent" :
-          section.listingType === "SALE" ? "/property-for-sale" :
-          "/properties";
+        const viewMoreHref = buildPropertiesHref({
+          listingType: section.listingType === "RENT" ? "rent" : section.listingType === "SALE" ? "buy" : undefined,
+          type: section.propertyType?.slug ?? undefined,
+          provinceId: section.provinceId ?? undefined,
+          districtId: section.districtId ?? undefined,
+        });
 
-        return { title: section.title, viewMoreHref, properties };
+        return { title: section.title, viewMoreHref, properties, hasMore };
       }),
     );
   } catch {

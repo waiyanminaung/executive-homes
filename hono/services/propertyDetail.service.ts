@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { PropertyItem } from "@/app/types";
 import { getMinSalePrice, getMinRentPrice } from "@/utils/getMinPrice";
+import { buildPropertiesHref } from "@/utils/buildPropertiesHref";
 
 export async function getPropertyBySlug(slug: string) {
   try {
@@ -22,7 +23,20 @@ export async function getPropertyBySlug(slug: string) {
   }
 }
 
-export async function getSimilarProperties(slug: string, provinceId: string, propertyTypeId: string): Promise<PropertyItem[]> {
+interface SimilarPropertiesResult {
+  properties: PropertyItem[];
+  viewMoreHref: string;
+  hasMore: boolean;
+}
+
+export async function getSimilarProperties(
+  slug: string,
+  provinceId: string,
+  propertyTypeId: string,
+  propertyTypeSlug?: string,
+): Promise<SimilarPropertiesResult> {
+  const viewMoreHref = buildPropertiesHref({ provinceId, type: propertyTypeSlug });
+
   try {
     const results = await prisma.property.findMany({
       where: {
@@ -30,7 +44,7 @@ export async function getSimilarProperties(slug: string, provinceId: string, pro
         NOT: { slug },
         OR: [{ provinceId }, { propertyTypeId }],
       },
-      take: 4,
+      take: 5,
       orderBy: { createdAt: "desc" },
       select: {
         slug: true,
@@ -48,8 +62,9 @@ export async function getSimilarProperties(slug: string, provinceId: string, pro
       },
     });
 
-    return results.map((p) => {
-      const listingType = p.isForSale && p.isForRent ? "Sale & Rent" : p.isForSale ? "Sale" : "Rent";
+    const hasMore = results.length > 4;
+    const properties = results.slice(0, 4).map((p) => {
+      const listingType = (p.isForSale && p.isForRent ? "Sale & Rent" : p.isForSale ? "Sale" : "Rent") as "Sale & Rent" | "Sale" | "Rent";
       return {
         id: p.id,
         slug: p.slug,
@@ -66,7 +81,9 @@ export async function getSimilarProperties(slug: string, provinceId: string, pro
         imageUrls: p.images.map((img) => img.url),
       };
     });
+
+    return { properties, viewMoreHref, hasMore };
   } catch {
-    return [];
+    return { properties: [], viewMoreHref, hasMore: false };
   }
 }
