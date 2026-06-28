@@ -141,8 +141,8 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
           </div>
 
           <div className="flex items-center gap-2">
-            <LocationIcon className="h-5 w-5 shrink-0 text-neutral-600" />
-            <p className="text-base font-semibold text-neutral-600">
+            <LocationIcon className="h-4 w-4 shrink-0 text-neutral-600" />
+            <p className="text-sm font-medium text-neutral-600">
               {[property.address, property.subDistrictName, property.districtName, property.provinceName]
                 .filter(Boolean)
                 .join(", ")}
