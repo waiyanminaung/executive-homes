@@ -4,10 +4,10 @@ interface SessionUserWithRole {
   role?: string;
 }
 
-export const adminMiddleware = createMiddleware(async (c, next) => {
+export const superAdminMiddleware = createMiddleware(async (c, next) => {
   const user = c.get("user") as SessionUserWithRole | undefined;
 
-  if (user?.role !== "ADMIN" && user?.role !== "SUPERADMIN") {
+  if (user?.role !== "SUPERADMIN") {
     return c.json({ error: "Forbidden" }, 403);
   }
 
