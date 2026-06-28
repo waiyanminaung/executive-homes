@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil, Trash2, Plus } from "lucide-react";
-import { ConfirmDialog, Dialog, Spinner } from "@geckoui/geckoui";
+import { Button, ConfirmDialog, Dialog, Spinner } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
 import { authClient } from "@/lib/auth-client";
 import { classNames } from "@/utils/classNames";
@@ -112,13 +112,13 @@ export function UsersTable() {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <button
+        <Button
           onClick={openCreate}
-          className="flex items-center gap-2 bg-primary-700 hover:bg-primary-800 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors"
+          className="flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           Add User
-        </button>
+        </Button>
       </div>
 
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
