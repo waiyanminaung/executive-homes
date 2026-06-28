@@ -52,7 +52,7 @@ export function HomeHero() {
 
   const handleSearch = (params: { q?: string; provinceId?: string; districtId?: string; subDistrictIds?: string; stationIds?: string }) => {
     const urlParams = new URLSearchParams();
-    urlParams.set("tab", tab === "rent" ? "rent" : "buy");
+    urlParams.set("listingType", tab === "rent" ? "rent" : "buy");
     if (params.q) urlParams.set("q", params.q);
     if (params.provinceId) urlParams.set("provinceId", params.provinceId);
     if (params.districtId) urlParams.set("districtId", params.districtId);
@@ -62,6 +62,7 @@ export function HomeHero() {
     if (filters.bedrooms) urlParams.set("bedrooms", filters.bedrooms);
     if (filters.minPrice) urlParams.set("minPrice", filters.minPrice);
     if (filters.maxPrice) urlParams.set("maxPrice", filters.maxPrice);
+    if (petAllow) urlParams.set("pet", "true");
     router.push(`/properties?${urlParams.toString()}`);
   };
 

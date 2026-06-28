@@ -10,6 +10,7 @@ export const publicPropertyListQuerySchema = z.object({
   districtId: z.string().optional(),
   beds: z.enum(["0", "1", "2", "3", "4", "5"]).optional(),
   q: z.string().optional(),
+  isPetFriendly: z.coerce.boolean().optional(),
   stationIds: z.string().optional(),
   subDistrictIds: z.string().optional(),
 });

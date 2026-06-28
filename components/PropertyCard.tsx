@@ -48,11 +48,14 @@ function PropertyPrice({ minSalePrice, minRentPrice, hasMultipleTiers }: Propert
 
 interface PropertyCardProps {
   property: PropertyItem;
+  backHref?: string;
 }
 
-export function PropertyCard({ property }: PropertyCardProps) {
-  const images = property.imageUrls.slice(0, 5);
-  const propertyHref = `/properties/${property.slug}`;
+export function PropertyCard({ property, backHref }: PropertyCardProps) {
+  const images = property.imageUrls.length > 0 ? property.imageUrls.slice(0, 5) : ["/property-placeholder.png"];
+  const propertyHref = backHref
+    ? `/properties/${property.slug}?back=${encodeURIComponent(backHref)}`
+    : `/properties/${property.slug}`;
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, watchDrag: false });
   const [selectedIndex, setSelectedIndex] = useState(0);
 

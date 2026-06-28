@@ -6,7 +6,7 @@ import { publicPropertyListQuerySchema } from "@/validation/publicPropertySchema
 const publicPropertiesRoutes = new Hono();
 
 publicPropertiesRoutes.get("/", zv("query", publicPropertyListQuerySchema), async (c) => {
-  const { page, limit, isForSale, isForRent, type, provinceId, districtId, subDistrictIds, beds, q, stationIds } = c.req.valid("query");
+  const { page, limit, isForSale, isForRent, type, provinceId, districtId, subDistrictIds, isPetFriendly, beds, q, stationIds } = c.req.valid("query");
   const skip = (page - 1) * limit;
 
   const where: Record<string, unknown> = { isPublished: true };
@@ -20,6 +20,7 @@ publicPropertiesRoutes.get("/", zv("query", publicPropertyListQuerySchema), asyn
     if (beds === "5") where.beds = { gte: 5 };
     else where.beds = Number(beds);
   }
+  if (isPetFriendly) where.isPetFriendly = true;
   if (q) where.title = { contains: q, mode: "insensitive" };
   if (subDistrictIds) {
     const ids = subDistrictIds.split(",").filter(Boolean);

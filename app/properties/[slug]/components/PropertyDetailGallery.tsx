@@ -145,7 +145,8 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
   const [galleryOpen, setGalleryOpen] = useState(false);
   const [initialIndex, setInitialIndex] = useState(0);
 
-  const [primaryImage, ...secondaryImages] = images;
+  const displayImages = images.length > 0 ? images : ["/property-placeholder.png"];
+  const [primaryImage, ...secondaryImages] = displayImages;
 
   function openAt(index: number) {
     setInitialIndex(index);
@@ -154,7 +155,7 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
 
   return (
     <>
-      {images.length === 1 && (
+      {displayImages.length === 1 && (
         <section className="relative min-h-[400px] overflow-hidden rounded-[10px] md:min-h-[500px]">
           <GalleryImage
             src={primaryImage}
@@ -165,7 +166,7 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
         </section>
       )}
 
-      {images.length === 2 && (
+      {displayImages.length === 2 && (
         <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-2">
           <div className="relative min-h-[300px] md:min-h-[440px]">
             <GalleryImage
@@ -186,7 +187,7 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
         </section>
       )}
 
-      {images.length === 3 && (
+      {displayImages.length === 3 && (
         <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-2">
           <div className="relative min-h-[300px] md:min-h-[440px]">
             <GalleryImage
@@ -211,16 +212,16 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
         </section>
       )}
 
-      {images.length === 4 && (
-        <GalleryLayoutFour images={images} title={title} onImageClick={openAt} />
+      {displayImages.length === 4 && (
+        <GalleryLayoutFour images={displayImages} title={title} onImageClick={openAt} />
       )}
 
-      {images.length >= 5 && (
-        <GalleryLayoutFivePlus images={images} title={title} onImageClick={openAt} />
+      {displayImages.length >= 5 && (
+        <GalleryLayoutFivePlus images={displayImages} title={title} onImageClick={openAt} />
       )}
 
       <PropertyGalleryModal
-        images={images}
+        images={displayImages}
         open={galleryOpen}
         title={title}
         initialIndex={initialIndex}

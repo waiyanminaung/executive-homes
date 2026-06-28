@@ -1,10 +1,10 @@
 "use client";
 
-import { parseAsInteger, parseAsString, useQueryState } from "nuqs";
 import { Spinner } from "@geckoui/geckoui";
 import { useRead } from "@/lib/spoosh";
 import { PropertyCard } from "@/components/PropertyCard";
 import type { PropertyItem } from "@/app/types";
+import { useListingSearchParams } from "@/utils/useListingSearchParams";
 import { ListingSearchBar } from "./ListingSearchBar";
 import { ListingResultsBar } from "./ListingResultsBar";
 import { ListingPagination } from "./ListingPagination";
@@ -55,14 +55,7 @@ interface ListingPageProps {
 
 export function ListingPage({ listingType, propertyType, pageTitle }: ListingPageProps) {
   const defaultTab = listingType === "for-rent" ? "rent" : "buy";
-  const [q] = useQueryState("q", parseAsString.withDefault(""));
-  const [tab] = useQueryState("tab", parseAsString.withDefault(defaultTab));
-  const [bedrooms] = useQueryState("bedrooms");
-  const [page] = useQueryState("page", parseAsInteger.withDefault(1));
-  const [provinceId] = useQueryState("provinceId");
-  const [districtId] = useQueryState("districtId");
-  const [subDistrictIds] = useQueryState("subDistrictIds");
-  const [stationIds] = useQueryState("stationIds");
+  const { listingType: tab, q, bedrooms, page, pet, provinceId, districtId, subDistrictIds, stationIds, backHref } = useListingSearchParams(defaultTab);
 
   const isForRent = tab === "rent" ? "true" : undefined;
   const isForSale = tab === "buy" ? "true" : undefined;
@@ -75,6 +68,7 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
     ...(q ? { q } : {}),
     ...(bedrooms ? { beds: bedrooms } : {}),
     ...(propertyType ? { type: propertyType } : {}),
+    ...(pet ? { isPetFriendly: "true" } : {}),
     ...(provinceId ? { provinceId } : {}),
     ...(districtId ? { districtId } : {}),
     ...(subDistrictIds ? { subDistrictIds } : {}),
@@ -104,7 +98,7 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
           ) : properties.length > 0 ? (
             <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-5">
               {properties.map((property) => (
-                <PropertyCard key={property.id} property={property} />
+                <PropertyCard key={property.id} property={property} backHref={backHref} />
               ))}
             </div>
           ) : (

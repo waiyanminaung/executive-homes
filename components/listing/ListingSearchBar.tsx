@@ -3,19 +3,13 @@
 import { useState } from "react";
 import { Button, Input, Select, SelectOption } from "@geckoui/geckoui";
 import { Search } from "lucide-react";
-import { parseAsBoolean, parseAsString, useQueryState } from "nuqs";
 import { classNames } from "@/utils/classNames";
 import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
 import { HomePetToggle } from "@/app/components/home/HomePetToggle";
+import { useListingSearchParams } from "@/utils/useListingSearchParams";
 
 export function ListingSearchBar() {
-  const [, setQ] = useQueryState("q", parseAsString.withDefault(""));
-  const [tab, setTab] = useQueryState("tab", parseAsString.withDefault("buy"));
-  const [type, setType] = useQueryState("type");
-  const [location, setLocation] = useQueryState("location");
-  const [price, setPrice] = useQueryState("price");
-  const [bedrooms, setBedrooms] = useQueryState("bedrooms");
-  const [pet, setPet] = useQueryState("pet", parseAsBoolean.withDefault(false));
+  const { listingType, setListingType, setQ, type, setType, location, setLocation, price, setPrice, bedrooms, setBedrooms, pet, setPet } = useListingSearchParams();
 
   const [inputKeyword, setInputKeyword] = useState("");
 
@@ -54,8 +48,8 @@ export function ListingSearchBar() {
 
         <div className="mt-3 grid grid-cols-2 gap-3 md:flex md:flex-wrap">
           <Select
-            value={tab}
-            onChange={(v) => void setTab(v ?? "buy")}
+            value={listingType}
+            onChange={(v) => void setListingType(v ?? "buy")}
             placeholder="Buy / Rent"
             className={selectClass}
             wrapperClassName="min-w-0 md:flex-1"

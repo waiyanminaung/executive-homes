@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronRight, ArrowLeft } from "lucide-react";
+import { parseAsString, useQueryState } from "nuqs";
 import { PropertyShareButton } from "./PropertyShareButton";
 
 interface PropertyDetailBreadcrumbProps {
@@ -7,10 +10,13 @@ interface PropertyDetailBreadcrumbProps {
 }
 
 export function PropertyDetailBreadcrumb({ title }: PropertyDetailBreadcrumbProps) {
+  const [back] = useQueryState("back", parseAsString);
+  const backHref = back ?? "/properties";
+
   return (
     <nav aria-label="Breadcrumb" className="flex items-center gap-3 overflow-hidden py-[14px] text-sm font-medium">
       <Link
-        href="/properties"
+        href={backHref}
         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-gray-300 bg-white text-neutral-700 shadow-sm transition-colors hover:border-primary-300 hover:text-primary-500"
         aria-label="Back to properties"
       >
@@ -27,7 +33,7 @@ export function PropertyDetailBreadcrumb({ title }: PropertyDetailBreadcrumbProp
           <ChevronRight className="h-5 w-5 text-neutral-950" />
         </li>
         <li className="shrink-0">
-          <Link href="/properties" className="text-neutral-600 transition-colors hover:text-primary-500">
+          <Link href={backHref} className="text-neutral-600 transition-colors hover:text-primary-500">
             Properties
           </Link>
         </li>
