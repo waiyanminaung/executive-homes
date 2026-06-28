@@ -17,6 +17,8 @@ import type { ContactInfo } from "@/types/contactInfo";
 import type { AppContent } from "@/types/appContent";
 import type { AppContentInput } from "@/validation/appContentSchema";
 import type { ContactInfoInput } from "@/validation/contactInfoSchema";
+import type { AdminUser } from "@/types/adminUser";
+import type { AdminUserCreateInput, AdminUserUpdateInput } from "@/validation/adminUserSchema";
 
 interface EnquiryListItem {
   id: string;
@@ -154,6 +156,14 @@ export type ApiSchema = {
   "admin/app-content": {
     GET: { data: { items: AppContent[] }; query?: { key?: string } };
     PUT: { data: { item: AppContent | null }; body: AppContentInput };
+  };
+  "admin/users": {
+    GET: { data: { users: AdminUser[] } };
+    POST: { data: { user: AdminUser }; body: AdminUserCreateInput };
+  };
+  "admin/users/:id": {
+    PATCH: { data: { user: AdminUser }; params: { id: string }; body: AdminUserUpdateInput };
+    DELETE: { data: { ok: true }; params: { id: string } };
   };
   "locations/provinces": {
     GET: { data: { provinces: Array<{ id: string; name: string; slug: string }> } };
