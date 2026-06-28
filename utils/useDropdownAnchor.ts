@@ -16,6 +16,12 @@ export function useDropdownAnchor(dropdownRef: React.RefObject<HTMLElement | nul
   useEffect(() => {
     if (!dropdownOpen) return;
 
+    const updatePos = () => {
+      const rect = anchorRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setDropdownPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
+    };
+
     const handleMouseDown = (e: MouseEvent) => {
       const target = e.target as Node;
       if (anchorRef.current?.contains(target) || dropdownRef.current?.contains(target)) return;
@@ -28,10 +34,14 @@ export function useDropdownAnchor(dropdownRef: React.RefObject<HTMLElement | nul
 
     document.addEventListener("mousedown", handleMouseDown);
     document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("scroll", updatePos, true);
+    window.addEventListener("resize", updatePos);
 
     return () => {
       document.removeEventListener("mousedown", handleMouseDown);
       document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("scroll", updatePos, true);
+      window.removeEventListener("resize", updatePos);
     };
   }, [dropdownOpen, dropdownRef]);
 

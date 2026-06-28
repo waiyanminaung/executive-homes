@@ -59,7 +59,7 @@ export function ListingSearchBar({ listingType: listingTypeProp }: ListingSearch
               onChange={(v) => { void setListingType(v ?? "buy"); void setPage(1); }}
               placeholder="Buy / Rent"
               className={classNames(
-                "h-[46px] shrink-0 rounded-md border border-gray-300 bg-white px-[18px]",
+                "h-[46px] shrink-0 rounded-md border border-gray-300 bg-white px-[14px]",
                 "cursor-pointer text-left text-sm font-semibold shadow-sm transition-colors hover:border-gray-400",
               )}
               wrapperClassName="w-[110px] shrink-0"

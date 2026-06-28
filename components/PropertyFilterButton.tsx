@@ -68,7 +68,7 @@ export function PropertyFilterButton({ tab, values, onApply, className }: Proper
       type="button"
       onClick={handleClick}
       className={classNames(
-        "flex h-[46px] min-w-0 items-center justify-between gap-1.5 rounded-md border bg-white px-[18px]",
+        "flex h-[46px] min-w-0 items-center justify-between gap-1.5 rounded-md border bg-white px-[14px]",
         "cursor-pointer text-left text-sm font-semibold shadow-sm transition-colors hover:border-gray-400",
         active ? "border-primary-400 text-neutral-900" : "border-gray-300 text-neutral-400",
         className,

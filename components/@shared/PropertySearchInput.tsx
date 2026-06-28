@@ -2,10 +2,12 @@
 
 import { useState, useRef } from "react";
 import { createPortal } from "react-dom";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { Button, Input } from "@geckoui/geckoui";
+import { useRouter } from "next/navigation";
 import { classNames } from "@/utils/classNames";
 import { useAnimatedPlaceholder } from "@/utils/useAnimatedPlaceholder";
+import { usePropertySearch, type SearchResult } from "@/utils/usePropertySearch";
 import { openLocationPicker } from "@/components/@shared/LocationPickerDialog";
 import { openTransitStationPicker } from "@/components/@shared/TransitStationPickerModal";
 import { PropertySearchDropdown } from "@/components/PropertySearchDropdown";
@@ -29,6 +31,7 @@ interface PropertySearchInputProps {
 }
 
 export function PropertySearchInput({ onApply, showSearchButton, className, inputClassName }: PropertySearchInputProps) {
+  const router = useRouter();
   const [inputValue, setInputValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
@@ -42,6 +45,9 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { anchorRef, dropdownOpen, dropdownPos, openDropdown, closeDropdown } = useDropdownAnchor(dropdownRef);
 
+  const { results, loading } = usePropertySearch(inputValue);
+  const hasQuery = inputValue.trim().length > 0;
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
     setProvinceId(null);
@@ -50,12 +56,45 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
     setStationIds([]);
   };
 
+  const handleClear = () => {
+    setInputValue("");
+    setProvinceId(null);
+    setDistrictId(null);
+    setSubDistrictIds([]);
+    setStationIds([]);
+
+    if (!showSearchButton) {
+      onApply({});
+    }
+  };
+
   const buildParams = (): PropertySearchParams => {
     if (stationIds.length > 0) return { stationIds: stationIds.join(",") };
     if (subDistrictIds.length > 0) return { provinceId: provinceId ?? undefined, districtId: districtId ?? undefined, subDistrictIds: subDistrictIds.join(",") };
     if (districtId) return { provinceId: provinceId ?? undefined, districtId };
     if (provinceId) return { provinceId };
     return { q: inputValue.trim() || undefined };
+  };
+
+  const handleResultClick = (result: SearchResult) => {
+    closeDropdown();
+
+    if (result.type === "property" && result.slug) {
+      router.push(`/properties/${result.slug}`);
+      return;
+    }
+
+    if (result.type === "station" && result.stationId) {
+      setInputValue(result.name);
+      setStationIds([result.stationId]);
+      setProvinceId(null);
+      setDistrictId(null);
+      setSubDistrictIds([]);
+
+      if (!showSearchButton) {
+        onApply({ stationIds: result.stationId });
+      }
+    }
   };
 
   const handleProvinceClick = () => {
@@ -120,17 +159,23 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
       <div ref={anchorRef} className="flex-1">
         <Input
           aria-label="Search keyword"
+          autoComplete="off"
           placeholder={`Search by ${animatedPlaceholder}`}
           value={inputValue}
           onChange={handleInputChange}
           onFocus={() => { setIsFocused(true); openDropdown(); }}
           onBlur={() => setIsFocused(false)}
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+          suffix={inputValue ? (
+            <button type="button" onClick={handleClear}>
+              <X className="h-3.5 w-3.5 text-gray-400 hover:text-gray-600" />
+            </button>
+          ) : undefined}
           className={classNames(
-            "border-gray-300 shadow-sm [&:focus-within]:border-primary-500 [&:focus-within]:ring-2 [&:focus-within]:ring-primary-100",
+            "border-gray-300 shadow-sm [&:focus-within]:border-primary-500 [&:focus-within]:ring-2 [&:focus-within]:ring-primary-100 px-3.5",
             inputClassName,
           )}
-          inputClassName="h-[46px] text-sm font-medium text-neutral-900"
+          inputClassName="h-[45px] text-sm font-medium text-neutral-900"
         />
       </div>
 
@@ -153,6 +198,9 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
             dropdownRef={dropdownRef}
             onProvinceClick={handleProvinceClick}
             onTransitClick={handleTransitClick}
+            onResultClick={handleResultClick}
+            results={hasQuery ? results : undefined}
+            loading={hasQuery ? loading : false}
           />,
           document.body,
         )}
