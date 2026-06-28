@@ -33,24 +33,28 @@ adminUsersRoutes.get("/", async (c) => {
 adminUsersRoutes.post("/", zv("json", createAdminUserSchema), async (c) => {
   const { name, email, password, role } = c.req.valid("json");
 
-  const created = await auth.api.createUser({
-    body: { name, email, password, role: role as "admin" },
-    headers: c.req.raw.headers,
-  });
+  try {
+    const created = await auth.api.createUser({
+      body: { name, email, password, role: role as "admin" },
+      headers: c.req.raw.headers,
+    });
 
-  return c.json(
-    {
-      user: {
-        id: created.user.id,
-        name: created.user.name,
-        email: created.user.email,
-        role: (created.user as { role?: string }).role ?? "ADMIN",
-        emailVerified: created.user.emailVerified,
-        createdAt: created.user.createdAt.toISOString(),
+    return c.json(
+      {
+        user: {
+          id: created.user.id,
+          name: created.user.name,
+          email: created.user.email,
+          role: (created.user as { role?: string }).role ?? "ADMIN",
+          emailVerified: created.user.emailVerified,
+          createdAt: created.user.createdAt.toISOString(),
+        },
       },
-    },
-    201,
-  );
+      201,
+    );
+  } catch {
+    return c.json({ error: "Failed to create user" }, 500);
+  }
 });
 
 adminUsersRoutes.patch("/:id", zv("json", updateAdminUserSchema), async (c) => {
