@@ -15,6 +15,7 @@ export function useListingSearchParams(defaultTab = "buy") {
   const [districtId, setDistrictId] = useQueryState("districtId");
   const [subDistrictIds, setSubDistrictIds] = useQueryState("subDistrictIds");
   const [stationIds, setStationIds] = useQueryState("stationIds");
+  const [locationLabel, setLocationLabel] = useQueryState("locationLabel");
 
   const backSearch = new URLSearchParams();
   if (listingType !== defaultTab) backSearch.set("listingType", listingType);
@@ -28,6 +29,7 @@ export function useListingSearchParams(defaultTab = "buy") {
   if (districtId) backSearch.set("districtId", districtId);
   if (subDistrictIds) backSearch.set("subDistrictIds", subDistrictIds);
   if (stationIds) backSearch.set("stationIds", stationIds);
+  if (locationLabel) backSearch.set("locationLabel", locationLabel);
   if (page > 1) backSearch.set("page", String(page));
   const backHref = `/properties${backSearch.toString() ? `?${backSearch.toString()}` : ""}`;
 
@@ -44,6 +46,7 @@ export function useListingSearchParams(defaultTab = "buy") {
     districtId, setDistrictId,
     subDistrictIds, setSubDistrictIds,
     stationIds, setStationIds,
+    locationLabel, setLocationLabel,
     backHref,
   };
 }

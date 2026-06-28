@@ -7,6 +7,7 @@ import { classNames } from "@/utils/classNames";
 import { HomePetToggle } from "./HomePetToggle";
 import { HomeSearchInput } from "./HomeSearchInput";
 import { type FilterValues } from "@/components/PropertyFilterModal";
+import { type PropertySearchParams } from "@/components/@shared/PropertySearchInput";
 import { PropertyFilterButton } from "@/components/PropertyFilterButton";
 
 export function HomeHero() {
@@ -20,7 +21,7 @@ export function HomeHero() {
     bedrooms: null,
   });
 
-  const handleSearch = (params: { q?: string; provinceId?: string; districtId?: string; subDistrictIds?: string; stationIds?: string }) => {
+  const handleSearch = (params: PropertySearchParams) => {
     const urlParams = new URLSearchParams();
     urlParams.set("listingType", tab === "rent" ? "rent" : "buy");
     if (params.q) urlParams.set("q", params.q);
@@ -33,6 +34,7 @@ export function HomeHero() {
     if (filters.minPrice) urlParams.set("minPrice", filters.minPrice);
     if (filters.maxPrice) urlParams.set("maxPrice", filters.maxPrice);
     if (petAllow) urlParams.set("pet", "true");
+    if (params.locationLabel) urlParams.set("locationLabel", params.locationLabel);
     router.push(`/properties?${urlParams.toString()}`);
   };
 

@@ -158,4 +158,16 @@ export type ApiSchema = {
   "locations/subdistricts": {
     GET: { data: { subDistricts: Array<{ id: string; name: string; slug: string; districtId: string }> }; query?: { districtId?: string } };
   };
+  "locations/search": {
+    GET: {
+      data: {
+        results: Array<
+          | { id: string; name: string; type: "province"; provinceId: string }
+          | { id: string; name: string; type: "district"; provinceId: string; provinceName: string; districtId: string }
+          | { id: string; name: string; type: "subdistrict"; provinceId: string; provinceName: string; districtId: string; districtName: string; subDistrictId: string }
+        >;
+      };
+      query?: { q?: string };
+    };
+  };
 };

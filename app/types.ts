@@ -17,6 +17,8 @@ export interface AreaCard {
   listings: number;
   imageUrl: string;
   featured?: boolean;
+  provinceId?: string | null;
+  districtId?: string | null;
 }
 
 export interface PropertyItem {

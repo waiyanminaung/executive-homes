@@ -21,6 +21,7 @@ export interface PropertySearchParams {
   districtId?: string;
   subDistrictIds?: string;
   stationIds?: string;
+  locationLabel?: string;
 }
 
 interface PropertySearchInputProps {
@@ -76,6 +77,10 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
     return { q: inputValue.trim() || undefined };
   };
 
+  const applyIfListing = (params: PropertySearchParams) => {
+    if (!showSearchButton) onApply(params);
+  };
+
   const handleResultClick = (result: SearchResult) => {
     closeDropdown();
 
@@ -84,17 +89,26 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
       return;
     }
 
+    setInputValue(result.name);
+
     if (result.type === "station" && result.stationId) {
-      setInputValue(result.name);
       setStationIds([result.stationId]);
       setProvinceId(null);
       setDistrictId(null);
       setSubDistrictIds([]);
-
-      if (!showSearchButton) {
-        onApply({ stationIds: result.stationId });
-      }
+      applyIfListing({ stationIds: result.stationId, locationLabel: result.name });
+      return;
     }
+
+    setStationIds([]);
+    setProvinceId(result.provinceId ?? null);
+    setDistrictId(result.districtId ?? null);
+    setSubDistrictIds(result.subDistrictId ? [result.subDistrictId] : []);
+
+    const params: PropertySearchParams = { provinceId: result.provinceId, locationLabel: result.name };
+    if (result.districtId) params.districtId = result.districtId;
+    if (result.subDistrictId) params.subDistrictIds = result.subDistrictId;
+    applyIfListing(params);
   };
 
   const handleProvinceClick = () => {
@@ -107,7 +121,7 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
         if (sel.subDistrictNames && sel.subDistrictNames.length > 0) {
           display = sel.subDistrictNames.join(", ");
         } else if (sel.districtName) {
-          display = `${sel.provinceName} › ${sel.districtName}`;
+          display = sel.districtName;
         } else {
           display = sel.provinceName;
         }
@@ -121,11 +135,11 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
         if (!showSearchButton) {
           const ids = sel.subDistrictIds ?? [];
           if (ids.length > 0) {
-            onApply({ provinceId: sel.provinceId ?? undefined, districtId: sel.districtId ?? undefined, subDistrictIds: ids.join(",") });
+            onApply({ provinceId: sel.provinceId ?? undefined, districtId: sel.districtId ?? undefined, subDistrictIds: ids.join(","), locationLabel: display });
           } else if (sel.districtId) {
-            onApply({ provinceId: sel.provinceId ?? undefined, districtId: sel.districtId });
+            onApply({ provinceId: sel.provinceId ?? undefined, districtId: sel.districtId, locationLabel: display });
           } else {
-            onApply({ provinceId: sel.provinceId ?? undefined });
+            onApply({ provinceId: sel.provinceId ?? undefined, locationLabel: display });
           }
         }
       },
@@ -137,14 +151,17 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
     openTransitStationPicker({
       selectedIds: stationIds,
       onConfirmWithStations: (stations) => {
-        setInputValue(stations.map((s) => s.name).join(", "));
+        const display = stations.length <= 2
+          ? stations.map((s) => s.name).join(", ")
+          : `${stations.length} BTS/MRT Stations`;
+        setInputValue(display);
         setStationIds(stations.map((s) => s.id));
         setProvinceId(null);
         setDistrictId(null);
         setSubDistrictIds([]);
 
         if (!showSearchButton) {
-          onApply({ stationIds: stations.map((s) => s.id).join(",") });
+          onApply({ stationIds: stations.map((s) => s.id).join(","), locationLabel: display });
         }
       },
       multiple: true,
@@ -152,7 +169,7 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
     });
   };
 
-  const handleSubmit = () => onApply(buildParams());
+  const handleSubmit = () => onApply({ ...buildParams(), locationLabel: inputValue.trim() || undefined });
 
   return (
     <div className={classNames("flex gap-2", className)}>

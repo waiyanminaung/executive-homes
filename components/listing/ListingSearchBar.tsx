@@ -18,7 +18,7 @@ export function ListingSearchBar({ listingType: listingTypeProp }: ListingSearch
     listingType, setListingType,
     setQ, type, setType, minPrice, setMinPrice, maxPrice, setMaxPrice,
     bedrooms, setBedrooms, pet, setPet,
-    setProvinceId, setDistrictId, setSubDistrictIds, setStationIds, setPage,
+    setProvinceId, setDistrictId, setSubDistrictIds, setStationIds, setLocationLabel, setPage,
   } = useListingSearchParams(defaultTab);
 
   const showListingTypeSelect = !listingTypeProp;
@@ -44,6 +44,7 @@ export function ListingSearchBar({ listingType: listingTypeProp }: ListingSearch
     void setDistrictId(params.districtId ?? null);
     void setSubDistrictIds(params.subDistrictIds ?? null);
     void setStationIds(params.stationIds ?? null);
+    void setLocationLabel(params.locationLabel ?? null);
     void setPage(1);
   };
 

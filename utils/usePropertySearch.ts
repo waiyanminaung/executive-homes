@@ -10,9 +10,12 @@ export interface SearchResult {
   name: string;
   description?: string;
   badge: string;
-  type: "station" | "property";
+  type: "station" | "property" | "province" | "district" | "subdistrict";
   stationId?: string;
   slug?: string;
+  provinceId?: string;
+  districtId?: string;
+  subDistrictId?: string;
 }
 
 function stationBadge(line: string): string {
@@ -33,8 +36,13 @@ export function usePropertySearch(query: string) {
     staleTime: 5 * 60 * 1000,
   });
 
-  const { data: propertiesData, loading } = useRead(
+  const { data: propertiesData, loading: propLoading } = useRead(
     (api) => api("properties").GET({ query: { q: debouncedQuery, limit: "5" } }),
+    { enabled: active },
+  );
+
+  const { data: locationsData, loading: locLoading } = useRead(
+    (api) => api("locations/search").GET({ query: { q: debouncedQuery } }),
     { enabled: active },
   );
 
@@ -44,7 +52,7 @@ export function usePropertySearch(query: string) {
 
   const stationResults: SearchResult[] = (stationsData?.stations ?? [])
     .filter((s) => s.name.toLowerCase().includes(q) || (s.code?.toLowerCase().includes(q) ?? false))
-    .slice(0, 4)
+    .slice(0, 3)
     .map((s) => ({
       id: s.id,
       name: s.name,
@@ -53,6 +61,18 @@ export function usePropertySearch(query: string) {
       type: "station" as const,
       stationId: s.id,
     }));
+
+  const locationResults: SearchResult[] = active
+    ? (locationsData?.results ?? []).map((loc) => {
+        if (loc.type === "province") {
+          return { id: loc.id, name: loc.name, badge: "Province", type: "province" as const, provinceId: loc.provinceId };
+        }
+        if (loc.type === "district") {
+          return { id: loc.id, name: loc.name, description: loc.provinceName, badge: "District", type: "district" as const, provinceId: loc.provinceId, districtId: loc.districtId };
+        }
+        return { id: loc.id, name: loc.name, description: `${loc.districtName}, ${loc.provinceName}`, badge: "Sub-district", type: "subdistrict" as const, provinceId: loc.provinceId, districtId: loc.districtId, subDistrictId: loc.subDistrictId };
+      })
+    : [];
 
   const propertyResults: SearchResult[] = active
     ? (propertiesData?.properties ?? []).map((p) => ({
@@ -65,5 +85,8 @@ export function usePropertySearch(query: string) {
       }))
     : [];
 
-  return { results: [...stationResults, ...propertyResults], loading: active && loading };
+  return {
+    results: [...locationResults, ...stationResults, ...propertyResults],
+    loading: active && (propLoading || locLoading),
+  };
 }

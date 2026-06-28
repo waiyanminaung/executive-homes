@@ -55,7 +55,7 @@ interface ListingPageProps {
 
 export function ListingPage({ listingType, propertyType, pageTitle }: ListingPageProps) {
   const defaultTab = listingType === "for-rent" ? "rent" : "buy";
-  const { listingType: tab, q, type, bedrooms, minPrice, maxPrice, page, pet, provinceId, districtId, subDistrictIds, stationIds, backHref } = useListingSearchParams(defaultTab);
+  const { listingType: tab, q, type, bedrooms, minPrice, maxPrice, page, pet, provinceId, districtId, subDistrictIds, stationIds, locationLabel, backHref } = useListingSearchParams(defaultTab);
 
   const isForRent = tab === "rent" ? "true" : undefined;
   const isForSale = tab === "buy" ? "true" : undefined;
@@ -84,7 +84,8 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / 12));
 
-  const title = pageTitle ?? (tab === "rent" ? "Properties for Rent in Bangkok" : "Properties for Sale in Bangkok");
+  const baseTitle = tab === "rent" ? "Properties for Rent" : "Properties for Sale";
+  const title = pageTitle ?? (locationLabel ? `${baseTitle} in ${locationLabel}` : baseTitle);
 
   return (
     <>

@@ -35,4 +35,39 @@ publicLocationsRoutes.get("/subdistricts", async (c) => {
   return c.json({ subDistricts });
 });
 
+publicLocationsRoutes.get("/search", async (c) => {
+  const q = c.req.query("q")?.trim() ?? "";
+  if (!q) return c.json({ results: [] });
+
+  try {
+    const [provinces, districts, subDistricts] = await Promise.all([
+      prisma.province.findMany({
+        where: { name: { contains: q, mode: "insensitive" } },
+        select: { id: true, name: true },
+        take: 3,
+      }),
+      prisma.district.findMany({
+        where: { name: { contains: q, mode: "insensitive" } },
+        select: { id: true, name: true, provinceId: true, province: { select: { id: true, name: true } } },
+        take: 3,
+      }),
+      prisma.subDistrict.findMany({
+        where: { name: { contains: q, mode: "insensitive" } },
+        select: { id: true, name: true, districtId: true, district: { select: { id: true, name: true, provinceId: true, province: { select: { id: true, name: true } } } } },
+        take: 3,
+      }),
+    ]);
+
+    const results = [
+      ...provinces.map((p) => ({ id: p.id, name: p.name, type: "province" as const, provinceId: p.id })),
+      ...districts.map((d) => ({ id: d.id, name: d.name, type: "district" as const, provinceId: d.province.id, provinceName: d.province.name, districtId: d.id })),
+      ...subDistricts.map((s) => ({ id: s.id, name: s.name, type: "subdistrict" as const, provinceId: s.district.province.id, provinceName: s.district.province.name, districtId: s.district.id, districtName: s.district.name, subDistrictId: s.id })),
+    ];
+
+    return c.json({ results });
+  } catch {
+    return c.json({ results: [] });
+  }
+});
+
 export default publicLocationsRoutes;

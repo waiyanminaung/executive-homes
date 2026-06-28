@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import useEmblaCarousel from "embla-carousel-react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { classNames } from "@/utils/classNames";
@@ -11,11 +12,20 @@ interface AreaGridProps {
   areas: AreaCard[];
 }
 
+function buildAreaHref(area: AreaCard): string {
+  const params = new URLSearchParams();
+  if (area.districtId) params.set("districtId", area.districtId);
+  else if (area.provinceId) params.set("provinceId", area.provinceId);
+  const qs = params.toString();
+  return qs ? `/properties?${qs}` : "/properties";
+}
+
 function AreaCardItem({ area, tall }: { area: AreaCard; tall?: boolean }) {
   return (
-    <article
+    <Link
+      href={buildAreaHref(area)}
       className={classNames(
-        "group relative min-h-[180px] flex-1 overflow-hidden rounded-xl shadow-sm",
+        "group relative block min-h-[180px] flex-1 overflow-hidden rounded-xl shadow-sm",
         tall && "min-h-[372px]",
       )}
     >
@@ -31,7 +41,7 @@ function AreaCardItem({ area, tall }: { area: AreaCard; tall?: boolean }) {
         <h3 className="text-lg font-bold">{area.name}</h3>
         <p className="text-sm font-normal">{area.listings} listings</p>
       </div>
-    </article>
+    </Link>
   );
 }
 
