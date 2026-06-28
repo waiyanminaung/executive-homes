@@ -5,12 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { RHFInput, RHFSelect, RHFError, SelectOption } from "@geckoui/geckoui";
 import { useWrite } from "@/lib/spoosh";
 import { createAdminUserSchema, type AdminUserCreateInput } from "@/validation/adminUserSchema";
-import { USER_ROLES } from "@/constants/auth";
-
-const ROLE_OPTIONS = [
-  { label: "Admin", value: USER_ROLES.ADMIN },
-  { label: "Super Admin", value: USER_ROLES.SUPERADMIN },
-];
+import { USER_ROLES, ROLE_SELECT_OPTIONS } from "@/constants/auth";
 
 const DEFAULT_VALUES: AdminUserCreateInput = {
   name: "",
@@ -63,7 +58,7 @@ export function UsersCreateModal({ onSaved, onCancel }: UsersCreateModalProps) {
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-gray-700">Role</label>
           <RHFSelect<string> name="role">
-            {ROLE_OPTIONS.map((opt) => (
+            {ROLE_SELECT_OPTIONS.map((opt) => (
               <SelectOption key={opt.value} value={opt.value} label={opt.label} />
             ))}
           </RHFSelect>

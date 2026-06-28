@@ -20,3 +20,8 @@ export const DEFAULT_ADMIN_REGISTER_VALUES = {
   password: "",
   confirmPassword: "",
 };
+
+export const ROLE_SELECT_OPTIONS = [
+  { label: "Admin", value: USER_ROLES.ADMIN },
+  { label: "Super Admin", value: USER_ROLES.SUPERADMIN },
+] as const;

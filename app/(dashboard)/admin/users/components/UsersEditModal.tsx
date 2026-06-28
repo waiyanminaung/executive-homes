@@ -5,13 +5,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { RHFInput, RHFSelect, RHFError, SelectOption } from "@geckoui/geckoui";
 import { useWrite } from "@/lib/spoosh";
 import { updateAdminUserSchema, type AdminUserUpdateInput } from "@/validation/adminUserSchema";
-import { USER_ROLES } from "@/constants/auth";
+import { ROLE_SELECT_OPTIONS } from "@/constants/auth";
 import type { AdminUser } from "@/types/adminUser";
-
-const ROLE_OPTIONS = [
-  { label: "Admin", value: USER_ROLES.ADMIN },
-  { label: "Super Admin", value: USER_ROLES.SUPERADMIN },
-];
 
 interface UsersEditModalProps {
   user: AdminUser;
@@ -47,7 +42,7 @@ export function UsersEditModal({ user, disableRoleChange, onSaved, onCancel }: U
         <div className="space-y-1.5">
           <label className="block text-sm font-medium text-gray-700">Role</label>
           <RHFSelect<string> name="role" disabled={disableRoleChange}>
-            {ROLE_OPTIONS.map((opt) => (
+            {ROLE_SELECT_OPTIONS.map((opt) => (
               <SelectOption key={opt.value} value={opt.value} label={opt.label} />
             ))}
           </RHFSelect>

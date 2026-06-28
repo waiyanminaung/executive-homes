@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { classNames } from "@/utils/classNames";
+import { USER_ROLES } from "@/constants/auth";
 
 const getInitials = (name?: string | null) => {
   if (!name?.trim()) return "AD";
@@ -287,7 +288,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
             Enquiries
           </Link>
 
-          {user?.role === "SUPERADMIN" && (
+          {user?.role === USER_ROLES.SUPERADMIN && (
             <Link
               href="/admin/users"
               onClick={onClose}

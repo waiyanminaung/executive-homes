@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import { authMiddleware, adminMiddleware, superAdminMiddleware } from "@/hono/middleware";
+import { authMiddleware, superAdminMiddleware } from "@/hono/middleware";
 import { zv } from "@/validation/zv";
 import { createAdminUserSchema, updateAdminUserSchema } from "@/validation/adminUserSchema";
 import { USER_ROLES } from "@/constants/auth";
@@ -9,7 +9,7 @@ import type { AppEnv } from "@/hono/types";
 
 const adminUsersRoutes = new Hono<AppEnv>();
 
-adminUsersRoutes.use("*", authMiddleware, adminMiddleware, superAdminMiddleware);
+adminUsersRoutes.use("*", authMiddleware, superAdminMiddleware);
 
 adminUsersRoutes.get("/", async (c) => {
   try {
@@ -36,23 +36,24 @@ adminUsersRoutes.post("/", zv("json", createAdminUserSchema), async (c) => {
 
   try {
     const created = await auth.api.createUser({
-      body: { name, email, password, role: role as "admin" },
+      body: { name, email, password },
       headers: c.req.raw.headers,
     });
 
-    return c.json(
-      {
-        user: {
-          id: created.user.id,
-          name: created.user.name,
-          email: created.user.email,
-          role: (created.user as { role?: string }).role ?? "ADMIN",
-          emailVerified: created.user.emailVerified,
-          createdAt: created.user.createdAt.toISOString(),
-        },
+    const user = await prisma.user.update({
+      where: { id: created.user.id },
+      data: { role },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        emailVerified: true,
+        createdAt: true,
       },
-      201,
-    );
+    });
+
+    return c.json({ user }, 201);
   } catch {
     return c.json({ error: "Failed to create user" }, 500);
   }
