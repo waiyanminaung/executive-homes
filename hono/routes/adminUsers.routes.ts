@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { authMiddleware, adminMiddleware, superAdminMiddleware } from "@/hono/middleware";
 import { zv } from "@/validation/zv";
 import { createAdminUserSchema, updateAdminUserSchema } from "@/validation/adminUserSchema";
+import { USER_ROLES } from "@/constants/auth";
 import type { AppEnv } from "@/hono/types";
 
 const adminUsersRoutes = new Hono<AppEnv>();
@@ -66,8 +67,8 @@ adminUsersRoutes.patch("/:id", zv("json", updateAdminUserSchema), async (c) => {
 
     if (!existing) return c.json({ error: "User not found" }, 404);
 
-    if (data.role && data.role !== "SUPERADMIN" && existing.role === "SUPERADMIN") {
-      const superAdminCount = await prisma.user.count({ where: { role: "SUPERADMIN" } });
+    if (data.role && data.role !== USER_ROLES.SUPERADMIN && existing.role === USER_ROLES.SUPERADMIN) {
+      const superAdminCount = await prisma.user.count({ where: { role: USER_ROLES.SUPERADMIN } });
 
       if (superAdminCount <= 1) {
         return c.json({ error: "Cannot demote the last SUPERADMIN" }, 400);
@@ -106,8 +107,8 @@ adminUsersRoutes.delete("/:id", async (c) => {
 
     if (!target) return c.json({ error: "User not found" }, 404);
 
-    if (target.role === "SUPERADMIN") {
-      const superAdminCount = await prisma.user.count({ where: { role: "SUPERADMIN" } });
+    if (target.role === USER_ROLES.SUPERADMIN) {
+      const superAdminCount = await prisma.user.count({ where: { role: USER_ROLES.SUPERADMIN } });
 
       if (superAdminCount <= 1) {
         return c.json({ error: "Cannot delete the last SUPERADMIN" }, 400);

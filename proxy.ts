@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { USER_ROLES } from "@/constants/auth";
 
 const PUBLIC_AUTH_PATHS = ["/admin/login", "/admin/register"];
 const SUPERADMIN_PATHS = ["/admin/users"];
@@ -25,7 +26,7 @@ export async function proxy(request: NextRequest) {
 
   const isSuperAdminPath = SUPERADMIN_PATHS.some((p) => pathname.startsWith(p));
 
-  if (isSuperAdminPath && session?.user?.role !== "SUPERADMIN") {
+  if (isSuperAdminPath && session?.user?.role !== USER_ROLES.SUPERADMIN) {
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 
