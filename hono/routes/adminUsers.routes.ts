@@ -35,9 +35,8 @@ adminUsersRoutes.post("/", zv("json", createAdminUserSchema), async (c) => {
   const { name, email, password, role } = c.req.valid("json");
 
   try {
-    const created = await auth.api.createUser({
+    const created = await auth.api.signUpEmail({
       body: { name, email, password },
-      headers: c.req.raw.headers,
     });
 
     const user = await prisma.user.update({
@@ -116,10 +115,7 @@ adminUsersRoutes.delete("/:id", async (c) => {
       }
     }
 
-    await auth.api.removeUser({
-      body: { userId: id },
-      headers: c.req.raw.headers,
-    });
+    await prisma.user.delete({ where: { id } });
 
     return c.json({ ok: true });
   } catch {
