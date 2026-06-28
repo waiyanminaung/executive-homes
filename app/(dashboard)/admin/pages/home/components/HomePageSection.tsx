@@ -13,6 +13,7 @@ interface HomePageSectionProps<T extends { id: string; order: number }> {
   items: T[];
   expandedId: string | "new" | null;
   emptyMessage: string;
+  topContent?: React.ReactNode;
   onAdd: () => void;
   onDragEnd: (event: DragEndEvent) => void;
   renderRow: (item: T) => React.ReactNode;
@@ -27,6 +28,7 @@ export default function HomePageSection<T extends { id: string; order: number }>
   items,
   expandedId,
   emptyMessage,
+  topContent,
   onAdd,
   onDragEnd,
   renderRow,
@@ -51,6 +53,12 @@ export default function HomePageSection<T extends { id: string; order: number }>
         </div>
       ) : (
         <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-3">
+          {topContent && (
+            <div className="border-b border-gray-100 pb-3">
+              {topContent}
+            </div>
+          )}
+
           {items.length === 0 && expandedId !== "new" && (
             <div className="text-center py-16">
               <p className="text-gray-400 text-sm">{emptyMessage}</p>

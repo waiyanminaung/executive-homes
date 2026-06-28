@@ -15,3 +15,4 @@ export { default as publicHomeAreaCardsRoutes } from "./publicHomeAreaCards.rout
 export { default as contactInfoRoutes } from "./contactInfo.routes";
 export { default as publicLocationsRoutes } from "./publicLocations.routes";
 export { default as publicTransitStationsRoutes } from "./publicTransitStations.routes";
+export { default as appContentRoutes } from "./appContent.routes";

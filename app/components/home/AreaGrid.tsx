@@ -10,6 +10,7 @@ import type { AreaCard } from "@/app/types";
 
 interface AreaGridProps {
   areas: AreaCard[];
+  title?: string;
 }
 
 function buildAreaHref(area: AreaCard): string {
@@ -51,7 +52,7 @@ function chunkArray<T>(arr: T[], size: number): T[][] {
   );
 }
 
-export function AreaGrid({ areas }: AreaGridProps) {
+export function AreaGrid({ areas, title = "Explore Bangkok Areas" }: AreaGridProps) {
   const [featured, ...rest] = areas;
   const pairs = chunkArray(rest, 2);
 
@@ -87,7 +88,7 @@ export function AreaGrid({ areas }: AreaGridProps) {
     <section className="container mx-auto px-4 pb-12 pt-10 md:pb-16 md:pt-[120px]">
       <div className="mb-5 flex items-center justify-between md:mb-6">
         <h2 className="text-2xl font-bold text-neutral-950 md:text-[28px]">
-          Explore Bangkok Areas
+          {title}
         </h2>
 
         <div className="flex gap-2">

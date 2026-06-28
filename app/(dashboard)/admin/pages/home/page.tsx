@@ -4,6 +4,8 @@ import { useState } from "react";
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useRead, useWrite } from "@/lib/spoosh";
+import { Input, LoadingButton } from "@geckoui/geckoui";
+import { toast } from "@geckoui/geckoui";
 import type { HomeSection } from "@/types/homeSection";
 import type { HomeAreaCard } from "@/types/homeAreaCard";
 import AdminPageHeader from "../../components/AdminPageHeader";
@@ -20,6 +22,17 @@ export default function AdminHomePage() {
   const { trigger: updateSection } = useWrite((api) => api("admin/home-sections/:id").PATCH());
   const [expandedSectionId, setExpandedSectionId] = useState<string | "new" | null>(null);
   const [sectionOrderIds, setSectionOrderIds] = useState<string[] | null>(null);
+
+  const { data: contentData } = useRead((api) => api("admin/app-content").GET({ query: { key: "home" } }));
+  const { trigger: saveContent, loading: savingTitle } = useWrite((api) => api("admin/app-content").PUT());
+  const [areasSectionTitle, setAreasSectionTitle] = useState<string | null>(null);
+  const serverTitle = contentData?.items.find((i) => i.type === "areasSectionTitle")?.value ?? "Explore Bangkok Areas";
+  const currentTitle = areasSectionTitle ?? serverTitle;
+
+  const handleSaveTitle = async () => {
+    await saveContent({ body: { key: "home", type: "areasSectionTitle", value: currentTitle } });
+    toast.success("Title saved");
+  };
 
   const { data: cardsData, loading: cardsLoading, trigger: refetchCards } = useRead(
     (api) => api("admin/home-area-cards").GET(),
@@ -115,6 +128,24 @@ export default function AdminHomePage() {
 
       <HomePageSection
         title="Locations"
+        topContent={
+          <div className="flex items-center gap-3">
+            <p className="shrink-0 text-sm font-semibold text-gray-700">Section Title</p>
+            <Input
+              value={currentTitle}
+              onChange={(e) => setAreasSectionTitle(e.target.value)}
+              className="flex-1"
+              inputClassName="h-9 text-sm"
+            />
+            <LoadingButton
+              loading={savingTitle}
+              onClick={handleSaveTitle}
+              className="h-9 shrink-0 rounded-lg bg-primary-700 px-3 text-sm font-semibold text-white hover:bg-primary-800"
+            >
+              Save
+            </LoadingButton>
+          </div>
+        }
         addLabel="Add Location"
         newFormLabel="New Location"
         loading={cardsLoading}

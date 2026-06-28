@@ -322,6 +322,16 @@ model HomeAreaCard {
   @@map("home_area_cards")
 }
 
+model AppContent {
+  id    String @id @default(cuid())
+  key   String
+  type  String
+  value String @db.Text
+
+  @@unique([key, type])
+  @@map("app_contents")
+}
+
 model ContactInfo {
   id        String @id @default("singleton")
   phone     String @default("")

@@ -14,6 +14,8 @@ import type { HomeSectionCreateInput, HomeSectionUpdateInput } from "@/validatio
 import type { HomeAreaCard, ClientHomeAreaCard } from "@/types/homeAreaCard";
 import type { HomeAreaCardCreateInput, HomeAreaCardUpdateInput } from "@/validation/homeAreaCardSchema";
 import type { ContactInfo } from "@/types/contactInfo";
+import type { AppContent } from "@/types/appContent";
+import type { AppContentInput } from "@/validation/appContentSchema";
 import type { ContactInfoInput } from "@/validation/contactInfoSchema";
 
 interface EnquiryListItem {
@@ -148,6 +150,10 @@ export type ApiSchema = {
   "admin/contact-info": {
     GET: { data: { contactInfo: ContactInfo | null } };
     PUT: { data: { contactInfo: ContactInfo }; body: ContactInfoInput };
+  };
+  "admin/app-content": {
+    GET: { data: { items: AppContent[] }; query?: { key?: string } };
+    PUT: { data: { item: AppContent | null }; body: AppContentInput };
   };
   "locations/provinces": {
     GET: { data: { provinces: Array<{ id: string; name: string; slug: string }> } };
