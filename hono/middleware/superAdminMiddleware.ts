@@ -1,4 +1,5 @@
 import { createMiddleware } from "hono/factory";
+import { USER_ROLES } from "@/constants/auth";
 
 interface SessionUserWithRole {
   role?: string;
@@ -7,7 +8,7 @@ interface SessionUserWithRole {
 export const superAdminMiddleware = createMiddleware(async (c, next) => {
   const user = c.get("user") as SessionUserWithRole | undefined;
 
-  if (user?.role !== "SUPERADMIN") {
+  if (user?.role !== USER_ROLES.SUPERADMIN) {
     return c.json({ error: "Forbidden" }, 403);
   }
 
