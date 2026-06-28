@@ -16,3 +16,4 @@ export { default as contactInfoRoutes } from "./contactInfo.routes";
 export { default as publicLocationsRoutes } from "./publicLocations.routes";
 export { default as publicTransitStationsRoutes } from "./publicTransitStations.routes";
 export { default as appContentRoutes } from "./appContent.routes";
+export { default as adminUsersRoutes } from "./adminUsers.routes";
