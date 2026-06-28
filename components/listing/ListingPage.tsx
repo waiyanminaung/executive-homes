@@ -55,7 +55,7 @@ interface ListingPageProps {
 
 export function ListingPage({ listingType, propertyType, pageTitle }: ListingPageProps) {
   const defaultTab = listingType === "for-rent" ? "rent" : "buy";
-  const { listingType: tab, q, bedrooms, page, pet, provinceId, districtId, subDistrictIds, stationIds, backHref } = useListingSearchParams(defaultTab);
+  const { listingType: tab, q, type, bedrooms, minPrice, maxPrice, page, pet, provinceId, districtId, subDistrictIds, stationIds, backHref } = useListingSearchParams(defaultTab);
 
   const isForRent = tab === "rent" ? "true" : undefined;
   const isForSale = tab === "buy" ? "true" : undefined;
@@ -67,7 +67,10 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
     ...(isForSale ? { isForSale } : {}),
     ...(q ? { q } : {}),
     ...(bedrooms ? { beds: bedrooms } : {}),
+    ...(type ? { type } : {}),
     ...(propertyType ? { type: propertyType } : {}),
+    ...(minPrice ? { minPrice } : {}),
+    ...(maxPrice ? { maxPrice } : {}),
     ...(pet ? { isPetFriendly: "true" } : {}),
     ...(provinceId ? { provinceId } : {}),
     ...(districtId ? { districtId } : {}),
@@ -85,7 +88,7 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
 
   return (
     <>
-      <ListingSearchBar />
+      <ListingSearchBar listingType={listingType} />
 
       <main className="min-h-screen bg-neutral-50">
         <div className="container mx-auto px-4 py-8">

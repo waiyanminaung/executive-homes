@@ -1,113 +1,80 @@
 "use client";
 
-import { useState } from "react";
-import { Button, Input, Select, SelectOption } from "@geckoui/geckoui";
-import { Search } from "lucide-react";
+import { Select, SelectOption } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
-import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
 import { HomePetToggle } from "@/app/components/home/HomePetToggle";
+import { PropertySearchInput, type PropertySearchParams } from "@/components/@shared/PropertySearchInput";
+import { PropertyFilterButton } from "@/components/PropertyFilterButton";
+import { type FilterValues } from "@/components/PropertyFilterModal";
 import { useListingSearchParams } from "@/utils/useListingSearchParams";
 
-export function ListingSearchBar() {
-  const { listingType, setListingType, setQ, type, setType, location, setLocation, price, setPrice, bedrooms, setBedrooms, pet, setPet } = useListingSearchParams();
+interface ListingSearchBarProps {
+  listingType?: "for-sale" | "for-rent";
+}
 
-  const [inputKeyword, setInputKeyword] = useState("");
+export function ListingSearchBar({ listingType: listingTypeProp }: ListingSearchBarProps) {
+  const defaultTab = listingTypeProp === "for-rent" ? "rent" : "buy";
+  const {
+    listingType, setListingType,
+    setQ, type, setType, minPrice, setMinPrice, maxPrice, setMaxPrice,
+    bedrooms, setBedrooms, pet, setPet,
+    setProvinceId, setDistrictId, setSubDistrictIds, setStationIds, setPage,
+  } = useListingSearchParams(defaultTab);
 
-  const selectClass = classNames(
-    "h-[46px] rounded-md border border-border bg-white px-[18px]",
-    "text-sm font-semibold text-neutral-600 shadow-none",
-  );
+  const showListingTypeSelect = !listingTypeProp;
 
-  const handleSearch = () => {
-    void setQ(inputKeyword.trim() || null);
+  const currentFilterValues: FilterValues = {
+    type,
+    minPrice: minPrice ?? "",
+    maxPrice: maxPrice ?? "",
+    bedrooms,
+  };
+
+  const handleFilterApply = (values: FilterValues) => {
+    void setType(values.type);
+    void setBedrooms(values.bedrooms);
+    void setMinPrice(values.minPrice || null);
+    void setMaxPrice(values.maxPrice || null);
+    void setPage(1);
+  };
+
+  const handleApply = (params: PropertySearchParams) => {
+    void setQ(params.q ?? null);
+    void setProvinceId(params.provinceId ?? null);
+    void setDistrictId(params.districtId ?? null);
+    void setSubDistrictIds(params.subDistrictIds ?? null);
+    void setStationIds(params.stationIds ?? null);
+    void setPage(1);
   };
 
   return (
     <div className="sticky top-0 z-40 bg-white shadow-sm">
-      <div className="container mx-auto px-4 py-5">
-        <div className="flex flex-col gap-3 md:flex-row md:gap-2">
-          <Input
-            aria-label="Search keyword"
-            placeholder="City, community or building"
-            value={inputKeyword}
-            onChange={(e) => setInputKeyword(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            className="flex-1 border-border [&:focus-within]:border-primary-500"
-            inputClassName="h-[46px] text-sm font-medium text-neutral-900"
-          />
-          <Button
-            type="button"
-            variant="ghost"
-            onClick={handleSearch}
-            className="h-[46px] rounded-md bg-gradient-to-b from-primary-500 to-primary-400 px-[30px] text-sm font-semibold !text-white hover:bg-gradient-to-b"
-          >
-            <Search className="h-4 w-4" />
-            <span>Search</span>
-          </Button>
-        </div>
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center gap-2">
+          <PropertySearchInput onApply={handleApply} className="min-w-0 flex-1" />
 
-        <div className="mt-3 grid grid-cols-2 gap-3 md:flex md:flex-wrap">
-          <Select
-            value={listingType}
-            onChange={(v) => void setListingType(v ?? "buy")}
-            placeholder="Buy / Rent"
-            className={selectClass}
-            wrapperClassName="min-w-0 md:flex-1"
-          >
-            <SelectOption value="buy" label="Buy" />
-            <SelectOption value="rent" label="Rent" />
-          </Select>
+          {showListingTypeSelect && (
+            <Select
+              value={listingType}
+              onChange={(v) => { void setListingType(v ?? "buy"); void setPage(1); }}
+              placeholder="Buy / Rent"
+              className={classNames(
+                "h-[46px] shrink-0 rounded-md border border-gray-300 bg-white px-[18px]",
+                "cursor-pointer text-left text-sm font-semibold shadow-sm transition-colors hover:border-gray-400",
+              )}
+              wrapperClassName="w-[110px] shrink-0"
+            >
+              <SelectOption value="buy" label="Buy" />
+              <SelectOption value="rent" label="Rent" />
+            </Select>
+          )}
 
-          <Select
-            value={location}
-            onChange={(v) => void setLocation(v)}
-            placeholder="Location"
-            className={selectClass}
-            wrapperClassName="min-w-0 md:flex-1"
-          >
-            {HOME_HERO_FILTER_OPTIONS.locations.map((o) => (
-              <SelectOption key={o.value} value={o.value} label={o.label} />
-            ))}
-          </Select>
+          <PropertyFilterButton tab="type" values={currentFilterValues} onApply={handleFilterApply} />
+          <PropertyFilterButton tab="price" values={currentFilterValues} onApply={handleFilterApply} />
+          <PropertyFilterButton tab="bedrooms" values={currentFilterValues} onApply={handleFilterApply} />
 
-          <Select
-            value={type}
-            onChange={(v) => void setType(v)}
-            placeholder="Property type"
-            className={selectClass}
-            wrapperClassName="min-w-0 md:flex-1"
-          >
-            {HOME_HERO_FILTER_OPTIONS.types.map((o) => (
-              <SelectOption key={o.value} value={o.value} label={o.label} />
-            ))}
-          </Select>
-
-          <Select
-            value={price}
-            onChange={(v) => void setPrice(v)}
-            placeholder="Price"
-            className={selectClass}
-            wrapperClassName="min-w-0 md:flex-1"
-          >
-            {HOME_HERO_FILTER_OPTIONS.prices.map((o) => (
-              <SelectOption key={o.value} value={o.value} label={o.label} />
-            ))}
-          </Select>
-
-          <Select
-            value={bedrooms}
-            onChange={(v) => void setBedrooms(v)}
-            placeholder="Beds & Baths"
-            className={selectClass}
-            wrapperClassName="min-w-0 md:flex-1"
-          >
-            {HOME_HERO_FILTER_OPTIONS.bedrooms.map((o) => (
-              <SelectOption key={o.value} value={o.value} label={o.label} />
-            ))}
-          </Select>
-
-          <div className="col-span-2 flex justify-end self-center md:col-span-1">
-            <HomePetToggle value={pet} onChange={(v) => void setPet(v)} />
+          <div className="self-center">
+            <HomePetToggle value={pet} onChange={(v) => { void setPet(v); void setPage(1); }} />
           </div>
         </div>
       </div>

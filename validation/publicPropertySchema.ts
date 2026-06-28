@@ -13,4 +13,6 @@ export const publicPropertyListQuerySchema = z.object({
   isPetFriendly: z.coerce.boolean().optional(),
   stationIds: z.string().optional(),
   subDistrictIds: z.string().optional(),
+  minPrice: z.coerce.number().optional(),
+  maxPrice: z.coerce.number().optional(),
 });

@@ -4,10 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { classNames } from "@/utils/classNames";
-import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
 import { HomePetToggle } from "./HomePetToggle";
 import { HomeSearchInput } from "./HomeSearchInput";
-import { openFilterModal, type FilterValues } from "./HomeFilterModal";
+import { type FilterValues } from "@/components/PropertyFilterModal";
+import { PropertyFilterButton } from "@/components/PropertyFilterButton";
 
 export function HomeHero() {
   const router = useRouter();
@@ -19,36 +19,6 @@ export function HomeHero() {
     maxPrice: "",
     bedrooms: null,
   });
-
-  const selectClass = classNames(
-    "h-[46px] rounded-md border border-gray-300 bg-white px-[18px]",
-    "text-sm font-semibold text-neutral-600 shadow-sm cursor-pointer",
-    "hover:border-gray-400 transition-colors truncate text-left",
-  );
-
-  const typeLabel = filters.type
-    ? (HOME_HERO_FILTER_OPTIONS.types.find((o) => o.value === filters.type)?.label ?? "Type")
-    : "Type";
-
-  const priceLabel = (() => {
-    if (!filters.minPrice && !filters.maxPrice) return "Price";
-    if (filters.minPrice && filters.maxPrice)
-      return `฿${Number(filters.minPrice).toLocaleString()} – ฿${Number(filters.maxPrice).toLocaleString()}`;
-    if (filters.minPrice) return `฿${Number(filters.minPrice).toLocaleString()}+`;
-    return `Up to ฿${Number(filters.maxPrice).toLocaleString()}`;
-  })();
-
-  const bedroomsLabel = filters.bedrooms
-    ? (HOME_HERO_FILTER_OPTIONS.bedrooms.find((o) => o.value === filters.bedrooms)?.label ?? "Bedrooms")
-    : "Bedrooms";
-
-  const openModal = (initialTab: "type" | "price" | "bedrooms") => {
-    openFilterModal({
-      initialTab,
-      initialValues: filters,
-      onApply: setFilters,
-    });
-  };
 
   const handleSearch = (params: { q?: string; provinceId?: string; districtId?: string; subDistrictIds?: string; stationIds?: string }) => {
     const urlParams = new URLSearchParams();
@@ -108,41 +78,9 @@ export function HomeHero() {
           <HomeSearchInput tab={tab} onSearch={handleSearch} />
 
           <div className="mt-3 grid grid-cols-2 gap-3 md:flex md:flex-wrap">
-            <button
-              type="button"
-              onClick={() => openModal("type")}
-              className={classNames(
-                selectClass,
-                "min-w-0 md:flex-1",
-                filters.type ? "text-neutral-900" : "text-neutral-400",
-              )}
-            >
-              {typeLabel}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => openModal("price")}
-              className={classNames(
-                selectClass,
-                "min-w-0 md:flex-1",
-                filters.minPrice || filters.maxPrice ? "text-neutral-900" : "text-neutral-400",
-              )}
-            >
-              {priceLabel}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => openModal("bedrooms")}
-              className={classNames(
-                selectClass,
-                "min-w-0 md:flex-1",
-                filters.bedrooms ? "text-neutral-900" : "text-neutral-400",
-              )}
-            >
-              {bedroomsLabel}
-            </button>
+            <PropertyFilterButton tab="type" values={filters} onApply={setFilters} className="min-w-0 md:flex-1" />
+            <PropertyFilterButton tab="price" values={filters} onApply={setFilters} className="min-w-0 md:flex-1" />
+            <PropertyFilterButton tab="bedrooms" values={filters} onApply={setFilters} className="min-w-0 md:flex-1" />
 
             <div className="col-span-2 flex justify-end self-center md:col-span-1">
               <HomePetToggle value={petAllow} onChange={setPetAllow} />
