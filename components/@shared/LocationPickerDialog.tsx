@@ -9,6 +9,7 @@ export interface LocationSelection {
   subDistrictIds: string[] | null;
   provinceName: string | null;
   districtName: string | null;
+  subDistrictNames: string[] | null;
 }
 
 interface LocationPickerOpts {

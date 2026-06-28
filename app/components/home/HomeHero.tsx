@@ -50,11 +50,13 @@ export function HomeHero() {
     });
   };
 
-  const handleSearch = (params: { q?: string; provinceId?: string; stationIds?: string }) => {
+  const handleSearch = (params: { q?: string; provinceId?: string; districtId?: string; subDistrictIds?: string; stationIds?: string }) => {
     const urlParams = new URLSearchParams();
     urlParams.set("tab", tab === "rent" ? "rent" : "buy");
     if (params.q) urlParams.set("q", params.q);
     if (params.provinceId) urlParams.set("provinceId", params.provinceId);
+    if (params.districtId) urlParams.set("districtId", params.districtId);
+    if (params.subDistrictIds) urlParams.set("subDistrictIds", params.subDistrictIds);
     if (params.stationIds) urlParams.set("stationIds", params.stationIds);
     if (filters.type) urlParams.set("type", filters.type);
     if (filters.bedrooms) urlParams.set("bedrooms", filters.bedrooms);

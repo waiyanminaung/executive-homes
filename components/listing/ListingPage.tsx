@@ -60,6 +60,8 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
   const [bedrooms] = useQueryState("bedrooms");
   const [page] = useQueryState("page", parseAsInteger.withDefault(1));
   const [provinceId] = useQueryState("provinceId");
+  const [districtId] = useQueryState("districtId");
+  const [subDistrictIds] = useQueryState("subDistrictIds");
   const [stationIds] = useQueryState("stationIds");
 
   const isForRent = tab === "rent" ? "true" : undefined;
@@ -74,6 +76,8 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
     ...(bedrooms ? { beds: bedrooms } : {}),
     ...(propertyType ? { type: propertyType } : {}),
     ...(provinceId ? { provinceId } : {}),
+    ...(districtId ? { districtId } : {}),
+    ...(subDistrictIds ? { subDistrictIds } : {}),
     ...(stationIds ? { stationIds } : {}),
   };
 

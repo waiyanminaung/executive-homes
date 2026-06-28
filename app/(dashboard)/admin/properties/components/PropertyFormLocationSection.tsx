@@ -6,7 +6,7 @@ import type { UseFormSetValue } from "react-hook-form";
 import { RHFInput, RHFSelect, RHFError, SelectOption, SelectDropdownSearch, SelectEmpty, Label, Dialog, Button, Textarea } from "@geckoui/geckoui";
 import { MapPin } from "lucide-react";
 import { useRead } from "@/lib/spoosh";
-import { extractLatLng } from "@/utils/extractLatLng";
+
 import type { Province } from "@/types/property";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
 
@@ -14,44 +14,68 @@ interface PropertyFormLocationSectionProps {
   provinces: Province[];
 }
 
-function EmbedImportDialog({ dismiss, setValue }: { dismiss: () => void; setValue: UseFormSetValue<PropertyCreateInput> }) {
-  const [embed, setEmbed] = useState("");
+function parseGoogleMapsUrl(url: string): { name: string | null; lat: number; lng: number } | null {
+  const nameMatch = url.match(/\/place\/([^/]+)\//);
+  const name = nameMatch ? decodeURIComponent(nameMatch[1].replace(/\+/g, " ")) : null;
+
+  const place = url.match(/!3d(-?\d+(?:\.\d+)?)!4d(-?\d+(?:\.\d+)?)/);
+
+  if (place) {
+    return { name, lat: Number(place[1]), lng: Number(place[2]) };
+  }
+
+  const camera = url.match(/@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/);
+
+  if (camera) {
+    return { name, lat: Number(camera[1]), lng: Number(camera[2]) };
+  }
+
+  return null;
+}
+
+interface LinkImportDialogProps {
+  dismiss: () => void;
+  setValue: UseFormSetValue<PropertyCreateInput>;
+}
+
+function LinkImportDialog({ dismiss, setValue }: LinkImportDialogProps) {
+  const [url, setUrl] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const handleImport = () => {
-    const coords = extractLatLng(embed);
+    const result = parseGoogleMapsUrl(url);
 
-    if (!coords) {
-      setError("No coordinates found. Paste a valid Google Maps embed code.");
+    if (!result) {
+      setError("No coordinates found. Paste a valid Google Maps link.");
       return;
     }
 
-    setValue("lat", coords.lat);
-    setValue("lng", coords.lng);
+    setValue("lat", result.lat);
+    setValue("lng", result.lng);
     dismiss();
   };
 
   return (
     <div className="bg-white rounded-2xl space-y-4 w-full">
       <div className="space-y-1">
-        <h3 className="text-base font-semibold text-gray-900">Import from Google Maps Embed</h3>
-        <p className="text-sm text-gray-500">Paste the iframe embed code from Google Maps Share.</p>
+        <h3 className="text-base font-semibold text-gray-900">Import from Google Maps Link</h3>
+        <p className="text-sm text-gray-500">Paste a Google Maps URL to extract coordinates.</p>
       </div>
 
       <div className="space-y-1.5">
-        <Label>Embed Code</Label>
+        <Label>Google Maps URL</Label>
         <Textarea
-          value={embed}
-          onChange={(e) => { setEmbed(e.target.value); setError(null); }}
-          placeholder='<iframe src="https://www.google.com/maps/embed?pb=..." />'
-          rows={4}
+          value={url}
+          onChange={(e) => { setUrl(e.target.value); setError(null); }}
+          placeholder="https://www.google.com/maps/place/..."
+          rows={3}
         />
         {error && <p className="text-sm text-red-500">{error}</p>}
       </div>
 
       <div className="flex justify-end gap-2">
         <Button variant="outlined" type="button" onClick={dismiss}>Cancel</Button>
-        <Button type="button" onClick={handleImport} disabled={!embed.trim()}>Import</Button>
+        <Button type="button" onClick={handleImport} disabled={!url.trim()}>Import</Button>
       </div>
     </div>
   );
@@ -141,11 +165,11 @@ export default function PropertyFormLocationSection({ provinces }: PropertyFormL
             type="button"
             variant="ghost"
             size="sm"
-            onClick={() => Dialog.show({ content: ({ dismiss }) => <EmbedImportDialog dismiss={dismiss} setValue={setValue} /> })}
+            onClick={() => Dialog.show({ content: ({ dismiss }) => <LinkImportDialog dismiss={dismiss} setValue={setValue} /> })}
             className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-700 font-medium bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg"
           >
             <MapPin className="w-3.5 h-3.5" />
-            Import from Embed Map
+            Import from Google Maps
           </Button>
         </div>
 

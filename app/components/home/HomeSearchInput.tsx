@@ -18,7 +18,7 @@ const SEARCH_PLACEHOLDER_PHRASES = [
 
 interface HomeSearchInputProps {
   tab: "rent" | "buy";
-  onSearch: (params: { q?: string; provinceId?: string; stationIds?: string }) => void;
+  onSearch: (params: { q?: string; provinceId?: string; districtId?: string; subDistrictIds?: string; stationIds?: string }) => void;
 }
 
 export function HomeSearchInput({ onSearch }: HomeSearchInputProps) {
@@ -29,6 +29,8 @@ export function HomeSearchInput({ onSearch }: HomeSearchInputProps) {
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
 
   const [provinceId, setProvinceId] = useState<string | null>(null);
+  const [districtId, setDistrictId] = useState<string | null>(null);
+  const [subDistrictIds, setSubDistrictIds] = useState<string[]>([]);
   const [stationIds, setStationIds] = useState<string[]>([]);
 
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -110,6 +112,8 @@ export function HomeSearchInput({ onSearch }: HomeSearchInputProps) {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
     setProvinceId(null);
+    setDistrictId(null);
+    setSubDistrictIds([]);
     setStationIds([]);
   };
 
@@ -128,12 +132,20 @@ export function HomeSearchInput({ onSearch }: HomeSearchInputProps) {
       onApply: (sel) => {
         if (!sel.provinceName) return;
 
-        const display = sel.districtName
-          ? `${sel.provinceName} › ${sel.districtName}`
-          : sel.provinceName;
+        let display: string;
+
+        if (sel.subDistrictNames && sel.subDistrictNames.length > 0) {
+          display = sel.subDistrictNames.join(", ");
+        } else if (sel.districtName) {
+          display = `${sel.provinceName} › ${sel.districtName}`;
+        } else {
+          display = sel.provinceName;
+        }
 
         setInputValue(display);
         setProvinceId(sel.provinceId);
+        setDistrictId(sel.districtId);
+        setSubDistrictIds(sel.subDistrictIds ?? []);
         setStationIds([]);
       },
     });
@@ -154,10 +166,14 @@ export function HomeSearchInput({ onSearch }: HomeSearchInputProps) {
   };
 
   const handleSearch = () => {
-    if (provinceId) {
-      onSearch({ provinceId });
-    } else if (stationIds.length > 0) {
+    if (stationIds.length > 0) {
       onSearch({ stationIds: stationIds.join(",") });
+    } else if (subDistrictIds.length > 0) {
+      onSearch({ provinceId: provinceId ?? undefined, districtId: districtId ?? undefined, subDistrictIds: subDistrictIds.join(",") });
+    } else if (districtId) {
+      onSearch({ provinceId: provinceId ?? undefined, districtId });
+    } else if (provinceId) {
+      onSearch({ provinceId });
     } else {
       onSearch({ q: inputValue.trim() || undefined });
     }

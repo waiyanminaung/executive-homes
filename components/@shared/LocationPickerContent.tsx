@@ -72,12 +72,12 @@ export default function LocationPickerContent({ onApply, onClose }: Props) {
     setDeselectedSubIds(new Set());
     setProvinceSearch("");
     setDistrictSearch("");
-    onApply({ provinceId: null, districtId: null, subDistrictIds: null, provinceName: null, districtName: null });
+    onApply({ provinceId: null, districtId: null, subDistrictIds: null, provinceName: null, districtName: null, subDistrictNames: null });
   };
 
   const handleApply = () => {
     if (!selectedProvince) {
-      onApply({ provinceId: null, districtId: null, subDistrictIds: null, provinceName: null, districtName: null });
+      onApply({ provinceId: null, districtId: null, subDistrictIds: null, provinceName: null, districtName: null, subDistrictNames: null });
       return;
     }
 
@@ -88,12 +88,17 @@ export default function LocationPickerContent({ onApply, onClose }: Props) {
 
     const selectedDistrict = districts.find((d) => d.id === pendingDistrictId);
 
+    const selectedSubNames = specificSubIds
+      ? subDistricts.filter((s) => specificSubIds.includes(s.id)).map((s) => s.name)
+      : null;
+
     onApply({
       provinceId: selectedProvince.id,
       districtId: pendingDistrictId,
       subDistrictIds: pendingDistrictId ? specificSubIds : null,
       provinceName: selectedProvince.name,
       districtName: selectedDistrict?.name ?? null,
+      subDistrictNames: pendingDistrictId ? selectedSubNames : null,
     });
   };
 

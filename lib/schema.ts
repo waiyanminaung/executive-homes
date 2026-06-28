@@ -119,7 +119,7 @@ export type ApiSchema = {
   "properties": {
     GET: {
       data: { properties: PublicPropertyListItem[]; total: number; page: number; limit: number };
-      query?: { page?: string; limit?: string; isForSale?: string; isForRent?: string; type?: string; provinceId?: string; beds?: string; q?: string; sort?: string; stationIds?: string };
+      query?: { page?: string; limit?: string; isForSale?: string; isForRent?: string; type?: string; provinceId?: string; districtId?: string; subDistrictIds?: string; beds?: string; q?: string; sort?: string; stationIds?: string };
     };
   };
   "properties/:slug": {
