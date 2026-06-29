@@ -10,7 +10,6 @@ import HomeSectionForm from "./HomeSectionForm";
 const LISTING_LABELS: Record<string, string> = {
   RENT: "Rent",
   SALE: "Sale",
-  BOTH: "Rent & Sale",
 };
 
 interface HomeSectionRowProps {

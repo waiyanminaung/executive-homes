@@ -17,6 +17,7 @@ import {
   Images,
   FileText,
   Users,
+  ExternalLink,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { classNames } from "@/utils/classNames";
@@ -87,15 +88,23 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         )}
       >
         <div className="flex items-center justify-between px-5 py-5 border-b border-white/10">
-          <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-700">
+          <div className="flex items-center gap-3">
+            <Link href="/" className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary-700 hover:opacity-80 transition-opacity">
               <Building2 className="w-4 h-4 text-white" />
-            </div>
+            </Link>
             <div>
               <p className="text-white text-sm font-bold leading-none">Executive Homes</p>
-              <p className="text-gray-500 text-[10px] mt-0.5 uppercase tracking-widest">Admin</p>
+              <Link
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-0.5 text-gray-400 text-[10px] mt-1.5 uppercase tracking-widest hover:text-white hover:underline transition-colors"
+              >
+                View Website
+                <ExternalLink className="w-2.5 h-2.5" />
+              </Link>
             </div>
-          </Link>
+          </div>
           {onClose && (
             <button onClick={onClose} className="lg:hidden text-gray-500 hover:text-white">
               <X className="w-5 h-5" />

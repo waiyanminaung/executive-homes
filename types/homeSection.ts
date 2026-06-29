@@ -5,8 +5,9 @@ export interface HomeSection {
   title: string;
   propertyTypeId: string | null;
   propertyType: { id: string; name: string; slug: string } | null;
-  listingType: "RENT" | "SALE" | "BOTH";
+  listingType: "RENT" | "SALE";
   onlyFeatured: boolean;
+  onlyPetFriendly: boolean;
   provinceId: string | null;
   province: { id: string; name: string; slug: string } | null;
   districtId: string | null;

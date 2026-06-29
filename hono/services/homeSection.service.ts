@@ -9,7 +9,11 @@ export async function getHomeSections(): Promise<PropertySection[]> {
   try {
     const sections = await prisma.homeSection.findMany({
       orderBy: { order: "asc" },
-      include: { propertyType: { select: { slug: true } } },
+      include: {
+        propertyType: { select: { slug: true } },
+        province: { select: { name: true } },
+        district: { select: { name: true } },
+      },
     });
 
     return await Promise.all(
@@ -19,6 +23,7 @@ export async function getHomeSections(): Promise<PropertySection[]> {
         if (section.listingType === "RENT") where.isForRent = true;
         if (section.listingType === "SALE") where.isForSale = true;
         if (section.onlyFeatured) where.isFeatured = true;
+        if (section.onlyPetFriendly) where.isPetFriendly = true;
         if (section.propertyTypeId) where.propertyTypeId = section.propertyTypeId;
         if (section.provinceId) where.provinceId = section.provinceId;
         if (section.districtId) where.districtId = section.districtId;
@@ -56,11 +61,14 @@ export async function getHomeSections(): Promise<PropertySection[]> {
           };
         });
 
+        const locationLabel = section.district?.name ?? section.province?.name ?? undefined;
+
         const viewMoreHref = buildPropertiesHref({
-          listingType: section.listingType === "RENT" ? "rent" : section.listingType === "SALE" ? "buy" : undefined,
+          listingType: section.listingType === "RENT" ? "rent" : "buy",
           type: section.propertyType?.slug ?? undefined,
           provinceId: section.provinceId ?? undefined,
           districtId: section.districtId ?? undefined,
+          locationLabel,
         });
 
         return { title: section.title, viewMoreHref, properties, hasMore };

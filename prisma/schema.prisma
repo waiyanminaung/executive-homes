@@ -35,7 +35,6 @@ enum TransitLine {
 enum HomeSectionListingType {
   RENT
   SALE
-  BOTH
 }
 
 model Province {
@@ -293,8 +292,9 @@ model HomeSection {
   title          String
   propertyTypeId String?
   propertyType   PropertyType?          @relation(fields: [propertyTypeId], references: [id])
-  listingType    HomeSectionListingType @default(BOTH)
+  listingType    HomeSectionListingType @default(RENT)
   onlyFeatured   Boolean                @default(false)
+  onlyPetFriendly Boolean               @default(false)
   provinceId     String?
   province       Province?              @relation(fields: [provinceId], references: [id])
   districtId     String?

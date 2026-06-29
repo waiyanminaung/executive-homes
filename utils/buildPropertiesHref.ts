@@ -3,6 +3,7 @@ interface PropertiesFilter {
   type?: string;
   provinceId?: string;
   districtId?: string;
+  locationLabel?: string;
 }
 
 export function buildPropertiesHref(filters: PropertiesFilter = {}): string {
@@ -11,5 +12,6 @@ export function buildPropertiesHref(filters: PropertiesFilter = {}): string {
   if (filters.type) params.set("type", filters.type);
   if (filters.provinceId) params.set("provinceId", filters.provinceId);
   if (filters.districtId) params.set("districtId", filters.districtId);
+  if (filters.locationLabel) params.set("locationLabel", filters.locationLabel);
   return `/properties${params.toString() ? `?${params.toString()}` : ""}`;
 }

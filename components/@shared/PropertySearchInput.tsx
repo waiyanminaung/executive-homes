@@ -29,11 +29,12 @@ interface PropertySearchInputProps {
   showSearchButton?: boolean;
   className?: string;
   inputClassName?: string;
+  initialValue?: string;
 }
 
-export function PropertySearchInput({ onApply, showSearchButton, className, inputClassName }: PropertySearchInputProps) {
+export function PropertySearchInput({ onApply, showSearchButton, className, inputClassName, initialValue }: PropertySearchInputProps) {
   const router = useRouter();
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(initialValue ?? "");
   const [isFocused, setIsFocused] = useState(false);
 
   const [provinceId, setProvinceId] = useState<string | null>(null);

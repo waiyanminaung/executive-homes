@@ -10,8 +10,9 @@ import type { HomeSection } from "@/types/homeSection";
 const DEFAULT_VALUES: HomeSectionCreateInput = {
   title: "",
   propertyTypeId: null,
-  listingType: "BOTH",
+  listingType: "RENT",
   onlyFeatured: false,
+  onlyPetFriendly: false,
   provinceId: null,
   districtId: null,
   limit: 8,
@@ -19,7 +20,6 @@ const DEFAULT_VALUES: HomeSectionCreateInput = {
 };
 
 const LISTING_TYPE_OPTIONS = [
-  { value: "BOTH", label: "Both (Rent & Sale)" },
   { value: "RENT", label: "For Rent" },
   { value: "SALE", label: "For Sale" },
 ] as const;
@@ -49,6 +49,7 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
           propertyTypeId: section.propertyTypeId ?? "",
           listingType: section.listingType,
           onlyFeatured: section.onlyFeatured,
+          onlyPetFriendly: section.onlyPetFriendly,
           provinceId: section.provinceId,
           districtId: section.districtId ?? "",
           limit: section.limit,
@@ -151,12 +152,22 @@ export default function HomeSectionForm({ section, onSaved, onCancel, onDeleted 
         </div>
 
 
-        <div className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3 col-span-full sm:col-span-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
+            <div>
+              <p className="text-sm font-medium text-gray-700">Pet Friendly</p>
+              <p className="text-xs text-gray-400 mt-0.5">Show only pet-friendly properties</p>
+            </div>
+            <RHFSwitch name="onlyPetFriendly" />
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg border border-gray-200 px-4 py-3">
             <div>
               <p className="text-sm font-medium text-gray-700">Featured only</p>
               <p className="text-xs text-gray-400 mt-0.5">Show only properties marked as featured</p>
             </div>
             <RHFSwitch name="onlyFeatured" />
+          </div>
         </div>
 
         <div className="flex items-center justify-between pt-1">

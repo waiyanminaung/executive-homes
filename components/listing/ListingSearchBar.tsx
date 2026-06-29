@@ -18,7 +18,7 @@ export function ListingSearchBar({ listingType: listingTypeProp }: ListingSearch
     listingType, setListingType,
     setQ, type, setType, minPrice, setMinPrice, maxPrice, setMaxPrice,
     bedrooms, setBedrooms, pet, setPet,
-    setProvinceId, setDistrictId, setSubDistrictIds, setStationIds, setLocationLabel, setPage,
+    setProvinceId, setDistrictId, setSubDistrictIds, setStationIds, locationLabel, setLocationLabel, setPage,
   } = useListingSearchParams(defaultTab);
 
   const showListingTypeSelect = !listingTypeProp;
@@ -52,7 +52,7 @@ export function ListingSearchBar({ listingType: listingTypeProp }: ListingSearch
     <div className="sticky top-0 z-40 bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center gap-2">
-          <PropertySearchInput onApply={handleApply} className="min-w-0 flex-1" />
+          <PropertySearchInput onApply={handleApply} className="min-w-0 flex-1" initialValue={locationLabel ?? undefined} />
 
           {showListingTypeSelect && (
             <Select
