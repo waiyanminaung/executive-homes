@@ -6,6 +6,7 @@ const publicTransitStationsRoutes = new Hono();
 publicTransitStationsRoutes.get("/", async (c) => {
   try {
     const stations = await prisma.transitStation.findMany({
+      where: { properties: { some: { property: { isPublished: true } } } },
       orderBy: [{ line: "asc" }, { name: "asc" }],
     });
     return c.json({ stations });

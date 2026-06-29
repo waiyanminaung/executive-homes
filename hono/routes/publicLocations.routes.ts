@@ -3,8 +3,11 @@ import { prisma } from "@/lib/prisma";
 
 const publicLocationsRoutes = new Hono();
 
+const HAS_PUBLISHED = { properties: { some: { isPublished: true } } } as const;
+
 publicLocationsRoutes.get("/provinces", async (c) => {
   const provinces = await prisma.province.findMany({
+    where: HAS_PUBLISHED,
     orderBy: { name: "asc" },
     select: { id: true, name: true, slug: true },
   });
@@ -16,7 +19,7 @@ publicLocationsRoutes.get("/districts", async (c) => {
   if (!provinceId) return c.json({ districts: [] });
 
   const districts = await prisma.district.findMany({
-    where: { provinceId },
+    where: { provinceId, ...HAS_PUBLISHED },
     orderBy: { name: "asc" },
     select: { id: true, name: true, slug: true, provinceId: true },
   });
@@ -28,7 +31,7 @@ publicLocationsRoutes.get("/subdistricts", async (c) => {
   if (!districtId) return c.json({ subDistricts: [] });
 
   const subDistricts = await prisma.subDistrict.findMany({
-    where: { districtId },
+    where: { districtId, ...HAS_PUBLISHED },
     orderBy: { name: "asc" },
     select: { id: true, name: true, slug: true, districtId: true },
   });
@@ -42,17 +45,17 @@ publicLocationsRoutes.get("/search", async (c) => {
   try {
     const [provinces, districts, subDistricts] = await Promise.all([
       prisma.province.findMany({
-        where: { name: { contains: q, mode: "insensitive" } },
+        where: { name: { contains: q, mode: "insensitive" }, ...HAS_PUBLISHED },
         select: { id: true, name: true },
         take: 3,
       }),
       prisma.district.findMany({
-        where: { name: { contains: q, mode: "insensitive" } },
+        where: { name: { contains: q, mode: "insensitive" }, ...HAS_PUBLISHED },
         select: { id: true, name: true, provinceId: true, province: { select: { id: true, name: true } } },
         take: 3,
       }),
       prisma.subDistrict.findMany({
-        where: { name: { contains: q, mode: "insensitive" } },
+        where: { name: { contains: q, mode: "insensitive" }, ...HAS_PUBLISHED },
         select: { id: true, name: true, districtId: true, district: { select: { id: true, name: true, provinceId: true, province: { select: { id: true, name: true } } } } },
         take: 3,
       }),
