@@ -24,7 +24,7 @@ function GalleryImage({ src, alt, sizes, onClick, overlay }: GalleryImageProps) 
     <button
       type="button"
       onClick={onClick}
-      className="absolute inset-0 overflow-hidden bg-neutral-200"
+      className="absolute inset-0 overflow-hidden bg-neutral-200 cursor-pointer"
     >
       <Image
         src={src}
@@ -92,7 +92,7 @@ function GalleryLayoutFivePlus({ images, title, onImageClick }: LayoutProps) {
       <button
         type="button"
         onClick={() => onImageClick(0)}
-        className="relative min-h-[300px] overflow-hidden bg-neutral-200 md:min-h-[440px]"
+        className="relative min-h-[300px] overflow-hidden bg-neutral-200 md:min-h-[440px] cursor-pointer"
       >
         <Image
           src={primary}

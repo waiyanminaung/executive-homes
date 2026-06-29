@@ -1,12 +1,14 @@
 import fs from "fs";
 import path from "path";
 import { Hono } from "hono";
+import { z } from "zod";
 import { PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import sharp from "sharp";
 import { prisma } from "@/lib/prisma";
 import { r2, R2_BUCKET } from "@/lib/r2";
 import { getMediaUrl } from "@/utils/getMediaUrl";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
+import { zv } from "@/validation/zv";
 import { ALLOWED_MIME_TYPES, MAX_UPLOAD_SIZE, QUALITY_REDUCTION_THRESHOLD } from "@/validation/mediaSchema";
 import type { AppEnv } from "@/hono/types";
 
@@ -129,6 +131,23 @@ mediaRoutes.post("/", async (c) => {
   });
 
   return c.json({ ...image, url: getMediaUrl(image.key) }, 201);
+});
+
+const bulkDeleteSchema = z.object({ ids: z.array(z.string()).min(1) });
+
+mediaRoutes.delete("/bulk", zv("json", bulkDeleteSchema), async (c) => {
+  const { ids } = c.req.valid("json");
+
+  try {
+    const images = await prisma.mediaImage.findMany({ where: { id: { in: ids } } });
+
+    await Promise.all(images.map((img) => r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: img.key }))));
+    await prisma.mediaImage.deleteMany({ where: { id: { in: ids } } });
+
+    return c.json({ ok: true, deleted: images.length });
+  } catch {
+    return c.json({ error: "Failed to delete images" }, 500);
+  }
 });
 
 mediaRoutes.delete("/:id", async (c) => {

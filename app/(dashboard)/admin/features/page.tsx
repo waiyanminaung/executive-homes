@@ -1,87 +1,28 @@
 "use client";
 
 import { createElement } from "react";
-import { Plus, Pencil, Trash2 } from "lucide-react";
-import { ConfirmDialog, Dialog, Spinner } from "@geckoui/geckoui";
-import { FormProvider, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { Button, Checkbox, ConfirmDialog, Dialog, Spinner, toast } from "@geckoui/geckoui";
 import { useRead, useWrite } from "@/lib/spoosh";
-import { featureCreateSchema, type FeatureCreateInput } from "@/validation/featureSchema";
 import { getLucideIcon } from "@/utils/getLucideIcon";
 import type { Feature } from "@/types/feature";
+import { useBulkSelect } from "@/utils/useBulkSelect";
 import AdminPageHeader from "../components/AdminPageHeader";
-import { FeatureFormFields } from "./components/FeatureFormFields";
-
-const DEFAULT_VALUES: FeatureCreateInput = { label: "", slug: "", category: "UNIT_FEATURE", icon: null };
+import FeatureForm from "./components/FeatureForm";
 
 function FeatureIconCell({ icon }: { icon: string | null | undefined }) {
   if (!icon) return <span className="text-gray-300 text-xs">—</span>;
-
   return createElement(getLucideIcon(icon), { className: "w-4 h-4 text-gray-600" });
-}
-
-function FeatureForm({
-  editing,
-  onSaved,
-  onCancel,
-}: {
-  editing: Feature | null;
-  onSaved: () => void;
-  onCancel: () => void;
-}) {
-  const { trigger: createFeature } = useWrite((api) => api("admin/features").POST());
-  const { trigger: updateFeature } = useWrite((api) => api("admin/features/:id").PATCH());
-
-  const methods = useForm({
-    values: editing
-      ? { label: editing.label, slug: editing.slug, category: editing.category as FeatureCreateInput["category"], icon: editing.icon ?? null }
-      : DEFAULT_VALUES,
-    resolver: zodResolver(featureCreateSchema),
-  });
-
-  const handleSubmit = methods.handleSubmit(async (values) => {
-    if (editing) {
-      await updateFeature({ params: { id: editing.id }, body: values });
-    } else {
-      await createFeature({ body: values });
-    }
-    onSaved();
-  });
-
-  return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 space-y-4">
-        <h3 className="text-base font-semibold text-gray-900">{editing ? "Edit Feature" : "Add Feature"}</h3>
-
-        <FeatureFormFields />
-
-        <div className="flex items-center gap-2 justify-end pt-1">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="text-sm font-medium text-gray-600 hover:text-gray-800 px-3 py-2 rounded-lg hover:bg-gray-100 transition-colors"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            disabled={methods.formState.isSubmitting}
-            className="text-sm font-semibold bg-primary-700 hover:bg-primary-800 text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-60"
-          >
-            {methods.formState.isSubmitting ? "Saving..." : editing ? "Update" : "Create"}
-          </button>
-        </div>
-      </form>
-    </FormProvider>
-  );
 }
 
 export default function AdminFeaturesPage() {
   const { data, loading, trigger: refetch } = useRead((api) => api("admin/features").GET());
   const { trigger: deleteFeature } = useWrite((api) => api("admin/features/:id").DELETE());
+  const { trigger: bulkDeleteFeatures } = useWrite((api) => api("admin/features/bulk").DELETE());
+
+  const { selectedIds, toggleSelect, toggleAll, clearSelection } = useBulkSelect();
 
   const features = data?.features ?? [];
-
   const unitFeatures = features.filter((f) => f.category === "UNIT_FEATURE");
   const commonFacilities = features.filter((f) => f.category === "AMENITY");
   const grouped = [
@@ -113,6 +54,26 @@ export default function AdminFeaturesPage() {
     });
   };
 
+  const handleBulkDelete = () => {
+    const ids = Array.from(selectedIds);
+
+    ConfirmDialog.show({
+      title: `Delete ${ids.length} feature${ids.length > 1 ? "s" : ""}?`,
+      content: `${ids.length} feature${ids.length > 1 ? "s" : ""} will be permanently deleted and cannot be recovered.`,
+      confirmButtonLabel: "Delete",
+      onConfirm: async () => {
+        try {
+          await bulkDeleteFeatures({ body: { ids } });
+          refetch();
+          clearSelection();
+          toast.success(`${ids.length} feature${ids.length > 1 ? "s" : ""} deleted`);
+        } catch {
+          toast.error("Failed to delete features");
+        }
+      },
+    });
+  };
+
   return (
     <div className="space-y-5">
       <AdminPageHeader
@@ -129,6 +90,25 @@ export default function AdminFeaturesPage() {
         }
       />
 
+      {selectedIds.size > 0 && (
+        <div className="flex items-center gap-3 px-4 py-2.5 bg-primary-50 border border-primary-200 rounded-xl">
+          <span className="text-sm font-medium text-primary-700 mr-1">{selectedIds.size} selected</span>
+          <Button
+            type="button"
+            size="sm"
+            variant="outlined"
+            onClick={handleBulkDelete}
+            className="flex items-center gap-1.5 text-red-600 border-red-300 hover:bg-red-50"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Delete Selected
+          </Button>
+          <button type="button" onClick={clearSelection} className="ml-auto p-1 text-gray-400 hover:text-gray-600 transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex items-center justify-center py-16">
           <Spinner className="w-6 h-6 text-primary-600" />
@@ -142,6 +122,8 @@ export default function AdminFeaturesPage() {
           ) : (
             grouped.map((group) => {
               const showIcon = group.category !== "AMENITY";
+              const groupIds = group.features.map((f) => f.id);
+              const allGroupSelected = groupIds.length > 0 && groupIds.every((id) => selectedIds.has(id));
 
               return (
                 <div key={group.label} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -151,6 +133,9 @@ export default function AdminFeaturesPage() {
                   <table className="min-w-full divide-y divide-gray-100">
                     <thead className="bg-white">
                       <tr>
+                        <th className="pl-4 pr-0 py-3 w-10">
+                          <Checkbox checked={allGroupSelected} onChange={() => toggleAll(groupIds)} />
+                        </th>
                         <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Label</th>
                         {showIcon && (
                           <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Icon</th>
@@ -162,6 +147,9 @@ export default function AdminFeaturesPage() {
                     <tbody className="divide-y divide-gray-100">
                       {group.features.map((feature) => (
                         <tr key={feature.id} className="hover:bg-gray-50 transition-colors">
+                          <td className="pl-4 pr-0 py-4 w-10">
+                            <Checkbox checked={selectedIds.has(feature.id)} onChange={() => toggleSelect(feature.id)} />
+                          </td>
                           <td className="px-6 py-4 text-sm font-medium text-gray-900">{feature.label}</td>
                           {showIcon && (
                             <td className="px-6 py-4">

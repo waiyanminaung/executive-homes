@@ -14,7 +14,7 @@ interface MediaUploadZoneProps {
 export default function MediaUploadZone({ onFiles }: MediaUploadZoneProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [oversizedFiles, setOversizedFiles] = useState<string[]>([]);
-  const [watermark, setWatermark] = useState(false);
+  const [watermark, setWatermark] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
 
@@ -93,7 +93,7 @@ export default function MediaUploadZone({ onFiles }: MediaUploadZoneProps) {
       </div>
 
       <div
-        className="flex items-center gap-2 cursor-pointer w-fit rounded-lg bg-primary-50 border border-primary-700 px-3 py-2 hover:bg-primary-100 transition-colors"
+        className="flex items-center gap-2 cursor-pointer self-center rounded-lg bg-primary-50 border border-primary-700 px-3 py-2 hover:bg-primary-100 transition-colors"
         onClick={() => setWatermark((prev) => !prev)}
       >
         <Checkbox

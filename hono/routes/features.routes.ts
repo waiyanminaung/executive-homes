@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
 import { zv } from "@/validation/zv";
@@ -31,6 +32,19 @@ featuresRoutes.patch("/:id", zv("json", featureUpdateSchema), async (c) => {
 
   const feature = await prisma.feature.update({ where: { id }, data });
   return c.json({ feature });
+});
+
+const bulkIdsSchema = z.object({ ids: z.array(z.string()).min(1) });
+
+featuresRoutes.delete("/bulk", zv("json", bulkIdsSchema), async (c) => {
+  const { ids } = c.req.valid("json");
+
+  try {
+    const result = await prisma.feature.deleteMany({ where: { id: { in: ids } } });
+    return c.json({ ok: true, deleted: result.count });
+  } catch {
+    return c.json({ error: "Failed to delete features" }, 500);
+  }
 });
 
 featuresRoutes.delete("/:id", async (c) => {

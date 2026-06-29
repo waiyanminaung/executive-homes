@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
 import { zv } from "@/validation/zv";
@@ -108,6 +109,31 @@ propertyRoutes.get("/:id", async (c) => {
     });
   } catch {
     return c.json({ error: "Internal server error" }, 500);
+  }
+});
+
+const bulkIdsSchema = z.object({ ids: z.array(z.string()).min(1) });
+const bulkPublishSchema = bulkIdsSchema.extend({ isPublished: z.boolean() });
+
+propertyRoutes.patch("/bulk", zv("json", bulkPublishSchema), async (c) => {
+  const { ids, isPublished } = c.req.valid("json");
+
+  try {
+    const result = await prisma.property.updateMany({ where: { id: { in: ids } }, data: { isPublished } });
+    return c.json({ ok: true, updated: result.count });
+  } catch {
+    return c.json({ error: "Failed to update properties" }, 500);
+  }
+});
+
+propertyRoutes.delete("/bulk", zv("json", bulkIdsSchema), async (c) => {
+  const { ids } = c.req.valid("json");
+
+  try {
+    const result = await prisma.property.deleteMany({ where: { id: { in: ids } } });
+    return c.json({ ok: true, deleted: result.count });
+  } catch {
+    return c.json({ error: "Failed to delete properties" }, 500);
   }
 });
 

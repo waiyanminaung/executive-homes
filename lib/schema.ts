@@ -47,6 +47,10 @@ export type ApiSchema = {
     PATCH: { data: { property: PropertyDetail }; params: { id: string }; body: PropertyUpdateInput };
     DELETE: { data: { ok: true }; params: { id: string } };
   };
+  "admin/properties/bulk": {
+    PATCH: { data: { ok: true; updated: number }; body: { ids: string[]; isPublished: boolean } };
+    DELETE: { data: { ok: true; deleted: number }; body: { ids: string[] } };
+  };
   "admin/provinces": {
     GET: { data: { provinces: Province[] } };
   };
@@ -57,6 +61,9 @@ export type ApiSchema = {
   "admin/features/:id": {
     PATCH: { data: { feature: Feature }; params: { id: string }; body: FeatureUpdateInput };
     DELETE: { data: { ok: true }; params: { id: string } };
+  };
+  "admin/features/bulk": {
+    DELETE: { data: { ok: true; deleted: number }; body: { ids: string[] } };
   };
   "admin/property-types": {
     GET: { data: { propertyTypes: PropertyTypeItem[] } };
@@ -111,6 +118,9 @@ export type ApiSchema = {
   };
   "admin/media/:id": {
     DELETE: { data: { ok: true }; params: { id: string } };
+  };
+  "admin/media/bulk": {
+    DELETE: { data: { ok: true; deleted: number }; body: { ids: string[] } };
   };
   "admin/home-sections": {
     GET: { data: { sections: HomeSection[] } };

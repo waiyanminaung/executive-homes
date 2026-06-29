@@ -68,9 +68,9 @@ export function PropertyGalleryModal({ images, open, title, initialIndex = 0, on
     <div className="fixed inset-0 z-[100] bg-secondary-950/95 text-white">
       <div className="flex h-full flex-col">
         <div className="flex h-16 items-center justify-between gap-4 border-b border-white/10 px-4 md:px-8">
-          <div className="min-w-0">
+          <div className="flex min-w-0 items-center gap-3">
             <p className="truncate text-sm font-semibold md:text-base">{title}</p>
-            <p className="text-xs text-white/60">{selectedIndex + 1} of {images.length}</p>
+            <p className="shrink-0 text-xs text-white/60">{selectedIndex + 1} of {images.length}</p>
           </div>
 
           <Button

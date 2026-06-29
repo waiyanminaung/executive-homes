@@ -2,22 +2,27 @@
 
 import { useCallback, useState } from "react";
 import Image from "next/image";
-import { Trash2, ExternalLink, Search, X } from "lucide-react";
-import { Button, ConfirmDialog, Input, Pagination, Spinner } from "@geckoui/geckoui";
-import { useWrite } from "@/lib/spoosh";
+import { ConfirmDialog, Pagination, Spinner } from "@geckoui/geckoui";
+import { useWrite, optimistic } from "@/lib/spoosh";
 import { formatBytes } from "@/utils/formatBytes";
 import { useMediaLibrary } from "@/utils/useMediaLibrary";
 import type { ClientMediaImage } from "@/types/media";
 import MediaUploadZone from "@/components/@shared/MediaUploadZone";
 import MediaUploadingCell from "@/components/@shared/MediaUploadingCell";
+import LibraryImageCard from "./components/LibraryImageCard";
+import LibraryToolbar from "./components/LibraryToolbar";
 
 const PAGE_LIMIT = 30;
 
 export default function LibraryPage() {
   const { trigger: deleteImage } = useWrite((api) => api("admin/media/:id").DELETE());
+  const { trigger: bulkDeleteImages } = useWrite((api) => api("admin/media/bulk").DELETE());
+
   const [showUploadZone, setShowUploadZone] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [bulkMode, setBulkMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
   const handleStart = useCallback(() => setShowUploadZone(false), []);
 
@@ -34,6 +39,34 @@ export default function LibraryPage() {
   const handleSearchChange = (val: string) => {
     setSearch(val);
     setPage(1);
+  };
+
+  const exitBulkMode = () => {
+    setBulkMode(false);
+    setSelectedIds(new Set());
+  };
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      console.log("Selected URLs:", images.filter((img) => next.has(img.id)).map((img) => img.url));
+      return next;
+    });
+  };
+
+  const handleSelectAll = () => {
+    if (selectedIds.size === images.length) {
+      console.log("Selected URLs:", []);
+      setSelectedIds(new Set());
+    } else {
+      console.log("Selected URLs:", images.map((img) => img.url));
+      setSelectedIds(new Set(images.map((img) => img.id)));
+    }
   };
 
   const handleDelete = (image: ClientMediaImage) => {
@@ -63,6 +96,39 @@ export default function LibraryPage() {
       confirmButtonLabel: "Delete",
       onConfirm: async () => {
         await deleteImage({ params: { id: image.id } });
+        optimistic((cache) =>
+          cache("admin/media").set((current) => ({
+            ...current,
+            images: (current?.images ?? []).filter((img) => img.id !== image.id),
+            total: (current?.total ?? 1) - 1,
+          })),
+        );
+      },
+    });
+  };
+
+  const handleBulkDelete = () => {
+    const count = selectedIds.size;
+
+    ConfirmDialog.show({
+      title: `Delete ${count} image${count > 1 ? "s" : ""}`,
+      content: (
+        <p className="text-sm text-gray-600">
+          {count} image{count > 1 ? "s" : ""} will be permanently deleted and cannot be recovered.
+        </p>
+      ),
+      confirmButtonLabel: "Delete",
+      onConfirm: async () => {
+        const ids = Array.from(selectedIds);
+        await bulkDeleteImages({ body: { ids } });
+        optimistic((cache) =>
+          cache("admin/media").set((current) => ({
+            ...current,
+            images: (current?.images ?? []).filter((img) => !ids.includes(img.id)),
+            total: (current?.total ?? count) - count,
+          })),
+        );
+        exitBulkMode();
       },
     });
   };
@@ -77,27 +143,20 @@ export default function LibraryPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="w-64">
-            <Input
-              value={search}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              placeholder="Search by filename..."
-              prefix={<Search className="w-4 h-4 text-gray-400" />}
-              suffix={search ? (
-                <button type="button" onClick={() => handleSearchChange("")}>
-                  <X className="w-3.5 h-3.5 text-gray-400 hover:text-gray-600" />
-                </button>
-              ) : undefined}
-            />
-          </div>
-
-          {uploadItems.length === 0 && (
-            <Button type="button" variant="outlined" onClick={() => setShowUploadZone((prev) => !prev)}>
-              {showUploadZone ? "Close" : "Upload Images"}
-            </Button>
-          )}
-        </div>
+        <LibraryToolbar
+          bulkMode={bulkMode}
+          selectedCount={selectedIds.size}
+          totalImageCount={images.length}
+          search={search}
+          showUploadZone={showUploadZone}
+          hasUploadItems={uploadItems.length > 0}
+          onSearchChange={handleSearchChange}
+          onSelectAll={handleSelectAll}
+          onBulkDelete={handleBulkDelete}
+          onExitBulkMode={exitBulkMode}
+          onEnterBulkMode={() => setBulkMode(true)}
+          onToggleUploadZone={() => setShowUploadZone((prev) => !prev)}
+        />
       </div>
 
       {loading ? (
@@ -106,7 +165,7 @@ export default function LibraryPage() {
         </div>
       ) : (
         <div className="space-y-6">
-          {(images.length === 0 || showUploadZone) && (
+          {(images.length === 0 || showUploadZone) && !bulkMode && (
             <MediaUploadZone onFiles={handleFiles} />
           )}
 
@@ -126,39 +185,14 @@ export default function LibraryPage() {
               ))}
 
               {images.map((img) => (
-                <div
+                <LibraryImageCard
                   key={img.id}
-                  className="relative group aspect-square rounded-xl overflow-hidden border border-gray-200 bg-gray-100"
-                >
-                  <Image src={img.url} alt={img.filename} fill className="object-cover" unoptimized />
-
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-colors flex items-end">
-                    <div className="w-full px-2 py-2 opacity-0 group-hover:opacity-100 transition-opacity space-y-1">
-                      <p className="text-[10px] text-gray-300">{formatBytes(img.size)}</p>
-                      <div className="flex items-center justify-between gap-1">
-                        <span className="text-white text-[10px] truncate flex-1">{img.filename}</span>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <a
-                            href={img.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="p-1 bg-white rounded-full text-gray-600 hover:bg-gray-100"
-                          >
-                            <ExternalLink className="w-3.5 h-3.5" />
-                          </a>
-                          <button
-                            type="button"
-                            onClick={() => handleDelete(img)}
-                            className="p-1 bg-white rounded-full text-red-600 hover:bg-red-50"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                  image={img}
+                  bulkMode={bulkMode}
+                  isSelected={selectedIds.has(img.id)}
+                  onToggle={toggleSelect}
+                  onDelete={handleDelete}
+                />
               ))}
             </div>
           )}
