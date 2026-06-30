@@ -1,6 +1,5 @@
 import { BadgeDollarSign, Handshake, ShieldCheck } from "lucide-react";
 import type {
-  FooterColumn,
   HomeNavItem,
   WhyItem,
 } from "./types";
@@ -120,49 +119,3 @@ export const WHY_EXECUTIVE_HOMES_ITEMS: WhyItem[] = [
   },
 ];
 
-export const HOME_FOOTER_COLUMNS: FooterColumn[] = [
-  {
-    title: "Property for Sales",
-    links: [
-      { label: "Condos for Sale", href: "/condo-for-sale" },
-      { label: "Houses for Sale", href: "/house-for-sale" },
-      { label: "Apartment for Sale", href: "/apartment-for-sale" },
-      { label: "Office space for Sale", href: "/office-space-for-sale" },
-      { label: "Commercial space for Sale", href: "/commercial-space-for-sale" },
-      { label: "Penthouse for Sale", href: "/penthouse-for-sale" },
-    ],
-  },
-  {
-    title: "Property for Rents",
-    links: [
-      { label: "Condos for Rent", href: "/condo-for-rent" },
-      { label: "Houses for Rent", href: "/house-for-rent" },
-      { label: "Apartment for Rent", href: "/apartment-for-rent" },
-      { label: "Office space for Rent", href: "/office-space-for-rent" },
-      { label: "Commercial space for Rent", href: "/commercial-space-for-rent" },
-      { label: "Penthouse for Rent", href: "/penthouse-for-rent" },
-    ],
-  },
-  {
-    title: "Property Types",
-    links: [
-      { label: "Apartment", href: "/apartment-for-sale" },
-      { label: "Commercial Space", href: "/commercial-space-for-sale" },
-      { label: "Condo", href: "/condo-for-sale" },
-      { label: "House", href: "/house-for-sale" },
-      { label: "Office Space", href: "/office-space-for-sale" },
-      { label: "Penthouse", href: "/penthouse-for-sale" },
-    ],
-  },
-  {
-    title: "Property within Bangkok Area",
-    links: [
-      { label: "Property for sale in Watthana", href: "/property-for-sale/bangkok/watthana" },
-      { label: "Properties for sale in Khlong Toei", href: "/property-for-sale/bangkok/khlong-toei" },
-      { label: "Properties for sale in Pathum Wan", href: "/property-for-sale/bangkok/pathum-wan" },
-      { label: "Properties for sale in Huai Khwang", href: "/property-for-sale/bangkok/huai-khwang" },
-      { label: "Properties for sale in Bang Rak", href: "/property-for-sale/bangkok/bang-rak" },
-      { label: "Properties for sale in Ratchathewi", href: "/property-for-sale/bangkok/ratchathewi" },
-    ],
-  },
-];

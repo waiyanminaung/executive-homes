@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
+import { HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
 import { ListingPage } from "@/components/listing";
 import { parseListingParam } from "@/utils/parseListingParam";
@@ -42,7 +42,7 @@ export default async function ListingTypePage({ params }: PageProps) {
       <Suspense>
         <ListingPage listingType={listingType} propertyType={propertyType} pageTitle={title} />
       </Suspense>
-      <HomeFooter columns={HOME_FOOTER_COLUMNS} />
+      <HomeFooter />
     </>
   );
 }

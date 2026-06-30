@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
+import { HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
 import { ListingPage } from "@/components/listing";
 
@@ -19,7 +19,7 @@ export default function PropertiesPage() {
       <Suspense>
         <ListingPage />
       </Suspense>
-      <HomeFooter columns={HOME_FOOTER_COLUMNS} />
+      <HomeFooter />
     </>
   );
 }

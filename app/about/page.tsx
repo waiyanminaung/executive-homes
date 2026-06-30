@@ -1,4 +1,4 @@
-import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
+import { HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader, WhyExecutiveHomes } from "@/app/components/home";
 import { ABOUT_STATS } from "./constants";
 import { AboutHero, AboutIntro, AboutStats } from "./components";
@@ -13,7 +13,7 @@ export default function AboutPage() {
         <AboutStats stats={ABOUT_STATS} />
         <WhyExecutiveHomes />
       </main>
-      <HomeFooter columns={HOME_FOOTER_COLUMNS} />
+      <HomeFooter />
     </>
   );
 }

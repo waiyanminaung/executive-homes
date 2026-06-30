@@ -1,6 +1,6 @@
 "use client";
 
-import { X } from "lucide-react";
+import { ChevronDown, X } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
 import { openFilterModal, type FilterValues } from "@/components/PropertyFilterModal";
@@ -68,22 +68,26 @@ export function PropertyFilterButton({ tab, values, onApply, className }: Proper
       type="button"
       onClick={handleClick}
       className={classNames(
-        "flex h-[46px] min-w-0 items-center justify-between gap-1.5 rounded-md border bg-white px-[14px]",
-        "cursor-pointer text-left text-sm font-semibold shadow-sm transition-colors hover:border-gray-400",
-        active ? "border-primary-400 text-neutral-900" : "border-gray-300 text-neutral-400",
+        "flex h-[46px] min-w-0 items-center justify-between gap-2 rounded-md border px-4",
+        "cursor-pointer text-left text-sm font-semibold shadow-sm transition-all hover:shadow-md",
+        active
+          ? "border-primary-500 bg-primary-50 text-primary-700 hover:border-primary-600"
+          : "border-gray-200 bg-white text-gray-600 hover:border-gray-400 hover:bg-gray-50",
         className,
       )}
     >
       <span className="truncate">{label}</span>
 
-      {active && (
+      {active ? (
         <span
           role="button"
           onClick={handleClear}
-          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-200 text-gray-500 hover:bg-gray-300 hover:text-gray-700"
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-600 hover:bg-primary-200"
         >
           <X className="h-3 w-3" />
         </span>
+      ) : (
+        <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" />
       )}
     </button>
   );

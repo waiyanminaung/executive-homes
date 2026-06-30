@@ -1,4 +1,4 @@
-import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "./constants";
+import { HOME_NAV_ITEMS } from "./constants";
 import {
   AreaGrid,
   HomeFooter,
@@ -29,7 +29,7 @@ export default async function HomePage() {
         ))}
         <WhyExecutiveHomes />
       </main>
-      <HomeFooter columns={HOME_FOOTER_COLUMNS} />
+      <HomeFooter />
     </>
   );
 }

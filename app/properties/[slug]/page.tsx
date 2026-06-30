@@ -6,7 +6,7 @@ import { getPropertyBySlug, getSimilarProperties } from "@/hono/services/propert
 import { getMinSalePrice, getMinRentPrice } from "@/utils/getMinPrice";
 import { getContactInfo } from "@/hono/services/contactInfo.service";
 import { formatBeds } from "@/utils/formatBeds";
-import { HOME_FOOTER_COLUMNS, HOME_NAV_ITEMS } from "@/app/constants";
+import { HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
 import {
   PropertyDetailContent,
@@ -133,7 +133,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
           </div>
         </div>
       </main>
-      <HomeFooter columns={HOME_FOOTER_COLUMNS} />
+      <HomeFooter />
     </>
   );
 }
