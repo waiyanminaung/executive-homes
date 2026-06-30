@@ -14,7 +14,7 @@ export function HeaderNav({ navItems }: HeaderNavProps) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
   return (
-    <nav className="hidden items-center gap-8 text-sm font-semibold text-white/90 transition-colors duration-300 md:flex">
+    <nav className="hidden items-center gap-1 text-sm font-semibold text-white/90 transition-colors duration-300 md:flex">
       {navItems.map((item) => (
         <div
           key={item.label}
@@ -24,7 +24,7 @@ export function HeaderNav({ navItems }: HeaderNavProps) {
         >
           <Link
             href={item.href}
-            className="flex items-center gap-1 transition-colors hover:text-primary-500"
+            className="flex items-center gap-1 rounded-md px-3 py-1.5 transition-colors hover:bg-white/10 hover:text-white"
           >
             <span>{item.label}</span>
             {item.hasDropdown ? (

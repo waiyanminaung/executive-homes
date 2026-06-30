@@ -44,7 +44,7 @@ export function InnerPageHeader({ navItems }: InnerPageHeaderProps) {
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
 
-          <Link href="/about" className="hidden transition-colors hover:text-primary-500 md:inline">
+          <Link href="/about" className="hidden rounded-md px-3 py-1.5 transition-colors hover:bg-white/10 hover:text-white md:inline">
             About Us
           </Link>
           <Link

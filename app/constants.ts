@@ -98,7 +98,6 @@ export const HOME_NAV_ITEMS: HomeNavItem[] = [
       },
     ],
   },
-  { label: "Projects", href: "/property-for-sale" },
 ];
 
 export const WHY_EXECUTIVE_HOMES_ITEMS: WhyItem[] = [
