@@ -37,7 +37,10 @@ export function PropertySearchDropdown({
             <Spinner className="h-5 w-5 text-primary-500" />
           </div>
         ) : results.length === 0 ? (
-          <p className="px-4 py-4 text-sm text-gray-400">No results found</p>
+          <div className="flex flex-col items-center gap-2 py-6 text-center">
+            <Building2 className="h-6 w-6 text-gray-300" />
+            <p className="text-sm text-gray-400">No results found</p>
+          </div>
         ) : (
           <ul>
             {results.map((result, i) => (

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, Building2, ChevronLeft, ChevronRight } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import { PropertyCard } from "@/components/PropertyCard";
 import type { PropertySection as PropertySectionType } from "@/app/types";
@@ -53,8 +53,11 @@ export function PropertySection({ section }: PropertySectionProps) {
       </div>
 
       {section.properties.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-gray-50 py-16 text-center">
-          <p className="text-base font-semibold text-gray-500">No properties found</p>
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-gray-50 py-16 text-center">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+            <Building2 className="h-7 w-7 text-gray-300" />
+          </div>
+          <p className="mt-4 text-base font-semibold text-gray-500">No properties found</p>
           <p className="mt-1 text-sm text-gray-400">Check back later for new listings.</p>
         </div>
       ) : (

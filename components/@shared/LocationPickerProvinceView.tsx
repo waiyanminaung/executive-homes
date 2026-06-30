@@ -44,9 +44,14 @@ export default function LocationPickerProvinceView({
           <Spinner className="w-5 h-5 text-primary-400" />
         </div>
       ) : filtered.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-12 text-center px-4">
-          <Search className="w-8 h-8 text-gray-200 mb-2" />
-          <p className="text-sm text-gray-400">No results for &ldquo;{search}&rdquo;</p>
+        <div className="flex flex-col items-center justify-center gap-3 px-4 py-12 text-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gray-50">
+            <Search className="h-6 w-6 text-gray-300" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-gray-500">No results found</p>
+            <p className="mt-0.5 text-xs text-gray-400">No match for &ldquo;{search}&rdquo;</p>
+          </div>
         </div>
       ) : (
         <ul className="divide-y divide-gray-50">

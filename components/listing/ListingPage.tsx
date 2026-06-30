@@ -1,7 +1,8 @@
 "use client";
 
-import { Spinner } from "@geckoui/geckoui";
+import { Building2 } from "lucide-react";
 import { useRead } from "@/lib/spoosh";
+import { PropertyGridSkeleton } from "@/components/skeletons/PropertyGridSkeleton";
 import { PropertyCard } from "@/components/PropertyCard";
 import type { PropertyItem } from "@/app/types";
 import { useListingSearchParams } from "@/utils/useListingSearchParams";
@@ -96,9 +97,7 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
           <ListingResultsBar title={title} count={total} />
 
           {loading ? (
-            <div className="mt-20 flex items-center justify-center">
-              <Spinner className="w-8 h-8 text-primary-600" />
-            </div>
+            <PropertyGridSkeleton count={12} />
           ) : properties.length > 0 ? (
             <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-5">
               {properties.map((property) => (
@@ -106,11 +105,16 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
               ))}
             </div>
           ) : (
-            <div className="mt-20 flex flex-col items-center gap-3 text-center">
-              <p className="text-xl font-bold text-neutral-900">No properties found</p>
-              <p className="text-sm text-neutral-500">
-                Try adjusting your filters to see more results.
-              </p>
+            <div className="mt-16 flex flex-col items-center gap-4 text-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-neutral-100">
+                <Building2 className="h-9 w-9 text-neutral-400" />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <p className="text-xl font-bold text-neutral-900">No properties found</p>
+                <p className="max-w-xs text-sm text-neutral-500">
+                  Try adjusting your filters or search in a different area to see more results.
+                </p>
+              </div>
             </div>
           )}
 

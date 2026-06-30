@@ -3,6 +3,7 @@ export { HomeFooter } from "./HomeFooter";
 export { HomeHeader } from "./HomeHeader";
 export { HomeHero } from "./HomeHero";
 export { HomePetToggle } from "./HomePetToggle";
+export { HomeSections } from "./HomeSections";
 export { HomeSearchInput } from "./HomeSearchInput";
 export { InnerPageHeader } from "./InnerPageHeader";
 export { PropertySection } from "./PropertySection";

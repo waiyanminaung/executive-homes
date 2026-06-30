@@ -1,22 +1,23 @@
+import { Suspense } from "react";
 import { HOME_NAV_ITEMS } from "./constants";
 import {
   AreaGrid,
   HomeFooter,
   HomeHeader,
   HomeHero,
-  PropertySection,
+  HomeSections,
   WhyExecutiveHomes,
 } from "./components/home";
-export const dynamic = "force-dynamic";
-
-import { getHomeSections } from "@/hono/services/homeSection.service";
 import { getHomeAreaCards } from "@/hono/services/homeAreaCard.service";
 import { getAppContent } from "@/hono/services/appContent.service";
+import { PropertyCarouselSkeleton } from "@/components/skeletons/PropertyCarouselSkeleton";
+
+export const dynamic = "force-dynamic";
 
 const DEFAULT_AREAS_TITLE = "Explore Bangkok Areas";
 
 export default async function HomePage() {
-  const [sections, areaCards, homeContent] = await Promise.all([getHomeSections(), getHomeAreaCards(), getAppContent("home")]);
+  const [areaCards, homeContent] = await Promise.all([getHomeAreaCards(), getAppContent("home")]);
 
   return (
     <>
@@ -24,9 +25,9 @@ export default async function HomePage() {
       <main className="min-h-screen bg-white">
         <HomeHero />
         <AreaGrid areas={areaCards} title={homeContent.areasSectionTitle ?? DEFAULT_AREAS_TITLE} />
-        {sections.map((section) => (
-          <PropertySection key={section.title} section={section} />
-        ))}
+        <Suspense fallback={<PropertyCarouselSkeleton />}>
+          <HomeSections />
+        </Suspense>
         <WhyExecutiveHomes />
       </main>
       <HomeFooter />
