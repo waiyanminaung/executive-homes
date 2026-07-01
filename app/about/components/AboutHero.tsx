@@ -1,11 +1,17 @@
 import Image from "next/image";
 import { ABOUT_HERO_IMAGE } from "../constants";
 
-export function AboutHero() {
+interface AboutHeroProps {
+  heroImage?: string;
+}
+
+export function AboutHero({ heroImage }: AboutHeroProps) {
+  const src = heroImage || ABOUT_HERO_IMAGE;
+
   return (
     <section className="relative flex min-h-[360px] items-center justify-center overflow-hidden md:min-h-[478px]">
       <Image
-        src={ABOUT_HERO_IMAGE}
+        src={src}
         alt="Bangkok skyline"
         fill
         priority

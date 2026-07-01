@@ -67,7 +67,7 @@ export function HomeHero() {
               type="button"
               onClick={() => setTab(t)}
               className={classNames(
-                "rounded-md px-4 py-2.5 text-base font-semibold capitalize text-white transition-all md:px-[38px] md:py-2",
+                "cursor-pointer rounded-md px-4 py-2.5 text-base font-semibold capitalize text-white transition-all md:px-[38px] md:py-2",
                 tab === t ? "bg-gradient-to-b from-primary-500 to-primary-400" : "",
               )}
             >
