@@ -36,7 +36,7 @@ const propertyBaseSchema = z.object({
   isFeatured: z.boolean(),
   isPublished: z.boolean(),
   isPetFriendly: z.boolean(),
-  imageUrls: z.array(z.string()),
+  mediaImageIds: z.array(z.string()),
   featureIds: z.array(z.string()),
   transitStations: z.array(
     z.object({

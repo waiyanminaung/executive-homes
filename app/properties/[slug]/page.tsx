@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 import { Bath, BedDouble, Building2, MapPin, Maximize2, PawPrint } from "lucide-react";
 import { getLucideIcon } from "@/utils/getLucideIcon";
 import { haversineMeters } from "@/utils/haversine";
@@ -8,6 +9,8 @@ import { getContactInfo } from "@/hono/services/contactInfo.service";
 import { formatBeds } from "@/utils/formatBeds";
 import { HOME_NAV_ITEMS } from "@/app/constants";
 import { HomeFooter, InnerPageHeader } from "@/app/components/home";
+import { auth } from "@/lib/auth";
+import { USER_ROLES } from "@/constants/auth";
 import {
   PropertyDetailContent,
   PropertyDetailBreadcrumb,
@@ -26,7 +29,10 @@ interface PageProps {
 export default async function PropertyDetailPage({ params }: PageProps) {
   const { slug } = await params;
 
-  const raw = await getPropertyBySlug(slug);
+  const session = await auth.api.getSession({ headers: await headers() });
+  const isAdmin = session?.user.role === USER_ROLES.ADMIN || session?.user.role === USER_ROLES.SUPERADMIN;
+
+  const raw = await getPropertyBySlug(slug, { includeUnpublished: isAdmin });
 
   if (!raw) notFound();
 

@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { prisma } from "@/lib/prisma";
+import { getMediaImageUrl } from "@/utils/getMediaImageUrl";
 import { zv } from "@/validation/zv";
 import { publicPropertyListQuerySchema } from "@/validation/publicPropertySchema";
 
@@ -53,13 +54,22 @@ publicPropertiesRoutes.get("/", zv("query", publicPropertyListQuerySchema), asyn
           pricingTiers: { orderBy: { order: "asc" as const } },
           beds: true, baths: true, areaSqm: true,
           address: true, isFeatured: true, isPublished: true, isPetFriendly: true, createdAt: true,
-          images: { take: 5, orderBy: { order: "asc" }, select: { url: true } },
+          images: {
+            take: 5,
+            orderBy: { order: "asc" },
+            select: { mediaImage: { select: { key: true } } },
+          },
         },
       }),
       prisma.property.count({ where }),
     ]);
 
-    return c.json({ properties, total, page, limit });
+    const propertiesWithImageUrls = properties.map((property) => ({
+      ...property,
+      images: property.images.map((img) => ({ url: getMediaImageUrl(img.mediaImage) })),
+    }));
+
+    return c.json({ properties: propertiesWithImageUrls, total, page, limit });
   } catch {
     return c.json({ error: "Internal server error" }, 500);
   }
@@ -72,7 +82,10 @@ publicPropertiesRoutes.get("/:slug", async (c) => {
     const property = await prisma.property.findUnique({
       where: { slug, isPublished: true },
       include: {
-        images: { orderBy: { order: "asc" } },
+        images: {
+          orderBy: { order: "asc" },
+          include: { mediaImage: { select: { key: true } } },
+        },
         features: { include: { feature: true } },
         transitStations: { include: { station: true } },
         pricingTiers: { orderBy: { order: "asc" as const } },
@@ -86,6 +99,7 @@ publicPropertiesRoutes.get("/:slug", async (c) => {
     return c.json({
       property: {
         ...property,
+        images: property.images.map((img) => ({ id: img.id, order: img.order, url: getMediaImageUrl(img.mediaImage) })),
         features: property.features.map((pf) => pf.feature),
         transitStations: property.transitStations,
       },

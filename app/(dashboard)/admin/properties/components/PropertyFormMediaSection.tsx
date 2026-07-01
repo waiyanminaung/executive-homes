@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { useFormContext } from "react-hook-form";
 import { Images, Trash2, GripVertical } from "lucide-react";
@@ -21,14 +22,19 @@ import { CSS } from "@dnd-kit/utilities";
 import { openMediaPicker } from "@/components/@shared/MediaPickerDialog";
 import type { PropertyCreateInput } from "@/validation/propertySchema";
 
-interface SortableImageProps {
+interface SelectedImage {
+  id: string;
   url: string;
+}
+
+interface SortableImageProps {
+  image: SelectedImage;
   index: number;
   onRemove: () => void;
 }
 
-function SortableImage({ url, index, onRemove }: SortableImageProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: url });
+function SortableImage({ image, index, onRemove }: SortableImageProps) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: image.id });
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -42,7 +48,7 @@ function SortableImage({ url, index, onRemove }: SortableImageProps) {
       style={style}
       className="relative group rounded-lg overflow-hidden border border-gray-200 aspect-video bg-gray-100"
     >
-      <Image src={url} alt="" fill className="object-cover" unoptimized />
+      <Image src={image.url} alt="" fill className="object-cover" unoptimized />
 
       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors">
         <div
@@ -75,33 +81,43 @@ function SortableImage({ url, index, onRemove }: SortableImageProps) {
   );
 }
 
-export default function PropertyFormMediaSection() {
-  const { watch, setValue } = useFormContext<PropertyCreateInput>();
-  const imageUrls = watch("imageUrls") ?? [];
+interface PropertyFormMediaSectionProps {
+  initialImages?: SelectedImage[];
+}
+
+export default function PropertyFormMediaSection({ initialImages }: PropertyFormMediaSectionProps) {
+  const { setValue } = useFormContext<PropertyCreateInput>();
+  const [images, setImages] = useState<SelectedImage[]>(initialImages ?? []);
 
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+
+  const syncImages = (next: SelectedImage[]) => {
+    setImages(next);
+    setValue("mediaImageIds", next.map((img) => img.id));
+  };
 
   const handleAddImages = () => {
     openMediaPicker({
       multiple: true,
-      initialSelected: imageUrls,
-      onSelect: (urls) => {
-        setValue("imageUrls", urls);
+      initialSelected: images.map((img) => img.url),
+      onSelect: () => {},
+      onSelectImages: (mediaImages) => {
+        syncImages(mediaImages.map((mi) => ({ id: mi.id, url: mi.url })));
       },
     });
   };
 
-  const removeUrl = (index: number) => {
-    setValue("imageUrls", imageUrls.filter((_, i) => i !== index));
+  const removeImage = (index: number) => {
+    syncImages(images.filter((_, i) => i !== index));
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = imageUrls.indexOf(active.id as string);
-      const newIndex = imageUrls.indexOf(over.id as string);
-      setValue("imageUrls", arrayMove(imageUrls, oldIndex, newIndex));
+      const oldIndex = images.findIndex((img) => img.id === active.id);
+      const newIndex = images.findIndex((img) => img.id === over.id);
+      syncImages(arrayMove(images, oldIndex, newIndex));
     }
   };
 
@@ -115,16 +131,16 @@ export default function PropertyFormMediaSection() {
         </Button>
       </div>
 
-      {imageUrls.length > 0 ? (
+      {images.length > 0 ? (
         <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-          <SortableContext items={imageUrls} strategy={rectSortingStrategy}>
+          <SortableContext items={images.map((img) => img.id)} strategy={rectSortingStrategy}>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-              {imageUrls.map((url, index) => (
+              {images.map((image, index) => (
                 <SortableImage
-                  key={url}
-                  url={url}
+                  key={image.id}
+                  image={image}
                   index={index}
-                  onRemove={() => removeUrl(index)}
+                  onRemove={() => removeImage(index)}
                 />
               ))}
             </div>

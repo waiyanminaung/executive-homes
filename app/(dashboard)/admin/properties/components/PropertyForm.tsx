@@ -39,13 +39,14 @@ const DEFAULT_VALUES: PropertyCreateInput = {
   isFeatured: false,
   isPublished: false,
   isPetFriendly: false,
-  imageUrls: [],
+  mediaImageIds: [],
   featureIds: [],
   transitStations: [],
 };
 
 interface PropertyFormProps {
   defaultValues?: Partial<PropertyCreateInput>;
+  initialImages?: { id: string; url: string }[];
   provinces: Province[];
   onSubmit: (values: PropertyCreateInput) => Promise<void>;
   submitLabel: string;
@@ -64,6 +65,7 @@ function TitleWatcher({ onTitleChange }: { onTitleChange: (title: string) => voi
 
 export default function PropertyForm({
   defaultValues,
+  initialImages,
   provinces,
   onSubmit,
   submitLabel,
@@ -90,7 +92,7 @@ export default function PropertyForm({
             <PropertyFormLocationSection provinces={provinces} />
             <PropertyFormFeaturesSection />
             <PropertyFormTransitSection />
-            <PropertyFormMediaSection />
+            <PropertyFormMediaSection initialImages={initialImages} />
           </div>
           <div className="space-y-5 lg:sticky lg:top-0 lg:self-start">
             <PropertyFormFlagsSection submitLabel={submitLabel} />

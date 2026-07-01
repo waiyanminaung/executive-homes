@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { getMediaImageUrl } from "@/utils/getMediaImageUrl";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
 import { zv } from "@/validation/zv";
 import {
@@ -11,12 +12,29 @@ import {
 import type { AppEnv } from "@/hono/types";
 
 const PROPERTY_INCLUDE = {
-  images: { orderBy: { order: "asc" as const } },
+  images: {
+    orderBy: { order: "asc" as const },
+    include: { mediaImage: { select: { key: true } } },
+  },
   features: { include: { feature: true } },
   transitStations: { include: { station: true } },
   propertyType: { select: { id: true, name: true, slug: true } },
   pricingTiers: { orderBy: { order: "asc" as const } },
 };
+
+function withImageUrls<T extends { images: { id: string; order: number; mediaImageId: string | null; mediaImage: { key: string } | null }[] }>(
+  property: T,
+) {
+  return {
+    ...property,
+    images: property.images.map((img) => ({
+      id: img.id,
+      order: img.order,
+      mediaImageId: img.mediaImageId,
+      url: getMediaImageUrl(img.mediaImage),
+    })),
+  };
+}
 
 const propertyRoutes = new Hono<AppEnv>();
 
@@ -65,13 +83,13 @@ propertyRoutes.get("/", zv("query", propertyListQuerySchema), async (c) => {
 });
 
 propertyRoutes.post("/", zv("json", propertyCreateSchema), async (c) => {
-  const { imageUrls, featureIds, transitStations, pricingTiers, ...data } = c.req.valid("json");
+  const { mediaImageIds, featureIds, transitStations, pricingTiers, ...data } = c.req.valid("json");
 
   try {
     const property = await prisma.property.create({
       data: {
         ...data,
-        images: { create: imageUrls.map((url, order) => ({ url, order })) },
+        images: { create: mediaImageIds.map((mediaImageId, order) => ({ mediaImageId, order })) },
         features: { create: featureIds.map((featureId) => ({ featureId })) },
         transitStations: { create: transitStations },
         pricingTiers: { create: pricingTiers.map((tier, order) => ({ ...tier, order })) },
@@ -81,7 +99,7 @@ propertyRoutes.post("/", zv("json", propertyCreateSchema), async (c) => {
 
     return c.json({
       property: {
-        ...property,
+        ...withImageUrls(property),
         features: property.features.map((pf) => pf.feature),
       },
     }, 201);
@@ -103,7 +121,7 @@ propertyRoutes.get("/:id", async (c) => {
 
     return c.json({
       property: {
-        ...property,
+        ...withImageUrls(property),
         features: property.features.map((pf) => pf.feature),
       },
     });
@@ -139,7 +157,7 @@ propertyRoutes.delete("/bulk", zv("json", bulkIdsSchema), async (c) => {
 
 propertyRoutes.patch("/:id", zv("json", propertyUpdateSchema), async (c) => {
   const id = c.req.param("id");
-  const { imageUrls, featureIds, transitStations, pricingTiers, ...data } = c.req.valid("json");
+  const { mediaImageIds, featureIds, transitStations, pricingTiers, ...data } = c.req.valid("json");
 
   try {
     const existing = await prisma.property.findUnique({ where: { id } });
@@ -149,8 +167,8 @@ propertyRoutes.patch("/:id", zv("json", propertyUpdateSchema), async (c) => {
       where: { id },
       data: {
         ...data,
-        ...(imageUrls !== undefined && {
-          images: { deleteMany: {}, create: imageUrls.map((url, order) => ({ url, order })) },
+        ...(mediaImageIds !== undefined && {
+          images: { deleteMany: {}, create: mediaImageIds.map((mediaImageId, order) => ({ mediaImageId, order })) },
         }),
         ...(featureIds !== undefined && {
           features: { deleteMany: {}, create: featureIds.map((featureId) => ({ featureId })) },
@@ -167,7 +185,7 @@ propertyRoutes.patch("/:id", zv("json", propertyUpdateSchema), async (c) => {
 
     return c.json({
       property: {
-        ...property,
+        ...withImageUrls(property),
         features: property.features.map((pf) => pf.feature),
       },
     });

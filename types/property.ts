@@ -32,6 +32,7 @@ export interface PropertyImage {
   id: string;
   url: string;
   order: number;
+  mediaImageId: string | null;
 }
 
 export interface PropertyDetail {

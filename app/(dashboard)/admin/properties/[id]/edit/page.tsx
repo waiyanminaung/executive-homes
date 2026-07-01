@@ -79,7 +79,10 @@ export default function AdminPropertyEditPage() {
     isFeatured: property.isFeatured,
     isPublished: property.isPublished,
     isPetFriendly: property.isPetFriendly,
-    imageUrls: property.images.map((img: { url: string }) => img.url),
+    mediaImageIds: property.images.reduce<string[]>((ids, img) => {
+      if (img.mediaImageId) ids.push(img.mediaImageId);
+      return ids;
+    }, []),
     featureIds: property.features.map((f: { id: string }) => f.id),
     transitStations: property.transitStations.map((pt) => ({
       stationId: pt.stationId,
@@ -120,6 +123,10 @@ export default function AdminPropertyEditPage() {
 
       <PropertyForm
         defaultValues={defaultValues}
+        initialImages={property.images.reduce<{ id: string; url: string }[]>((acc, img) => {
+          if (img.mediaImageId) acc.push({ id: img.mediaImageId, url: img.url });
+          return acc;
+        }, [])}
         provinces={provincesData?.provinces ?? []}
         onSubmit={handleSubmit}
         submitLabel="Save Changes"

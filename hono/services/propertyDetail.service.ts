@@ -2,14 +2,18 @@ import { prisma } from "@/lib/prisma";
 import type { PropertyItem } from "@/app/types";
 import { getMinSalePrice, getMinRentPrice } from "@/utils/getMinPrice";
 import { buildPropertiesHref } from "@/utils/buildPropertiesHref";
+import { getMediaImageUrl } from "@/utils/getMediaImageUrl";
 
-export async function getPropertyBySlug(slug: string) {
+export async function getPropertyBySlug(slug: string, options?: { includeUnpublished?: boolean }) {
   try {
-    return await prisma.property.findUnique({
-      where: { slug, isPublished: true },
+    const property = await prisma.property.findUnique({
+      where: options?.includeUnpublished ? { slug } : { slug, isPublished: true },
       include: {
         propertyType: true,
-        images: { orderBy: { order: "asc" } },
+        images: {
+          orderBy: { order: "asc" },
+          include: { mediaImage: { select: { key: true } } },
+        },
         features: { include: { feature: true } },
         transitStations: { include: { station: true } },
         pricingTiers: { orderBy: { order: "asc" } },
@@ -18,6 +22,13 @@ export async function getPropertyBySlug(slug: string) {
         subDistrict: { select: { name: true } },
       },
     });
+
+    if (!property) return null;
+
+    return {
+      ...property,
+      images: property.images.map((img) => ({ id: img.id, order: img.order, url: getMediaImageUrl(img.mediaImage) })),
+    };
   } catch {
     return null;
   }
@@ -57,7 +68,11 @@ export async function getSimilarProperties(
         beds: true,
         baths: true,
         areaSqm: true,
-        images: { take: 1, orderBy: { order: "asc" }, select: { url: true } },
+        images: {
+          take: 1,
+          orderBy: { order: "asc" },
+          select: { mediaImage: { select: { key: true } } },
+        },
         id: true,
       },
     });
@@ -78,7 +93,7 @@ export async function getSimilarProperties(
         beds: p.beds ?? 0,
         baths: p.baths ?? 0,
         area: `${p.areaSqm} sqm`,
-        imageUrls: p.images.map((img) => img.url),
+        imageUrls: p.images.map((img) => getMediaImageUrl(img.mediaImage)),
       };
     });
 

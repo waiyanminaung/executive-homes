@@ -6,6 +6,8 @@ import type {
 
 export const WALKING_SPEED_METERS_PER_MIN = 80;
 
+export const PLACEHOLDER_IMAGE_URL = "/property-placeholder.png";
+
 export const HOME_HERO_FILTER_OPTIONS = {
   types: [
     { value: "apartment", label: "Apartment" },

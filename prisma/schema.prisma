@@ -141,11 +141,12 @@ model PropertyPricingTier {
 }
 
 model PropertyImage {
-  id         String   @id @default(cuid())
-  propertyId String
-  url        String
-  order      Int      @default(0)
-  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  id           String      @id @default(cuid())
+  propertyId   String
+  property     Property    @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  mediaImageId String?
+  mediaImage   MediaImage? @relation(fields: [mediaImageId], references: [id], onDelete: SetNull)
+  order        Int         @default(0)
 
   @@map("property_images")
 }
@@ -263,14 +264,16 @@ model Account {
 }
 
 model MediaImage {
-  id           String   @id @default(cuid())
-  key          String   @unique
-  filename     String
-  size         Int
-  mimeType     String
-  uploadedById String
-  uploadedBy   User     @relation(fields: [uploadedById], references: [id])
-  createdAt    DateTime @default(now())
+  id             String          @id @default(cuid())
+  key            String          @unique
+  filename       String
+  size           Int
+  mimeType       String
+  uploadedById   String
+  uploadedBy     User            @relation(fields: [uploadedById], references: [id])
+  createdAt      DateTime        @default(now())
+  propertyImages PropertyImage[]
+  homeAreaCards  HomeAreaCard[]
 
   @@map("media_images")
 }
@@ -308,16 +311,17 @@ model HomeSection {
 }
 
 model HomeAreaCard {
-  id         String    @id @default(cuid())
-  name       String
-  imageKey   String
-  order      Int       @default(0)
-  provinceId String?
-  province   Province? @relation(fields: [provinceId], references: [id])
-  districtId String?
-  district   District? @relation(fields: [districtId], references: [id])
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id           String      @id @default(cuid())
+  name         String
+  mediaImageId String?
+  mediaImage   MediaImage? @relation(fields: [mediaImageId], references: [id], onDelete: SetNull)
+  order        Int         @default(0)
+  provinceId   String?
+  province     Province?   @relation(fields: [provinceId], references: [id])
+  districtId   String?
+  district     District?   @relation(fields: [districtId], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   @@map("home_area_cards")
 }

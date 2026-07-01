@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { getMediaUrl } from "@/utils/getMediaUrl";
+import { getMediaImageUrl } from "@/utils/getMediaImageUrl";
 import type { ClientHomeAreaCard } from "@/types/homeAreaCard";
 
 export async function getHomeAreaCards(): Promise<ClientHomeAreaCard[]> {
@@ -9,6 +9,7 @@ export async function getHomeAreaCards(): Promise<ClientHomeAreaCard[]> {
     include: {
       province: { select: { id: true, name: true, slug: true } },
       district: { select: { id: true, name: true, slug: true } },
+      mediaImage: { select: { key: true } },
     },
   });
 
@@ -32,7 +33,7 @@ export async function getHomeAreaCards(): Promise<ClientHomeAreaCard[]> {
         updatedAt: card.updatedAt.toISOString(),
         listings,
         listingCount: listings,
-        imageUrl: getMediaUrl(card.imageKey),
+        imageUrl: getMediaImageUrl(card.mediaImage),
       };
     }),
   );

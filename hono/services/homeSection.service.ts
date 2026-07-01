@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { toListingType } from "@/utils/homeSectionUtils";
 import { getMinSalePrice, getMinRentPrice } from "@/utils/getMinPrice";
 import { buildPropertiesHref } from "@/utils/buildPropertiesHref";
+import { getMediaImageUrl } from "@/utils/getMediaImageUrl";
 import type { PropertyItem, PropertySection } from "@/app/types";
 
 export async function getHomeSections(): Promise<PropertySection[]> {
@@ -37,7 +38,11 @@ export async function getHomeSections(): Promise<PropertySection[]> {
             isForSale: true, isForRent: true, availabilityStatus: true,
             beds: true, baths: true, areaSqm: true,
             address: true,
-            images: { take: 5, orderBy: { order: "asc" }, select: { url: true } },
+            images: {
+              take: 5,
+              orderBy: { order: "asc" },
+              select: { mediaImage: { select: { key: true } } },
+            },
             pricingTiers: { orderBy: { order: "asc" }, select: { salePrice: true, rentPrice: true } },
           },
         });
@@ -52,7 +57,7 @@ export async function getHomeSections(): Promise<PropertySection[]> {
             minSalePrice: getMinSalePrice(p.pricingTiers, p.isForSale),
             minRentPrice: getMinRentPrice(p.pricingTiers, p.isForRent),
             hasMultipleTiers: p.pricingTiers.length > 1,
-            imageUrls: p.images.map((img) => img.url),
+            imageUrls: p.images.map((img) => getMediaImageUrl(img.mediaImage)),
             listingType: toListingType(p.isForRent, p.isForSale),
             availabilityStatus: p.availabilityStatus,
             beds: p.beds ?? 0,

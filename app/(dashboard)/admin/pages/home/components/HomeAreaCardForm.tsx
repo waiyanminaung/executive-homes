@@ -36,7 +36,7 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
   const { trigger: updateCard } = useWrite((api) => api("admin/home-area-cards/:id").PATCH());
   const { trigger: deleteCard } = useWrite((api) => api("admin/home-area-cards/:id").DELETE());
 
-  const [imageKey, setImageKey] = useState<string>(card?.imageKey ?? "");
+  const [mediaImageId, setMediaImageId] = useState<string>(card?.mediaImageId ?? "");
   const [previewUrl, setPreviewUrl] = useState<string | null>(card?.imageUrl ?? null);
   const [imageError, setImageError] = useState<string | null>(null);
 
@@ -67,7 +67,7 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
   const handleSubmit = methods.handleSubmit(async (values) => {
     setImageError(null);
 
-    if (!imageKey) {
+    if (!mediaImageId) {
       setImageError("Image is required.");
       return;
     }
@@ -75,9 +75,9 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
     const name = deriveName();
 
     if (card) {
-      await updateCard({ params: { id: card.id }, body: { ...values, name, imageKey } });
+      await updateCard({ params: { id: card.id }, body: { ...values, name, mediaImageId } });
     } else {
-      await createCard({ body: { ...values, name, imageKey, order: defaultOrder } });
+      await createCard({ body: { ...values, name, mediaImageId, order: defaultOrder } });
     }
 
     onSaved();
@@ -98,13 +98,13 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
   };
 
   const handleImageSelect = (image: ClientMediaImage) => {
-    setImageKey(image.key);
+    setMediaImageId(image.id);
     setPreviewUrl(image.url);
     setImageError(null);
   };
 
   const handleImageClear = () => {
-    setImageKey("");
+    setMediaImageId("");
     setPreviewUrl(null);
   };
 

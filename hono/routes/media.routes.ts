@@ -153,13 +153,17 @@ mediaRoutes.delete("/bulk", zv("json", bulkDeleteSchema), async (c) => {
 mediaRoutes.delete("/:id", async (c) => {
   const id = c.req.param("id");
 
-  const image = await prisma.mediaImage.findUnique({ where: { id } });
-  if (!image) return c.json({ error: "Not found" }, 404);
+  try {
+    const image = await prisma.mediaImage.findUnique({ where: { id } });
+    if (!image) return c.json({ error: "Not found" }, 404);
 
-  await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: image.key }));
-  await prisma.mediaImage.delete({ where: { id } });
+    await r2.send(new DeleteObjectCommand({ Bucket: R2_BUCKET, Key: image.key }));
+    await prisma.mediaImage.delete({ where: { id } });
 
-  return c.json({ ok: true });
+    return c.json({ ok: true });
+  } catch {
+    return c.json({ error: "Failed to delete image" }, 500);
+  }
 });
 
 export default mediaRoutes;

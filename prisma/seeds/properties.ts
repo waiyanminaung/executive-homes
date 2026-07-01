@@ -1,4 +1,5 @@
 import { PrismaClient } from "../generated/prisma/client";
+import { upsertSeedMediaImages } from "./mediaImages";
 
 interface PricingTierSeed {
   label: string;
@@ -542,6 +543,8 @@ export async function seedProperties(prisma: PrismaClient) {
         ).then((entries) => entries.filter((e): e is { stationId: string; distanceMeters: number } => e !== null))
       : [];
 
+    const mediaImages = p.images ? await upsertSeedMediaImages(prisma, p.images) : [];
+
     await prisma.property.create({
       data: {
         slug: p.slug,
@@ -567,8 +570,8 @@ export async function seedProperties(prisma: PrismaClient) {
             ? p.pricingTiers.map((t, order) => ({ label: t.label, salePrice: t.salePrice ?? null, rentPrice: t.rentPrice ?? null, order }))
             : [{ label: "Standard", salePrice: p.salePrice ?? null, rentPrice: p.rentPrice ?? null, order: 0 }],
         },
-        images: p.images
-          ? { create: p.images.map((url, order) => ({ url, order })) }
+        images: mediaImages.length
+          ? { create: mediaImages.map((mi, order) => ({ mediaImageId: mi.id, order })) }
           : undefined,
         features: featureIds.length
           ? { create: featureIds.map((featureId) => ({ featureId })) }

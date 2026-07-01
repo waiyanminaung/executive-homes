@@ -1,7 +1,7 @@
 export interface HomeAreaCard {
   id: string;
   name: string;
-  imageKey: string;
+  mediaImageId: string | null;
   imageUrl: string;
   order: number;
   listingCount: number;

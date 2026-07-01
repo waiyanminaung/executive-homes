@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const homeAreaCardCreateSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  imageKey: z.string().min(1, "Image is required"),
+  mediaImageId: z.string().min(1, "Image is required"),
   order: z.number().int().min(0),
   provinceId: z.string().nullable().optional(),
   districtId: z.string().nullable().optional(),
