@@ -90,7 +90,7 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
 
   return (
     <>
-      <ListingSearchBar listingType={listingType} />
+      <ListingSearchBar listingType={listingType} propertyType={propertyType} />
 
       <main className="min-h-screen bg-neutral-50">
         <div className="container mx-auto px-4 py-8">

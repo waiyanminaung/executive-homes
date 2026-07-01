@@ -1,5 +1,6 @@
 export { default as propertyRoutes } from "./properties.routes";
 export { default as propertyTypesRoutes } from "./propertyTypes.routes";
+export { default as publicPropertyTypesRoutes } from "./publicPropertyTypes.routes";
 export { default as provincesRoutes } from "./provinces.routes";
 export { default as featuresRoutes } from "./features.routes";
 export { default as transitStationsRoutes } from "./transitStations.routes";

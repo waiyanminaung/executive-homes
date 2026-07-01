@@ -3,13 +3,16 @@
 import { ChevronDown, X } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
+import { useRead } from "@/lib/spoosh";
 import { openFilterModal, type FilterValues } from "@/components/PropertyFilterModal";
+import type { PropertyTypeItem } from "@/types/propertyType";
 
 interface PropertyFilterButtonProps {
   tab: "type" | "price" | "bedrooms";
   values: FilterValues;
   onApply: (values: FilterValues) => void;
   className?: string;
+  showTypeTab?: boolean;
 }
 
 function formatPrice(value: string): string {
@@ -19,10 +22,10 @@ function formatPrice(value: string): string {
   return `฿${n}`;
 }
 
-function getLabel(tab: "type" | "price" | "bedrooms", values: FilterValues): string {
+function getLabel(tab: "type" | "price" | "bedrooms", values: FilterValues, propertyTypes: PropertyTypeItem[]): string {
   if (tab === "type") {
     return values.type
-      ? (HOME_HERO_FILTER_OPTIONS.types.find((o) => o.value === values.type)?.label ?? "Type")
+      ? (propertyTypes.find((o) => o.slug === values.type)?.name ?? "Type")
       : "Type";
   }
 
@@ -50,12 +53,15 @@ function isActive(tab: "type" | "price" | "bedrooms", values: FilterValues): boo
   return !!values.bedrooms;
 }
 
-export function PropertyFilterButton({ tab, values, onApply, className }: PropertyFilterButtonProps) {
-  const label = getLabel(tab, values);
+export function PropertyFilterButton({ tab, values, onApply, className, showTypeTab }: PropertyFilterButtonProps) {
+  const { data: propertyTypesData } = useRead((api) => api("property-types").GET());
+  const propertyTypes = propertyTypesData?.propertyTypes ?? [];
+
+  const label = getLabel(tab, values, propertyTypes);
   const active = isActive(tab, values);
 
   const handleClick = () => {
-    openFilterModal({ initialTab: tab, initialValues: values, onApply });
+    openFilterModal({ initialTab: tab, initialValues: values, onApply, showTypeTab });
   };
 
   const handleClear = (e: React.MouseEvent) => {

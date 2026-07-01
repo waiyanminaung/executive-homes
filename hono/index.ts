@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import {
   propertyRoutes,
   propertyTypesRoutes,
+  publicPropertyTypesRoutes,
   provincesRoutes,
   featuresRoutes,
   transitStationsRoutes,
@@ -43,6 +44,7 @@ router.route("/admin/app-content", appContentRoutes);
 router.route("/admin/users", adminUsersRoutes);
 
 router.route("/properties", publicPropertiesRoutes);
+router.route("/property-types", publicPropertyTypesRoutes);
 router.route("/home-sections", publicHomeSectionsRoutes);
 router.route("/home-area-cards", publicHomeAreaCardsRoutes);
 router.route("/enquiries", publicEnquiriesRoutes);

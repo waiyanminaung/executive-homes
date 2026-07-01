@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Check, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Dialog } from "@geckoui/geckoui";
 import { HOME_HERO_FILTER_OPTIONS } from "@/app/constants";
 import { classNames } from "@/utils/classNames";
+import { PropertyFilterOptionButton } from "@/components/PropertyFilterOptionButton";
+import { PropertyFilterTypeOptions } from "@/components/PropertyFilterTypeOptions";
 
 export type FilterTab = "type" | "price" | "bedrooms";
 
@@ -25,6 +27,7 @@ export function openFilterModal(opts: {
   initialTab: FilterTab;
   initialValues: FilterValues;
   onApply: (values: FilterValues) => void;
+  showTypeTab?: boolean;
 }) {
   Dialog.show({
     className: "w-full max-w-sm p-0 overflow-hidden",
@@ -32,6 +35,7 @@ export function openFilterModal(opts: {
       <PropertyFilterModal
         initialTab={opts.initialTab}
         initialValues={opts.initialValues}
+        showTypeTab={opts.showTypeTab ?? true}
         onApply={(values) => {
           opts.onApply(values);
           dismiss();
@@ -47,9 +51,11 @@ interface PropertyFilterModalProps {
   initialValues: FilterValues;
   onApply: (values: FilterValues) => void;
   dismiss: () => void;
+  showTypeTab: boolean;
 }
 
-function PropertyFilterModal({ initialTab, initialValues, onApply, dismiss }: PropertyFilterModalProps) {
+function PropertyFilterModal({ initialTab, initialValues, onApply, dismiss, showTypeTab }: PropertyFilterModalProps) {
+  const tabs = showTypeTab ? TABS : TABS.filter((tab) => tab.key !== "type");
   const [activeTab, setActiveTab] = useState<FilterTab>(initialTab);
   const [localType, setLocalType] = useState<string | null>(initialValues.type);
   const [localMinPrice, setLocalMinPrice] = useState(initialValues.minPrice);
@@ -86,7 +92,7 @@ function PropertyFilterModal({ initialTab, initialValues, onApply, dismiss }: Pr
         </div>
 
         <div className="flex">
-          {TABS.map((tab) => (
+          {tabs.map((tab) => (
             <button
               key={tab.key}
               type="button"
@@ -105,32 +111,7 @@ function PropertyFilterModal({ initialTab, initialValues, onApply, dismiss }: Pr
       </div>
 
       <div className="flex-1 overflow-y-auto bg-white px-4 py-4">
-        {activeTab === "type" && (
-          <div className="grid grid-cols-2 gap-2">
-            {HOME_HERO_FILTER_OPTIONS.types.map((o) => {
-              const selected = localType === o.value;
-              return (
-                <button
-                  key={o.value}
-                  type="button"
-                  onClick={() => setLocalType(selected ? null : o.value)}
-                  className={classNames(
-                    "flex items-center justify-between rounded-xl border-2 px-4 py-2.5 text-left text-sm font-semibold transition-all",
-                    selected
-                      ? "border-primary-700 bg-primary-50 text-primary-700"
-                      : classNames(
-                          "border-gray-200 bg-white hover:border-gray-300",
-                          localType ? "text-gray-400" : "text-gray-700",
-                        ),
-                  )}
-                >
-                  <span>{o.label}</span>
-                  {selected && <Check className="h-4 w-4 shrink-0" />}
-                </button>
-              );
-            })}
-          </div>
-        )}
+        {activeTab === "type" && <PropertyFilterTypeOptions value={localType} onChange={setLocalType} />}
 
         {activeTab === "price" && (
           <div className="grid grid-cols-2 gap-4">
@@ -173,23 +154,13 @@ function PropertyFilterModal({ initialTab, initialValues, onApply, dismiss }: Pr
             {HOME_HERO_FILTER_OPTIONS.bedrooms.map((o) => {
               const selected = localBedrooms === o.value;
               return (
-                <button
+                <PropertyFilterOptionButton
                   key={o.value}
-                  type="button"
+                  label={o.label}
+                  selected={selected}
+                  hasSelection={!!localBedrooms}
                   onClick={() => setLocalBedrooms(selected ? null : o.value)}
-                  className={classNames(
-                    "flex items-center justify-between rounded-xl border-2 px-4 py-2.5 text-sm font-semibold transition-all",
-                    selected
-                      ? "border-primary-700 bg-primary-50 text-primary-700"
-                      : classNames(
-                          "border-gray-200 bg-white hover:border-gray-300",
-                          localBedrooms ? "text-gray-400" : "text-gray-700",
-                        ),
-                  )}
-                >
-                  <span>{o.label}</span>
-                  {selected && <Check className="h-4 w-4 shrink-0" />}
-                </button>
+                />
               );
             })}
           </div>

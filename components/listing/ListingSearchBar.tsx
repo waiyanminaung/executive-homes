@@ -10,9 +10,10 @@ import { useListingSearchParams } from "@/utils/useListingSearchParams";
 
 interface ListingSearchBarProps {
   listingType?: "for-sale" | "for-rent";
+  propertyType?: string;
 }
 
-export function ListingSearchBar({ listingType: listingTypeProp }: ListingSearchBarProps) {
+export function ListingSearchBar({ listingType: listingTypeProp, propertyType }: ListingSearchBarProps) {
   const defaultTab = listingTypeProp === "for-rent" ? "rent" : "buy";
   const {
     listingType, setListingType,
@@ -22,6 +23,7 @@ export function ListingSearchBar({ listingType: listingTypeProp }: ListingSearch
   } = useListingSearchParams(defaultTab);
 
   const showListingTypeSelect = !listingTypeProp;
+  const showTypeFilter = !propertyType;
 
   const currentFilterValues: FilterValues = {
     type,
@@ -70,9 +72,11 @@ export function ListingSearchBar({ listingType: listingTypeProp }: ListingSearch
             </Select>
           )}
 
-          <PropertyFilterButton tab="type" values={currentFilterValues} onApply={handleFilterApply} />
-          <PropertyFilterButton tab="price" values={currentFilterValues} onApply={handleFilterApply} />
-          <PropertyFilterButton tab="bedrooms" values={currentFilterValues} onApply={handleFilterApply} />
+          {showTypeFilter && (
+            <PropertyFilterButton tab="type" values={currentFilterValues} onApply={handleFilterApply} showTypeTab={showTypeFilter} />
+          )}
+          <PropertyFilterButton tab="price" values={currentFilterValues} onApply={handleFilterApply} showTypeTab={showTypeFilter} />
+          <PropertyFilterButton tab="bedrooms" values={currentFilterValues} onApply={handleFilterApply} showTypeTab={showTypeFilter} />
 
           <div className="self-center">
             <HomePetToggle value={pet} onChange={(v) => { void setPet(v); void setPage(1); }} />

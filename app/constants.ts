@@ -9,20 +9,6 @@ export const WALKING_SPEED_METERS_PER_MIN = 80;
 export const PLACEHOLDER_IMAGE_URL = "/property-placeholder.png";
 
 export const HOME_HERO_FILTER_OPTIONS = {
-  types: [
-    { value: "apartment", label: "Apartment" },
-    { value: "condo", label: "Condo" },
-    { value: "house", label: "House" },
-    { value: "office", label: "Office Space" },
-    { value: "commercial", label: "Commercial" },
-  ],
-  locations: [
-    { value: "sukhumvit", label: "Sukhumvit" },
-    { value: "silom", label: "Silom" },
-    { value: "sathorn", label: "Sathorn" },
-    { value: "riverside", label: "Riverside" },
-    { value: "watthana", label: "Watthana" },
-  ],
   prices: [
     { value: "0-5m", label: "Under ฿5M" },
     { value: "5m-10m", label: "฿5M – ฿10M" },

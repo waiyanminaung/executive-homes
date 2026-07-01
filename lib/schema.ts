@@ -136,6 +136,9 @@ export type ApiSchema = {
       query?: { page?: string; limit?: string; isForSale?: string; isForRent?: string; type?: string; provinceId?: string; districtId?: string; subDistrictIds?: string; isPetFriendly?: string; beds?: string; q?: string; sort?: string; stationIds?: string; minPrice?: string; maxPrice?: string };
     };
   };
+  "property-types": {
+    GET: { data: { propertyTypes: PropertyTypeItem[] } };
+  };
   "properties/:slug": {
     GET: { data: { property: PropertyDetail }; params: { slug: string } };
   };
