@@ -13,7 +13,7 @@ import { useRead, useWrite } from "@/lib/spoosh";
 import { homeAreaCardFormSchema, type HomeAreaCardFormValues } from "@/validation/homeAreaCardSchema";
 import type { HomeAreaCard } from "@/types/homeAreaCard";
 import type { ClientMediaImage } from "@/types/media";
-import HomeAreaCardImagePicker from "./HomeAreaCardImagePicker";
+import MediaImagePicker from "@/components/@shared/MediaImagePicker";
 
 const DEFAULT_VALUES: HomeAreaCardFormValues = {
   provinceId: null,
@@ -112,11 +112,12 @@ export default function HomeAreaCardForm({ card, defaultOrder = 0, onSaved, onCa
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit} className="p-5 border-t border-gray-100 bg-white space-y-4">
         <div className="flex gap-4 items-start">
-          <HomeAreaCardImagePicker
+          <MediaImagePicker
             previewUrl={previewUrl}
             error={imageError}
             onSelect={handleImageSelect}
             onClear={handleImageClear}
+            alt="Area preview"
           />
 
           <div className="flex-1 space-y-3">

@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { authMiddleware, adminMiddleware } from "@/hono/middleware";
 import { zv } from "@/validation/zv";
 import { appContentSchema } from "@/validation/appContentSchema";
+import { getMediaImageMapForItems, IMAGE_CONTENT_TYPE_SUFFIX } from "@/hono/services/appContent.service";
+import { getMediaUrl } from "@/utils/getMediaUrl";
 import type { AppEnv } from "@/hono/types";
 
 const appContentRoutes = new Hono<AppEnv>();
@@ -16,7 +18,17 @@ appContentRoutes.get("/", async (c) => {
       where: key ? { key } : undefined,
       orderBy: [{ key: "asc" }, { type: "asc" }],
     });
-    return c.json({ items });
+
+    const mediaImageMap = await getMediaImageMapForItems(items);
+
+    return c.json({
+      items: items.map((i) => ({
+        ...i,
+        mediaImageUrl: i.type.endsWith(IMAGE_CONTENT_TYPE_SUFFIX) && mediaImageMap.has(i.value)
+          ? getMediaUrl(mediaImageMap.get(i.value)!.key)
+          : null,
+      })),
+    });
   } catch {
     return c.json({ items: [] });
   }

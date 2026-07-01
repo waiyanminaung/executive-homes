@@ -9,13 +9,14 @@ import TiptapEditor from "@/components/TiptapEditor";
 import { aboutContentSchema, type AboutContentInput } from "@/validation/aboutContentSchema";
 import { ABOUT_STATS, ABOUT_HERO_IMAGE, ABOUT_INTRO_IMAGE } from "@/app/about/constants";
 import AdminPageHeader from "../../components/AdminPageHeader";
+import AboutImageField from "./components/AboutImageField";
 
 const DEFAULT_VALUES: AboutContentInput = {
-  heroImage: ABOUT_HERO_IMAGE,
+  heroImage: "",
   introTagline: "Who We Are",
   introHeading: "About Us",
   introContent: "",
-  introImage: ABOUT_INTRO_IMAGE,
+  introImage: "",
   stats: ABOUT_STATS,
 };
 
@@ -30,6 +31,7 @@ export default function AdminAboutPage() {
   const items = data?.items ?? [];
 
   const getValue = (type: string) => items.find((i) => i.type === type)?.value ?? "";
+  const getImageUrl = (type: string) => items.find((i) => i.type === type)?.mediaImageUrl ?? null;
 
   let statsFromDb = DEFAULT_VALUES.stats;
   const rawStats = getValue("stats");
@@ -46,11 +48,11 @@ export default function AdminAboutPage() {
   const methods = useForm<AboutContentInput>({
     values: items.length > 0
       ? {
-          heroImage: getValue("heroImage") || ABOUT_HERO_IMAGE,
+          heroImage: getValue("heroImage"),
           introTagline: getValue("introTagline") || "Who We Are",
           introHeading: getValue("introHeading") || "About Us",
           introContent: getValue("introContent") || "",
-          introImage: getValue("introImage") || ABOUT_INTRO_IMAGE,
+          introImage: getValue("introImage"),
           stats: statsFromDb,
         }
       : DEFAULT_VALUES,
@@ -88,11 +90,12 @@ export default function AdminAboutPage() {
           <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-5">
             <h2 className="text-sm font-semibold text-gray-900">Hero Section</h2>
 
-            <div className="space-y-1.5">
-              <Label>Hero Image URL</Label>
-              <RHFInput name="heroImage" placeholder={ABOUT_HERO_IMAGE} />
-              <RHFError name="heroImage" />
-            </div>
+            <AboutImageField
+              key={`hero-${items.length}`}
+              name="heroImage"
+              label="Hero Image"
+              initialPreviewUrl={getImageUrl("heroImage") ?? ABOUT_HERO_IMAGE}
+            />
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-5">
@@ -128,11 +131,12 @@ export default function AdminAboutPage() {
               <RHFError name="introContent" />
             </div>
 
-            <div className="space-y-1.5">
-              <Label>Image URL</Label>
-              <RHFInput name="introImage" placeholder={ABOUT_INTRO_IMAGE} />
-              <RHFError name="introImage" />
-            </div>
+            <AboutImageField
+              key={`intro-${items.length}`}
+              name="introImage"
+              label="Intro Image"
+              initialPreviewUrl={getImageUrl("introImage") ?? ABOUT_INTRO_IMAGE}
+            />
           </div>
 
           <div className="rounded-xl border border-gray-200 bg-white p-6 space-y-5">

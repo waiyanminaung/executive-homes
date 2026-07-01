@@ -6,14 +6,23 @@ import { classNames } from "@/utils/classNames";
 import { openMediaPicker } from "@/components/@shared/MediaPickerDialog";
 import type { ClientMediaImage } from "@/types/media";
 
-interface HomeAreaCardImagePickerProps {
+interface MediaImagePickerProps {
   previewUrl: string | null;
   error: string | null;
   onSelect: (image: ClientMediaImage) => void;
   onClear: () => void;
+  alt?: string;
+  className?: string;
 }
 
-export default function HomeAreaCardImagePicker({ previewUrl, error, onSelect, onClear }: HomeAreaCardImagePickerProps) {
+export default function MediaImagePicker({
+  previewUrl,
+  error,
+  onSelect,
+  onClear,
+  alt = "Selected image",
+  className = "w-36",
+}: MediaImagePickerProps) {
   const handleOpen = () => {
     openMediaPicker({
       multiple: false,
@@ -26,13 +35,13 @@ export default function HomeAreaCardImagePicker({ previewUrl, error, onSelect, o
   };
 
   return (
-    <div className="space-y-1.5 w-36 shrink-0">
+    <div className={classNames("space-y-1.5 shrink-0", className)}>
       <div className="relative aspect-square w-full rounded-xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 group">
         {previewUrl ? (
           <>
             <Image
               src={previewUrl}
-              alt="Area preview"
+              alt={alt}
               fill
               className="object-cover"
               unoptimized

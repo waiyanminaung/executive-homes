@@ -3,4 +3,5 @@ export interface AppContent {
   key: string;
   type: string;
   value: string;
+  mediaImageUrl: string | null;
 }
