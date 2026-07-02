@@ -22,27 +22,27 @@ export function AboutIntro({ tagline, heading, introContent, introImage }: About
   const resolvedImage = introImage || ABOUT_INTRO_IMAGE;
 
   return (
-    <section className="px-4 py-12 md:py-[70px]">
-      <div className="mx-auto grid w-full max-w-[1186px] gap-10 lg:grid-cols-2 lg:gap-16 lg:items-center">
-        <div className="grid gap-6">
+    <section className="px-4 py-8 md:py-[70px]">
+      <div className="mx-auto grid w-full max-w-[1186px] gap-6 lg:grid-cols-2 lg:gap-16 lg:items-center">
+        <div className="grid gap-4 md:gap-6">
           <div>
-            <p className="text-sm font-semibold tracking-[0.18em] text-primary-500 uppercase">
+            <p className="text-xs font-semibold tracking-[0.18em] text-primary-500 uppercase md:text-sm">
               {resolvedTagline}
             </p>
-            <div className="mt-3 h-px w-10 bg-primary-500" />
+            <div className="mt-2 h-px w-10 bg-primary-500 md:mt-3" />
           </div>
 
-          <h2 className="text-[32px] font-bold leading-[1.4] text-neutral-900 md:text-[36px]">
+          <h2 className="text-2xl font-bold leading-[1.3] text-neutral-900 md:text-[36px] md:leading-[1.4]">
             {resolvedHeading}
           </h2>
 
           <div
-            className="prose prose-lg max-w-none leading-[1.7] text-neutral-600"
+            className="prose max-w-none text-sm leading-[1.6] text-neutral-600 md:prose-lg md:text-base md:leading-[1.7]"
             dangerouslySetInnerHTML={{ __html: resolvedContent }}
           />
         </div>
 
-        <div className="relative h-[300px] w-full overflow-hidden rounded-2xl bg-neutral-200 lg:h-[460px]">
+        <div className="relative h-[220px] w-full overflow-hidden rounded-2xl bg-neutral-200 lg:h-[460px]">
           <Image
             src={resolvedImage}
             alt="Executive Homes interior"

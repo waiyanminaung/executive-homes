@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronDown, X } from "lucide-react";
@@ -17,29 +18,36 @@ function MobileNavItem({ item, onClose }: MobileNavItemProps) {
 
   if (!item.dropdownColumns) {
     return (
-      <Link
-        href={item.href}
-        onClick={onClose}
-        className="flex items-center justify-between rounded-xl px-4 py-3 transition-colors hover:bg-white/10"
-      >
-        <span>{item.label}</span>
-      </Link>
+      <div>
+        <Link
+          href={item.href}
+          onClick={onClose}
+          className="flex items-center justify-between rounded-xl px-4 py-3 transition-colors hover:bg-white/10"
+        >
+          <span>{item.label}</span>
+        </Link>
+      </div>
     );
   }
 
   return (
     <div>
-      <button
-        type="button"
-        onClick={() => setExpanded((v) => !v)}
-        aria-expanded={expanded}
-        className="flex w-full items-center justify-between rounded-xl px-4 py-3 text-left transition-colors hover:bg-white/10"
-      >
-        <span>{item.label}</span>
-        <ChevronDown
-          className={classNames("h-4 w-4 text-white/70 transition-transform duration-200", expanded && "rotate-180")}
-        />
-      </button>
+      <div className="flex items-center justify-between rounded-xl transition-colors hover:bg-white/10">
+        <Link href={item.href} onClick={onClose} className="flex-1 px-4 py-3">
+          {item.label}
+        </Link>
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          aria-expanded={expanded}
+          aria-label={`Toggle ${item.label} submenu`}
+          className="px-4 py-3"
+        >
+          <ChevronDown
+            className={classNames("h-4 w-4 text-white/70 transition-transform duration-200", expanded && "rotate-180")}
+          />
+        </button>
+      </div>
 
       {expanded && (
         <div className="ml-4 grid gap-0.5 border-l border-white/10 pl-4">
@@ -76,7 +84,9 @@ export function MobileMenu({ navItems, open, onClose }: MobileMenuProps) {
     };
   }, [open]);
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <div className="md:hidden">
       <div
         onClick={onClose}
@@ -102,7 +112,7 @@ export function MobileMenu({ navItems, open, onClose }: MobileMenuProps) {
         />
 
         <div className="relative z-10 flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-5">
-          <span className="text-sm font-bold text-white/90">Menu</span>
+          <span className="text-sm font-bold text-white/90">Executive Homes</span>
           <button
             type="button"
             aria-label="Close menu"
@@ -113,17 +123,19 @@ export function MobileMenu({ navItems, open, onClose }: MobileMenuProps) {
           </button>
         </div>
 
-        <nav className="relative z-10 flex flex-1 flex-col gap-1 overflow-y-auto p-4 text-sm font-semibold text-white">
+        <nav className="relative z-10 flex flex-1 flex-col divide-y divide-white/[0.06] overflow-y-auto p-4 text-sm font-semibold text-white">
           {navItems.map((item) => (
             <MobileNavItem key={item.label} item={item} onClose={onClose} />
           ))}
-          <Link
-            href="/about"
-            onClick={onClose}
-            className="rounded-xl px-4 py-3 transition-colors hover:bg-white/10"
-          >
-            About Us
-          </Link>
+          <div>
+            <Link
+              href="/about"
+              onClick={onClose}
+              className="block rounded-xl px-4 py-3 transition-colors hover:bg-white/10"
+            >
+              About Us
+            </Link>
+          </div>
         </nav>
 
         <div className="relative z-10 shrink-0 border-t border-white/10 p-4">
@@ -136,6 +148,7 @@ export function MobileMenu({ navItems, open, onClose }: MobileMenuProps) {
           </Link>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

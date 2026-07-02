@@ -99,7 +99,7 @@ export function ListingPage({ listingType, propertyType, pageTitle }: ListingPag
           {loading ? (
             <PropertyGridSkeleton count={12} />
           ) : properties.length > 0 ? (
-            <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-5">
+            <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 lg:gap-5">
               {properties.map((property) => (
                 <PropertyCard key={property.id} property={property} backHref={backHref} />
               ))}

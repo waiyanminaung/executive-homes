@@ -35,8 +35,8 @@ export async function ContactMain() {
   ].filter(Boolean) as ContactMethod[];
 
   return (
-    <section className="bg-white px-4 py-[70px]">
-      <div className="mx-auto grid w-full max-w-[1186px] gap-6 lg:grid-cols-[minmax(0,572px)_minmax(0,1fr)]">
+    <section className="bg-white px-4 py-10 md:py-[70px]">
+      <div className="mx-auto grid w-full max-w-[1186px] gap-4 md:gap-6 lg:grid-cols-[minmax(0,572px)_minmax(0,1fr)]">
         <ContactForm />
         <ContactInfo methods={methods} />
       </div>

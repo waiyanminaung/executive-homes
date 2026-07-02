@@ -28,7 +28,7 @@ export function PropertySearchDropdown({
   return (
     <div
       ref={dropdownRef}
-      style={{ position: "fixed", top: pos.top, left: pos.left, width: pos.width, zIndex: 9999 }}
+      style={{ position: "fixed", top: pos.top, left: pos.left, width: pos.width, minWidth: 280, zIndex: 9999 }}
       className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg"
     >
       {hasQuery ? (
