@@ -19,8 +19,8 @@ function SinglePriceDisplay({ tier, isForSale, isForRent }: SinglePriceDisplayPr
     <div className="grid gap-2">
       {isForSale && tier.salePrice != null && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-base font-semibold text-neutral-600">For sale</span>
-          <span className="whitespace-nowrap text-xl font-bold text-secondary-500">
+          <span className="text-sm font-semibold text-neutral-600 md:text-base">For sale</span>
+          <span className="whitespace-nowrap text-lg font-bold text-secondary-500 md:text-xl">
             {formatPrice(tier.salePrice)}
           </span>
         </div>
@@ -28,8 +28,8 @@ function SinglePriceDisplay({ tier, isForSale, isForRent }: SinglePriceDisplayPr
 
       {isForRent && tier.rentPrice != null && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-base font-semibold text-neutral-600">For rent</span>
-          <span className="whitespace-nowrap text-xl font-bold text-secondary-500">
+          <span className="text-sm font-semibold text-neutral-600 md:text-base">For rent</span>
+          <span className="whitespace-nowrap text-lg font-bold text-secondary-500 md:text-xl">
             {formatPrice(tier.rentPrice)}/mo
           </span>
         </div>
@@ -120,11 +120,11 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
   const availabilityBadgeClass = AVAILABILITY_BADGE[property.availabilityStatus];
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-detail-card md:p-[30px]">
+    <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-detail-card md:p-[30px]">
       <div>
         <div className="space-y-1.5">
           <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-xl font-bold leading-snug text-neutral-900">
+            <h1 className="text-lg font-bold leading-snug text-neutral-900 md:text-xl">
               {property.title}
             </h1>
 
@@ -142,12 +142,12 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
 
           <div className="flex items-center gap-2">
             <LocationIcon className="h-4 w-4 shrink-0 text-neutral-600" />
-            <p className="text-sm font-medium text-neutral-600">
+            <p className="text-xs font-medium text-neutral-600 md:text-sm">
               {property.address}
             </p>
           </div>
 
-          <div className="mt-4">
+          <div className="mt-3 md:mt-4">
             {property.pricingTiers.length === 1 ? (
               <SinglePriceDisplay tier={property.pricingTiers[0]} isForSale={property.isForSale} isForRent={property.isForRent} />
             ) : property.pricingTiers.length > 1 ? (
@@ -157,15 +157,18 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
         </div>
       </div>
 
-      <dl className="mt-5 grid overflow-hidden rounded-[10px] border border-gray-300 bg-gray-400 sm:grid-cols-2 lg:grid-cols-3">
+      <dl className="mt-4 grid overflow-hidden rounded-[10px] border border-gray-300 bg-gray-400 sm:grid-cols-2 lg:grid-cols-3 md:mt-5">
         {property.detailStats.map((stat) => (
-          <div key={stat.label} className="flex items-center gap-[18px] border-gray-300 bg-white px-[18px] py-3.5 sm:border-r sm:border-b">
-            <stat.icon className="h-6 w-6 shrink-0 text-neutral-950" />
+          <div
+            key={stat.label}
+            className="flex items-center gap-3 border-b border-gray-300 bg-white px-3 py-2.5 last:border-b-0 sm:border-r sm:[&:nth-last-child(-n+2)]:border-b-0 lg:[&:nth-last-child(-n+3)]:border-b-0 md:gap-[18px] md:px-[18px] md:py-3.5"
+          >
+            <stat.icon className="h-5 w-5 shrink-0 text-neutral-950 md:h-6 md:w-6" />
             <div className="grid gap-1">
-              <dt className="text-sm font-semibold leading-[18px] text-neutral-500">
+              <dt className="text-xs font-semibold leading-[18px] text-neutral-500 md:text-sm">
                 {stat.label}
               </dt>
-              <dd className="text-sm font-bold leading-[18px] text-neutral-900">
+              <dd className="text-xs font-bold leading-[18px] text-neutral-900 md:text-sm">
                 {stat.value}
               </dd>
             </div>
@@ -174,7 +177,7 @@ export function PropertyDetailSummary({ property }: PropertyDetailSummaryProps) 
       </dl>
 
       {property.transitStations.length > 0 && (
-        <div className="mt-5 space-y-2.5">
+        <div className="mt-4 space-y-2.5 md:mt-5">
           {property.transitStations.map((station) => (
             <TransitRow key={station.stationId} station={station} />
           ))}

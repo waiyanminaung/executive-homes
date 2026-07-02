@@ -4,7 +4,6 @@ import { GeckoUIPortal } from "@geckoui/geckoui";
 import { classNames } from "@/utils/classNames";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import AdminFloatingMenu from "@/components/@shared/AdminFloatingMenu";
 
 const roboto = Roboto({
   variable: "--font-roboto",
@@ -39,7 +38,6 @@ export default function RootLayout({
     >
       <body className={classNames("min-h-full", "flex", "flex-col")}>
         <NuqsAdapter>
-          <AdminFloatingMenu />
           {children}
           <GeckoUIPortal />
         </NuqsAdapter>

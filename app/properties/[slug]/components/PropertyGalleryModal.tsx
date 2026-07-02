@@ -78,7 +78,7 @@ export function PropertyGalleryModal({ images, open, title, initialIndex = 0, on
             variant="ghost"
             aria-label="Close gallery"
             onClick={onClose}
-            className="h-10 w-10 rounded-full bg-white/10 p-0 !text-white hover:bg-white/20"
+            className="aspect-square h-10 w-10 shrink-0 !min-w-0 rounded-full bg-white/10 p-0 !text-white hover:bg-white/20"
           >
             <X className="h-5 w-5" />
           </Button>

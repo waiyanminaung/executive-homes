@@ -50,7 +50,7 @@ export function HomeHero() {
           height={92}
           className="mb-2 h-24 w-[188px] animate-fade-up [animation-delay:0ms] md:h-[120px] md:w-[235px]"
         />
-        <h1 className="max-w-[340px] animate-fade-up text-[32px] font-black leading-[1.12] tracking-tight [animation-delay:100ms] md:max-w-[699px] md:text-[40px] md:leading-[1.5]">
+        <h1 className="max-w-[340px] animate-fade-up text-2xl font-black leading-[1.12] tracking-tight [animation-delay:100ms] md:max-w-[699px] md:text-[40px] md:leading-[1.5]">
           Your Gateway to Elite Living
         </h1>
         <p className="max-w-[340px] animate-fade-up text-sm font-normal leading-6 text-white/90 [animation-delay:300ms] md:max-w-none md:text-lg md:leading-[1.5]">
@@ -60,14 +60,14 @@ export function HomeHero() {
       </div>
 
       <div className="relative z-50 mt-8 w-full max-w-3xl px-4 pb-8 md:absolute md:bottom-10 md:left-1/2 md:mt-0 md:-translate-x-1/2 md:translate-y-1/2 md:px-6 md:pb-0 lg:px-0">
-        <div className="mx-auto mb-4 grid w-full max-w-[280px] grid-cols-2 items-center rounded-lg border border-white/40 bg-black/60 p-1 md:flex md:w-fit md:max-w-none">
+        <div className="mx-auto mb-4 grid w-full max-w-[200px] grid-cols-2 items-center rounded-lg border border-white/40 bg-black/60 p-1 md:flex md:w-fit md:max-w-none">
           {(["rent", "buy"] as const).map((t) => (
             <button
               key={t}
               type="button"
               onClick={() => setTab(t)}
               className={classNames(
-                "cursor-pointer rounded-md px-4 py-2.5 text-base font-semibold capitalize text-white transition-all md:px-[38px] md:py-2",
+                "cursor-pointer rounded-md px-3 py-1.5 text-sm font-semibold capitalize text-white transition-all md:px-[38px] md:py-2 md:text-base",
                 tab === t ? "bg-gradient-to-b from-primary-500 to-primary-400" : "",
               )}
             >
@@ -84,7 +84,7 @@ export function HomeHero() {
             <PropertyFilterButton tab="price" values={filters} onApply={setFilters} className="min-w-0 md:flex-1" />
             <PropertyFilterButton tab="bedrooms" values={filters} onApply={setFilters} className="min-w-0 md:flex-1" />
 
-            <div className="col-span-2 flex justify-end self-center md:col-span-1">
+            <div className="flex justify-end self-center">
               <HomePetToggle value={petAllow} onChange={setPetAllow} />
             </div>
           </div>

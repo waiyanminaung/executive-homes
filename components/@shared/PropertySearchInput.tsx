@@ -202,10 +202,10 @@ export function PropertySearchInput({ onApply, showSearchButton, className, inpu
           type="button"
           variant="ghost"
           onClick={handleSubmit}
-          className="h-[46px] shrink-0 rounded-md bg-gradient-to-b from-primary-500 to-primary-400 px-[30px] text-sm font-semibold !text-white hover:bg-gradient-to-b"
+          className="h-[46px] shrink-0 rounded-md bg-gradient-to-b from-primary-500 to-primary-400 px-3.5 text-sm font-semibold !text-white hover:bg-gradient-to-b md:px-[30px]"
         >
           <Search className="h-4 w-4" />
-          <span>Search</span>
+          <span className="hidden md:inline">Search</span>
         </Button>
       )}
 

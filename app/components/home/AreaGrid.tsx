@@ -26,8 +26,8 @@ function AreaCardItem({ area, tall }: { area: AreaCard; tall?: boolean }) {
     <Link
       href={buildAreaHref(area)}
       className={classNames(
-        "group relative block min-h-[180px] flex-1 overflow-hidden rounded-xl shadow-sm",
-        tall && "min-h-[372px]",
+        "group relative block min-h-[140px] flex-1 overflow-hidden rounded-xl shadow-sm md:min-h-[180px]",
+        tall && "min-h-[220px] md:min-h-[372px]",
       )}
     >
       <Image
@@ -38,9 +38,9 @@ function AreaCardItem({ area, tall }: { area: AreaCard; tall?: boolean }) {
         className="object-cover transition-transform duration-500 group-hover:scale-110"
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-opacity duration-300 group-hover:opacity-80" />
-      <div className="absolute inset-x-0 bottom-0 p-5 text-white transition-transform duration-300 group-hover:-translate-y-1">
-        <h3 className="text-lg font-bold">{area.name}</h3>
-        <p className="text-sm font-normal">{area.listings} listings</p>
+      <div className="absolute inset-x-0 bottom-0 p-3 text-white transition-transform duration-300 group-hover:-translate-y-1 md:p-5">
+        <h3 className="text-sm font-bold md:text-lg">{area.name}</h3>
+        <p className="text-xs font-normal md:text-sm">{area.listings} listings</p>
       </div>
     </Link>
   );
@@ -87,7 +87,7 @@ export function AreaGrid({ areas, title = "Explore Bangkok Areas" }: AreaGridPro
   return (
     <section className="container mx-auto px-4 pb-12 pt-10 md:pb-16 md:pt-[120px]">
       <div className="mb-5 flex items-center justify-between md:mb-6">
-        <h2 className="text-2xl font-bold text-neutral-950 md:text-[28px]">
+        <h2 className="text-lg font-bold text-neutral-950 md:text-[28px]">
           {title}
         </h2>
 
@@ -97,22 +97,22 @@ export function AreaGrid({ areas, title = "Explore Bangkok Areas" }: AreaGridPro
             aria-label="Previous areas"
             onClick={() => emblaApi?.scrollPrev()}
             className={classNames(
-              "flex h-9 w-9 items-center justify-center rounded-full border border-neutral-300 text-neutral-700 transition-all hover:border-neutral-500 hover:text-neutral-900",
+              "flex h-7 w-7 items-center justify-center rounded-full border border-neutral-300 text-neutral-700 transition-all hover:border-neutral-500 hover:text-neutral-900 md:h-9 md:w-9",
               !canScrollPrev && "cursor-not-allowed opacity-40",
             )}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-3.5 w-3.5 md:h-4 md:w-4" />
           </button>
           <button
             type="button"
             aria-label="Next areas"
             onClick={() => emblaApi?.scrollNext()}
             className={classNames(
-              "flex h-9 w-9 items-center justify-center rounded-full border border-neutral-300 text-neutral-700 transition-all hover:border-neutral-500 hover:text-neutral-900",
+              "flex h-7 w-7 items-center justify-center rounded-full border border-neutral-300 text-neutral-700 transition-all hover:border-neutral-500 hover:text-neutral-900 md:h-9 md:w-9",
               !canScrollNext && "cursor-not-allowed opacity-40",
             )}
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-3.5 w-3.5 md:h-4 md:w-4" />
           </button>
         </div>
       </div>

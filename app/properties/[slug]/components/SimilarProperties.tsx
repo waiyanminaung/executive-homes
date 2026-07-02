@@ -13,9 +13,9 @@ export function SimilarProperties({ properties, viewMoreHref = "/properties", ha
   if (properties.length === 0) return null;
 
   return (
-    <section className="space-y-6">
+    <section className="space-y-3 md:space-y-6">
       <div className="flex items-center justify-between gap-4">
-        <h2 className="text-2xl font-bold leading-[1.5] text-neutral-950">
+        <h2 className="text-lg font-bold leading-[1.5] text-neutral-950 md:text-2xl">
           Similar listings
         </h2>
 
@@ -30,7 +30,7 @@ export function SimilarProperties({ properties, viewMoreHref = "/properties", ha
         )}
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4 md:gap-5">
         {properties.map((property) => (
           <PropertyCard key={property.id} property={property} />
         ))}

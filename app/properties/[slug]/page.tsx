@@ -121,12 +121,12 @@ export default async function PropertyDetailPage({ params }: PageProps) {
     <>
       <InnerPageHeader navItems={HOME_NAV_ITEMS} />
       <main className="min-h-screen bg-background text-neutral-950">
-        <div className="mx-auto w-full max-w-[1292px] px-4 pb-20 md:px-6 xl:px-0">
+        <div className="mx-auto w-full max-w-[1292px] px-4 pb-24 md:px-6 md:pb-20 xl:px-0">
           <PropertyDetailBreadcrumb title={property.title} />
           <PropertyDetailGallery images={property.imageUrls} title={property.title} />
 
-          <div className="mt-[30px] grid gap-6 lg:grid-cols-[minmax(0,908px)_359px] lg:items-start">
-            <div className="grid gap-5">
+          <div className="mt-4 grid gap-4 md:mt-[30px] md:gap-6 lg:grid-cols-[minmax(0,908px)_359px] lg:items-start">
+            <div className="grid gap-4 md:gap-5">
               <PropertyDetailSummary property={property} />
               <PropertyDetailContent property={property} />
             </div>
@@ -134,7 +134,7 @@ export default async function PropertyDetailPage({ params }: PageProps) {
             <PropertyDetailSidebar contactInfo={contactInfo} />
           </div>
 
-          <div className="mt-[50px]">
+          <div className="mt-8 md:mt-[50px]">
             <SimilarProperties properties={similarProperties} viewMoreHref={similarViewMoreHref} hasMore={similarHasMore} />
           </div>
         </div>

@@ -37,9 +37,9 @@ function AmenitiesGrid({ amenities }: { amenities: PropertyAmenity[] }) {
 
 export function PropertyDetailContent({ property }: PropertyDetailContentProps) {
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-detail-card md:p-[30px]">
-      <div className="space-y-4">
-        <h2 className="text-lg font-bold text-neutral-900">About this property</h2>
+    <section className="rounded-2xl border border-gray-200 bg-white p-4 shadow-detail-card md:p-[30px]">
+      <div className="space-y-3 md:space-y-4">
+        <h2 className="text-base font-bold text-neutral-900 md:text-lg">About this property</h2>
         <div
           className="prose max-w-none text-neutral-950"
           dangerouslySetInnerHTML={{ __html: property.description }}
@@ -48,9 +48,9 @@ export function PropertyDetailContent({ property }: PropertyDetailContentProps) 
 
       {property.unitFeatures.length > 0 && (
         <>
-          <div className="my-6 h-px bg-gray-300" />
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold text-neutral-950">Unit Features</h2>
+          <div className="my-4 h-px bg-gray-300 md:my-6" />
+          <div className="space-y-3 md:space-y-4">
+            <h2 className="text-base font-bold text-neutral-950 md:text-lg">Unit Features</h2>
             <AmenityGrid amenities={property.unitFeatures} />
           </div>
         </>
@@ -58,9 +58,9 @@ export function PropertyDetailContent({ property }: PropertyDetailContentProps) 
 
       {property.commonFacilities.length > 0 && (
         <>
-          <div className="my-6 h-px bg-gray-300" />
-          <div className="space-y-4">
-            <h2 className="text-lg font-bold text-neutral-950">Amenities</h2>
+          <div className="my-4 h-px bg-gray-300 md:my-6" />
+          <div className="space-y-3 md:space-y-4">
+            <h2 className="text-base font-bold text-neutral-950 md:text-lg">Amenities</h2>
             <AmenitiesGrid amenities={property.commonFacilities} />
           </div>
         </>
@@ -68,9 +68,9 @@ export function PropertyDetailContent({ property }: PropertyDetailContentProps) 
 
       {property.lat != null && property.lng != null && (
         <>
-          <div className="my-6 h-px bg-gray-300" />
-          <div className="space-y-4">
-            <h2 className="text-xl font-bold text-neutral-900">Location</h2>
+          <div className="my-4 h-px bg-gray-300 md:my-6" />
+          <div className="space-y-3 md:space-y-4">
+            <h2 className="text-base font-bold text-neutral-900 md:text-xl">Location</h2>
             <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
               <iframe
                 src={`https://maps.google.com/maps?q=${property.lat},${property.lng}&z=15&output=embed`}

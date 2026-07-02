@@ -23,27 +23,27 @@ function PropertyPrice({ minSalePrice, minRentPrice, hasMultipleTiers }: Propert
   const prefix = hasMultipleTiers ? "From " : "";
 
   if (!hasSale && !hasRent) {
-    return <p className="text-base font-semibold text-primary-500 md:text-lg">Contact for price</p>;
+    return <p className="text-sm font-semibold text-primary-500 md:text-lg">Contact for price</p>;
   }
 
   if (hasSale && hasRent) {
     return hasMultipleTiers ? (
       <div className="flex flex-col gap-0.5">
-        <p className="text-base font-bold text-primary-500 md:text-lg">From {formatPrice(minSalePrice!)}</p>
-        <p className="text-base font-bold text-primary-500 md:text-lg">From {formatPrice(minRentPrice!)}/mo</p>
+        <p className="text-sm font-bold text-primary-500 md:text-lg">From {formatPrice(minSalePrice!)}</p>
+        <p className="text-sm font-bold text-primary-500 md:text-lg">From {formatPrice(minRentPrice!)}/mo</p>
       </div>
     ) : (
-      <p className="text-base font-bold text-primary-500 md:text-lg">
+      <p className="text-sm font-bold text-primary-500 md:text-lg">
         {formatPrice(minSalePrice!)} · {formatPrice(minRentPrice!)}/mo
       </p>
     );
   }
 
   if (hasSale) {
-    return <p className="text-base font-bold text-primary-500 md:text-lg">{prefix}{formatPrice(minSalePrice!)}</p>;
+    return <p className="text-sm font-bold text-primary-500 md:text-lg">{prefix}{formatPrice(minSalePrice!)}</p>;
   }
 
-  return <p className="text-base font-bold text-primary-500 md:text-lg">{prefix}{formatPrice(minRentPrice!)}/mo</p>;
+  return <p className="text-sm font-bold text-primary-500 md:text-lg">{prefix}{formatPrice(minRentPrice!)}/mo</p>;
 }
 
 interface PropertyCardProps {
@@ -112,9 +112,9 @@ export function PropertyCard({ property, backHref }: PropertyCardProps) {
           </div>
         </div>
 
-        <span className="absolute left-4 top-4 flex items-center gap-1.5 rounded-2xl bg-black/70 px-2.5 py-1.5">
+        <span className="absolute left-2.5 top-2.5 flex items-center gap-1.5 rounded-2xl bg-black/70 px-2 py-1 md:left-4 md:top-4 md:px-2.5 md:py-1.5">
           <span className="h-2 w-2 rounded-full bg-green-500" />
-          <span className="text-[13px] font-semibold text-white">{property.listingType}</span>
+          <span className="text-xs font-semibold text-white md:text-[13px]">{property.listingType}</span>
         </span>
 
         {images.length > 1 && (
@@ -155,28 +155,28 @@ export function PropertyCard({ property, backHref }: PropertyCardProps) {
         )}
       </div>
 
-      <div className="flex flex-1 flex-col justify-between gap-4 p-4 md:gap-5 md:p-[18px]">
-        <div className="flex flex-col gap-[10px]">
-          <div className="flex flex-col gap-2.5">
-            <h3 className="line-clamp-2 text-base font-bold leading-snug text-neutral-950">
+      <div className="flex flex-1 flex-col justify-between gap-2.5 p-3 md:gap-5 md:p-[18px]">
+        <div className="flex flex-col gap-2 md:gap-[10px]">
+          <div className="flex flex-col gap-1.5 md:gap-2.5">
+            <h3 className="line-clamp-2 text-sm font-bold leading-snug text-neutral-950 md:text-base">
               {property.title}
             </h3>
-            <p className="text-sm font-normal text-neutral-900">{property.location}</p>
+            <p className="text-xs font-normal text-neutral-900 md:text-sm">{property.location}</p>
           </div>
 
-          <dl className="flex flex-wrap items-center gap-3 text-sm font-semibold text-neutral-900 md:gap-4">
+          <dl className="flex flex-wrap items-center gap-2.5 text-xs font-semibold text-neutral-900 md:gap-4 md:text-sm">
             <div className="flex items-center gap-1.5">
-              <BedDouble className="h-[18px] w-[18px]" />
+              <BedDouble className="h-3.5 w-3.5 md:h-[18px] md:w-[18px]" />
               <dt className="sr-only">Bedrooms</dt>
               <dd>{formatBeds(property.beds)}</dd>
             </div>
             <div className="flex items-center gap-1.5">
-              <Bath className="h-[18px] w-[18px]" />
+              <Bath className="h-3.5 w-3.5 md:h-[18px] md:w-[18px]" />
               <dt className="sr-only">Bathrooms</dt>
               <dd>{property.baths}</dd>
             </div>
             <div className="flex items-center gap-1.5">
-              <Maximize2 className="h-[18px] w-[18px]" />
+              <Maximize2 className="h-3.5 w-3.5 md:h-[18px] md:w-[18px]" />
               <dt className="sr-only">Area</dt>
               <dd>{formatArea(property.area)}</dd>
             </div>

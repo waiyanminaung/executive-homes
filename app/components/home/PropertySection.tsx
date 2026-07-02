@@ -36,18 +36,18 @@ export function PropertySection({ section }: PropertySectionProps) {
   }, [emblaApi]);
 
   return (
-    <section className="container mx-auto px-4 py-8 md:py-10">
-      <div className="mb-5 flex items-center justify-between gap-4 md:mb-7">
-        <h2 className="text-2xl font-bold text-neutral-950 md:text-[28px]">
+    <section className="container mx-auto px-4 py-6 md:py-10">
+      <div className="mb-3 flex items-center justify-between gap-4 md:mb-7">
+        <h2 className="text-lg font-bold text-neutral-950 md:text-[28px]">
           {section.title}
         </h2>
         {section.hasMore && (
           <Link
             href={section.viewMoreHref}
-            className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-primary-500"
+            className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-primary-500 md:text-sm"
           >
             <span>View More</span>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-3.5 w-3.5 md:h-4 md:w-4" />
           </Link>
         )}
       </div>

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import type { HomeNavItem } from "@/app/types";
+import { AdminAvatarMenu } from "@/components/@shared/AdminAvatarMenu";
 import { HeaderNav } from "./HeaderNav";
 import { MobileMenu } from "./MobileMenu";
 
@@ -19,9 +20,19 @@ export function InnerPageHeader({ navItems }: InnerPageHeaderProps) {
   return (
     <header className="relative z-[100] bg-secondary-900/95 shadow-sm backdrop-blur-md">
       <div className="container mx-auto grid h-16 grid-cols-[1fr_auto_1fr] items-center px-4 md:h-20">
-        <div className="h-11 w-11 md:hidden" />
+        <div className="flex items-center">
+          <button
+            type="button"
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white md:hidden"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
 
-        <HeaderNav navItems={navItems} />
+          <HeaderNav navItems={navItems} />
+        </div>
 
         <Link href="/" className="flex justify-center" aria-label="Executive Homes">
           <Image
@@ -33,17 +44,7 @@ export function InnerPageHeader({ navItems }: InnerPageHeaderProps) {
           />
         </Link>
 
-        <div className="flex items-center justify-end gap-6 text-sm font-semibold text-white/90">
-          <button
-            type="button"
-            aria-label="Toggle navigation menu"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white md:hidden"
-          >
-            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-
+        <div className="flex items-center justify-end gap-3 text-sm font-semibold text-white/90 md:gap-6">
           <Link href="/about" className="hidden rounded-md px-3 py-1.5 transition-colors hover:bg-white/10 hover:text-white md:inline">
             About Us
           </Link>
@@ -55,10 +56,12 @@ export function InnerPageHeader({ navItems }: InnerPageHeaderProps) {
           >
             Contact Us
           </Link>
+
+          <AdminAvatarMenu />
         </div>
       </div>
 
-      {menuOpen && <MobileMenu navItems={navItems} onClose={() => setMenuOpen(false)} />}
+      <MobileMenu navItems={navItems} open={menuOpen} onClose={() => setMenuOpen(false)} />
     </header>
   );
 }

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { classNames } from "@/utils/classNames";
 import type { HomeNavItem } from "@/app/types";
+import { AdminAvatarMenu } from "@/components/@shared/AdminAvatarMenu";
 import { HeaderNav } from "./HeaderNav";
 import { MobileMenu } from "./MobileMenu";
 
@@ -20,9 +21,19 @@ export function HomeHeader({ navItems, hideLogo }: HomeHeaderProps) {
   return (
     <header className="absolute inset-x-0 top-0 z-[60] bg-transparent">
       <div className="container mx-auto grid h-20 grid-cols-[1fr_auto_1fr] items-center px-4 md:h-24">
-        <div className="h-11 w-11 md:hidden" />
+        <div className="flex items-center">
+          <button
+            type="button"
+            aria-label="Toggle navigation menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur md:hidden"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
 
-        <HeaderNav navItems={navItems} />
+          <HeaderNav navItems={navItems} />
+        </div>
 
         {!hideLogo ? (
           <Link href="/" className="flex justify-center" aria-label="Executive Homes">
@@ -34,20 +45,10 @@ export function HomeHeader({ navItems, hideLogo }: HomeHeaderProps) {
 
         <div
           className={classNames(
-            "flex items-center justify-end gap-6 text-sm font-semibold transition-colors duration-300",
+            "flex items-center justify-end gap-3 text-sm font-semibold transition-colors duration-300 md:gap-6",
             "text-white/90",
           )}
         >
-          <button
-            type="button"
-            aria-label="Toggle navigation menu"
-            aria-expanded={menuOpen}
-            onClick={() => setMenuOpen((open) => !open)}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 bg-black/20 text-white backdrop-blur md:hidden"
-          >
-            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-
           <Link href="/about" className="hidden rounded-md px-3 py-1.5 transition-colors hover:bg-white/10 hover:text-white md:inline">
             About Us
           </Link>
@@ -57,10 +58,12 @@ export function HomeHeader({ navItems, hideLogo }: HomeHeaderProps) {
           >
             Contact Us
           </Link>
+
+          <AdminAvatarMenu />
         </div>
       </div>
 
-      {menuOpen && <MobileMenu navItems={navItems} onClose={() => setMenuOpen(false)} />}
+      <MobileMenu navItems={navItems} open={menuOpen} onClose={() => setMenuOpen(false)} />
     </header>
   );
 }

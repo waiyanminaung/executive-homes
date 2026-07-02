@@ -49,7 +49,7 @@ function GalleryLayoutFour({ images, title, onImageClick }: LayoutProps) {
 
   return (
     <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-2">
-      <div className="relative min-h-[300px] md:min-h-[440px]">
+      <div className="relative min-h-[200px] md:min-h-[440px]">
         <GalleryImage
           src={primary}
           alt={title}
@@ -58,7 +58,7 @@ function GalleryLayoutFour({ images, title, onImageClick }: LayoutProps) {
         />
       </div>
       <div className="grid gap-1.5">
-        <div className="relative min-h-[214px]">
+        <div className="relative min-h-[150px] md:min-h-[214px]">
           <GalleryImage
             src={secondary[0]}
             alt={`${title} gallery 2`}
@@ -68,7 +68,7 @@ function GalleryLayoutFour({ images, title, onImageClick }: LayoutProps) {
         </div>
         <div className="grid grid-cols-2 gap-1.5">
           {secondary.slice(1).map((image, index) => (
-            <div key={image} className="relative min-h-[100px]">
+            <div key={image} className="relative min-h-[70px] md:min-h-[100px]">
               <GalleryImage
                 src={image}
                 alt={`${title} gallery ${index + 3}`}
@@ -92,7 +92,7 @@ function GalleryLayoutFivePlus({ images, title, onImageClick }: LayoutProps) {
       <button
         type="button"
         onClick={() => onImageClick(0)}
-        className="relative min-h-[300px] overflow-hidden bg-neutral-200 md:min-h-[440px] cursor-pointer"
+        className="relative min-h-[200px] overflow-hidden bg-neutral-200 md:min-h-[440px] cursor-pointer"
       >
         <Image
           src={primary}
@@ -104,12 +104,12 @@ function GalleryLayoutFivePlus({ images, title, onImageClick }: LayoutProps) {
         />
       </button>
 
-      <div className="relative grid min-h-[260px] grid-cols-2 gap-1.5 md:min-h-[440px]">
+      <div className="relative grid min-h-[170px] grid-cols-2 gap-1.5 md:min-h-[440px]">
         {secondary.slice(0, 4).map((image, index) => {
           const isLast = index === 3;
 
           return (
-            <div key={image} className="relative min-h-[128px] overflow-hidden bg-neutral-200">
+            <div key={image} className="relative min-h-[85px] md:min-h-[128px] overflow-hidden bg-neutral-200">
               <GalleryImage
                 src={image}
                 alt={`${title} gallery ${index + 2}`}
@@ -117,7 +117,7 @@ function GalleryLayoutFivePlus({ images, title, onImageClick }: LayoutProps) {
                 onClick={() => onImageClick(index + 1)}
                 overlay={
                   isLast && extraImageCount > 0 ? (
-                    <div className="absolute inset-0 flex items-center justify-center bg-secondary-900/55 text-4xl font-bold text-white">
+                    <div className="absolute inset-0 flex items-center justify-center bg-secondary-900/55 text-xl font-bold text-white md:text-4xl">
                       {extraImageCount}+
                     </div>
                   ) : undefined
@@ -156,7 +156,7 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
   return (
     <>
       {displayImages.length === 1 && (
-        <section className="relative min-h-[400px] overflow-hidden rounded-[10px] md:min-h-[500px]">
+        <section className="relative min-h-[260px] overflow-hidden rounded-[10px] md:min-h-[500px]">
           <GalleryImage
             src={primaryImage}
             alt={title}
@@ -168,7 +168,7 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
 
       {displayImages.length === 2 && (
         <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-2">
-          <div className="relative min-h-[300px] md:min-h-[440px]">
+          <div className="relative min-h-[200px] md:min-h-[440px]">
             <GalleryImage
               src={primaryImage}
               alt={title}
@@ -176,7 +176,7 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
               onClick={() => openAt(0)}
             />
           </div>
-          <div className="relative min-h-[300px] md:min-h-[440px]">
+          <div className="relative min-h-[200px] md:min-h-[440px]">
             <GalleryImage
               src={secondaryImages[0]}
               alt={`${title} gallery 2`}
@@ -189,7 +189,7 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
 
       {displayImages.length === 3 && (
         <section className="grid gap-1.5 overflow-hidden rounded-[10px] md:grid-cols-2">
-          <div className="relative min-h-[300px] md:min-h-[440px]">
+          <div className="relative min-h-[200px] md:min-h-[440px]">
             <GalleryImage
               src={primaryImage}
               alt={title}
@@ -199,7 +199,7 @@ export function PropertyDetailGallery({ images, title }: PropertyDetailGalleryPr
           </div>
           <div className="grid gap-1.5">
             {secondaryImages.map((image, index) => (
-              <div key={image} className="relative min-h-[214px]">
+              <div key={image} className="relative min-h-[150px] md:min-h-[214px]">
                 <GalleryImage
                   src={image}
                   alt={`${title} gallery ${index + 2}`}
